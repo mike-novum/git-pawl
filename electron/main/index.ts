@@ -2,6 +2,41 @@ import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { IPC_CHANNELS } from '../shared/ipc-channels';
+import {
+  accountRemoveSchema,
+  accountSetActiveSchema,
+  authGithubCompleteSchema,
+  authGitlabCompleteSchema,
+  fsIconSchema,
+  fsSizeSchema,
+  fsWorkspaceListSchema,
+  gitAmendSchema,
+  gitBranchSchema,
+  gitCheckoutSchema,
+  gitCloneSchema,
+  gitCommitSchema,
+  gitConfigSchema,
+  gitDiffSchema,
+  gitFetchSchema,
+  gitHooksSchema,
+  gitLogSchema,
+  gitMergeSchema,
+  gitPatchSchema,
+  gitPullSchema,
+  gitPushSchema,
+  gitRebaseSchema,
+  gitResetSchema,
+  gitRevertSchema,
+  gitRevParseSchema,
+  gitStashSchema,
+  gitStatusSchema,
+  gitTagSchema,
+  githubListReposSchema,
+  gitlabListReposSchema
+} from '../shared/schemas';
+import { safeHandle, safeHandleNoArgs } from '../shared/handler';
+
 import { storeDelete, storeGet, storeSet } from './services/store';
 
 const isDev = !app.isPackaged;
@@ -55,62 +90,62 @@ const createWindow = async (): Promise<void> => {
 const echo = async (args: unknown): Promise<unknown> => args;
 
 const registerIpcHandlers = (): void => {
-  ipcMain.handle('app:info', () => ({
+  ipcMain.handle(IPC_CHANNELS.APP_INFO, () => ({
     name: app.getName(),
     version: app.getVersion(),
     electron: process.versions.electron,
     node: process.versions.node
   }));
 
-  ipcMain.handle('store:get', (_event, args: { key: string }) =>
+  ipcMain.handle(IPC_CHANNELS.STORE_GET, (_event, args: { key: string }) =>
     storeGet(args.key)
   );
   ipcMain.handle(
-    'store:set',
+    IPC_CHANNELS.STORE_SET,
     (_event, args: { key: string; value: unknown }) => {
       storeSet(args.key, args.value);
     }
   );
-  ipcMain.handle('store:delete', (_event, args: { key: string }) => {
+  ipcMain.handle(IPC_CHANNELS.STORE_DELETE, (_event, args: { key: string }) => {
     storeDelete(args.key);
   });
 
-  ipcMain.handle('git:status', (_event, args) => echo(args));
-  ipcMain.handle('git:log', (_event, args) => echo(args));
-  ipcMain.handle('git:diff', (_event, args) => echo(args));
-  ipcMain.handle('git:rev-parse', (_event, args) => echo(args));
-  ipcMain.handle('git:clone', (_event, args) => echo(args));
-  ipcMain.handle('git:fetch', (_event, args) => echo(args));
-  ipcMain.handle('git:pull', (_event, args) => echo(args));
-  ipcMain.handle('git:push', (_event, args) => echo(args));
-  ipcMain.handle('git:commit', (_event, args) => echo(args));
-  ipcMain.handle('git:stash', (_event, args) => echo(args));
-  ipcMain.handle('git:merge', (_event, args) => echo(args));
-  ipcMain.handle('git:rebase', (_event, args) => echo(args));
-  ipcMain.handle('git:reset', (_event, args) => echo(args));
-  ipcMain.handle('git:revert', (_event, args) => echo(args));
-  ipcMain.handle('git:amend', (_event, args) => echo(args));
-  ipcMain.handle('git:checkout', (_event, args) => echo(args));
-  ipcMain.handle('git:branch', (_event, args) => echo(args));
-  ipcMain.handle('git:tag', (_event, args) => echo(args));
-  ipcMain.handle('git:patch', (_event, args) => echo(args));
-  ipcMain.handle('git:config', (_event, args) => echo(args));
-  ipcMain.handle('git:hooks', (_event, args) => echo(args));
+  safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_CLONE, gitCloneSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_FETCH, gitFetchSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_PULL, gitPullSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_PUSH, gitPushSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_COMMIT, gitCommitSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_STASH, gitStashSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_MERGE, gitMergeSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_REBASE, gitRebaseSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_RESET, gitResetSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_REVERT, gitRevertSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_AMEND, gitAmendSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_CHECKOUT, gitCheckoutSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_BRANCH, gitBranchSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_TAG, gitTagSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_PATCH, gitPatchSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_CONFIG, gitConfigSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_HOOKS, gitHooksSchema, echo);
 
-  ipcMain.handle('fs:size', (_event, args) => echo(args));
-  ipcMain.handle('fs:icon', (_event, args) => echo(args));
-  ipcMain.handle('fs:workspace-list', (_event, args) => echo(args));
+  safeHandle(IPC_CHANNELS.FS_SIZE, fsSizeSchema, echo);
+  safeHandle(IPC_CHANNELS.FS_ICON, fsIconSchema, echo);
+  safeHandle(IPC_CHANNELS.FS_WORKSPACE_LIST, fsWorkspaceListSchema, echo);
 
-  ipcMain.handle('auth:github-start', () => echo(null));
-  ipcMain.handle('auth:github-complete', (_event, args) => echo(args));
-  ipcMain.handle('auth:gitlab-start', () => echo(null));
-  ipcMain.handle('auth:gitlab-complete', (_event, args) => echo(args));
-  ipcMain.handle('account:list', () => echo([]));
-  ipcMain.handle('account:set-active', (_event, args) => echo(args));
-  ipcMain.handle('account:remove', (_event, args) => echo(args));
+  safeHandleNoArgs(IPC_CHANNELS.AUTH_GITHUB_START, () => null);
+  safeHandle(IPC_CHANNELS.AUTH_GITHUB_COMPLETE, authGithubCompleteSchema, echo);
+  safeHandleNoArgs(IPC_CHANNELS.AUTH_GITLAB_START, () => null);
+  safeHandle(IPC_CHANNELS.AUTH_GITLAB_COMPLETE, authGitlabCompleteSchema, echo);
+  safeHandleNoArgs(IPC_CHANNELS.ACCOUNT_LIST, () => []);
+  safeHandle(IPC_CHANNELS.ACCOUNT_SET_ACTIVE, accountSetActiveSchema, echo);
+  safeHandle(IPC_CHANNELS.ACCOUNT_REMOVE, accountRemoveSchema, echo);
 
-  ipcMain.handle('github:list-repos', (_event, args) => echo(args));
-  ipcMain.handle('gitlab:list-repos', (_event, args) => echo(args));
+  safeHandle(IPC_CHANNELS.GITHUB_LIST_REPOS, githubListReposSchema, echo);
+  safeHandle(IPC_CHANNELS.GITLAB_LIST_REPOS, gitlabListReposSchema, echo);
 };
 
 app.whenReady().then(async () => {
