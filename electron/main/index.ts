@@ -38,6 +38,7 @@ import {
 import { safeHandle, safeHandleNoArgs } from '../shared/handler';
 
 import { storeDelete, storeGet, storeSet } from './services/store';
+import { gitDiff, gitLog, gitRevParse, gitStatus } from './services/git';
 
 const isDev = !app.isPackaged;
 
@@ -110,10 +111,10 @@ const registerIpcHandlers = (): void => {
     storeDelete(args.key);
   });
 
-  safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, gitStatus);
+  safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, gitLog);
+  safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, gitDiff);
+  safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, gitRevParse);
   safeHandle(IPC_CHANNELS.GIT_CLONE, gitCloneSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_FETCH, gitFetchSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_PULL, gitPullSchema, echo);

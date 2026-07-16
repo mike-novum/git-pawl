@@ -1,5 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
+import type { Commit as GitCommit, DiffHunk, GitStatus } from '../shared/types/git';
+
 export type AppInfo = {
   name: string;
   version: string;
@@ -46,10 +48,10 @@ export type ApiSchema = {
   storeSet: (args: StoreSetArgs) => Promise<void>;
   storeDelete: (args: StoreDeleteArgs) => Promise<void>;
 
-  gitStatus: (args: GitStatusArgs) => Promise<unknown>;
-  gitLog: (args: GitLogArgs) => Promise<unknown>;
-  gitDiff: (args: GitDiffArgs) => Promise<unknown>;
-  gitRevParse: (args: GitRevParseArgs) => Promise<unknown>;
+  gitStatus: (args: GitStatusArgs) => Promise<GitStatus>;
+  gitLog: (args: GitLogArgs) => Promise<GitCommit[]>;
+  gitDiff: (args: GitDiffArgs) => Promise<DiffHunk[]>;
+  gitRevParse: (args: GitRevParseArgs) => Promise<string>;
   gitClone: (args: GitCloneArgs) => Promise<unknown>;
   gitFetch: (args: GitFetchArgs) => Promise<unknown>;
   gitPull: (args: GitPullArgs) => Promise<unknown>;
@@ -94,10 +96,10 @@ const api: ApiSchema = {
   storeSet: (args) => invoke('store:set', args) as Promise<void>,
   storeDelete: (args) => invoke('store:delete', args) as Promise<void>,
 
-  gitStatus: (args) => invoke('git:status', args),
-  gitLog: (args) => invoke('git:log', args),
-  gitDiff: (args) => invoke('git:diff', args),
-  gitRevParse: (args) => invoke('git:rev-parse', args),
+  gitStatus: (args) => invoke('git:status', args) as Promise<GitStatus>,
+  gitLog: (args) => invoke('git:log', args) as Promise<GitCommit[]>,
+  gitDiff: (args) => invoke('git:diff', args) as Promise<DiffHunk[]>,
+  gitRevParse: (args) => invoke('git:rev-parse', args) as Promise<string>,
   gitClone: (args) => invoke('git:clone', args),
   gitFetch: (args) => invoke('git:fetch', args),
   gitPull: (args) => invoke('git:pull', args),
