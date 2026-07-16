@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { api } from './ipc';
+import { getAppInfo } from './ipc';
 
-describe('api', () => {
+describe('ipc', () => {
   it('returns fallback app info when bridge is not available', async () => {
-    const info = await api.getAppInfo();
+    const info = await getAppInfo();
 
     expect(info.name).toBe('git-pawl');
     expect(info.version).toBeTypeOf('string');
