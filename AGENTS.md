@@ -53,3 +53,56 @@ perf: A code change that improves performance
 refactor: A code change that neither fixes a bug nor adds a feature
 style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
 test: Adding missing tests or correcting existing tests
+
+
+# Конвенция имен
+ 
+Придерживайся этой конвенции при именовании 
+
+## Элементы кода
+
+Названия React-компонентов - `PascalCase`
+
+Названия типов и интерфейсов в Typescript - `PascalCase`
+
+Названия классов - `PascalCase`
+
+Название функций - `camelCase`
+
+Название констант - `UPPER_SNAKE_CASE`
+
+## Файлы
+
+Файлы React компонентов - `PascalCase`
+
+Файлы функций и утилит  - `camelCase`
+
+Файлы классов - `PascalCase`
+
+## Директории
+
+### Верхняя структура каталогов
+
+Верхнеуровневая структура стоится по такому паттерну согласно FSD:
+
+src/{layer}/{slice}/{subslice}/{segment}
+
+или 
+
+src/{layer}/{slice}/{segment}
+
+layer,slice, subslice segment -  `kebab-case`
+
+Дополнительные группирующие директории - `kebab-case`
+
+Директория React-компонентов - `PascalCase`
+
+
+### Общие правила
+
+Функции обработки кликов - называть с префиксом `handle` в `camelCase`
+
+Пример: `const handleSave = ()=>{}`
+
+
+

@@ -142,7 +142,7 @@ git-pawl/
 - `eslint` v9 (flat config)
 
 ### UI
-- `@base-ui-components/react` (новая основа Shadcn — заменяет Radix)
+- `@base-ui/react` (новая основа Shadcn — заменяет Radix; бывший `@base-ui-components/react`)
 - `tailwindcss` v4 (CSS-first config, дизайн-токены через `@theme`)
 - `class-variance-authority` + `tailwind-merge` + `clsx`
 - `lucide-react` (иконки)

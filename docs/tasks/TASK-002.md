@@ -1,7 +1,7 @@
 # TASK-002 — UI-кит (пакет 1)
 
 ## Цель
-Создать первую партию UI-примитивов на базе `@base-ui-components/react` + cva + tailwind-merge.
+Создать первую партию UI-примитивов на базе `@base-ui/react` + cva + tailwind-merge.
 
 ## Компоненты
 

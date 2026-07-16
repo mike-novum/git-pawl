@@ -11,9 +11,9 @@
 | `Badge` (variants) | HTML | малая |
 | `Avatar` | HTML | малая |
 | `Separator` | HTML | малая |
-| `ScrollArea` | Base UI | средняя |
-| `DropdownMenu` | Base UI | средняя |
-| `Sheet` (боковая панель) | Base UI Dialog | средняя |
+| `ScrollArea` | `@base-ui/react` | средняя |
+| `DropdownMenu` | `@base-ui/react` | средняя |
+| `Sheet` (боковая панель) | `@base-ui/react` Dialog | средняя |
 | `Skeleton` | HTML | малая |
 | `Kbd` (отображение клавиш) | HTML | малая |
 

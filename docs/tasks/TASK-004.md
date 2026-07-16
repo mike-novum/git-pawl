@@ -8,12 +8,12 @@
 | Компонент | База | Сложность |
 |---|---|---|
 | `Table` (стили) | HTML | малая |
-| `Popover` | Base UI | средняя |
-| `Command` (command palette) | Base UI + cmdk | большая |
+| `Popover` | `@base-ui/react` | средняя |
+| `Command` (command palette) | `@base-ui/react` + cmdk | большая |
 | `Progress` | HTML/SVG | малая |
-| `Switch` | Base UI | малая |
-| `Slider` | Base UI | малая |
-| `Accordion` | Base UI | средняя |
+| `Switch` | `@base-ui/react` | малая |
+| `Slider` | `@base-ui/react` | малая |
+| `Accordion` | `@base-ui/react` | средняя |
 | `Empty` (заглушка пустого состояния) | HTML | малая |
 | `Spinner` / `Loader` | SVG | малая |
 | `ResizablePanel` | react-resizable-panels | средняя |
