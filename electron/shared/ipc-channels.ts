@@ -1,0 +1,47 @@
+export const IPC_CHANNELS = {
+  APP_INFO: 'app:info',
+
+  STORE_GET: 'store:get',
+  STORE_SET: 'store:set',
+  STORE_DELETE: 'store:delete',
+
+  GIT_STATUS: 'git:status',
+  GIT_LOG: 'git:log',
+  GIT_DIFF: 'git:diff',
+  GIT_REV_PARSE: 'git:rev-parse',
+  GIT_CLONE: 'git:clone',
+  GIT_FETCH: 'git:fetch',
+  GIT_PULL: 'git:pull',
+  GIT_PUSH: 'git:push',
+  GIT_COMMIT: 'git:commit',
+  GIT_STASH: 'git:stash',
+  GIT_MERGE: 'git:merge',
+  GIT_REBASE: 'git:rebase',
+  GIT_RESET: 'git:reset',
+  GIT_REVERT: 'git:revert',
+  GIT_AMEND: 'git:amend',
+  GIT_CHECKOUT: 'git:checkout',
+  GIT_BRANCH: 'git:branch',
+  GIT_CURRENT_BRANCH: 'git:current-branch',
+  GIT_TAG: 'git:tag',
+  GIT_PATCH: 'git:patch',
+  GIT_CONFIG: 'git:config',
+  GIT_HOOKS: 'git:hooks',
+
+  FS_SIZE: 'fs:size',
+  FS_ICON: 'fs:icon',
+  FS_WORKSPACE_LIST: 'fs:workspace-list',
+
+  AUTH_GITHUB_START: 'auth:github-start',
+  AUTH_GITHUB_COMPLETE: 'auth:github-complete',
+  AUTH_GITLAB_START: 'auth:gitlab-start',
+  AUTH_GITLAB_COMPLETE: 'auth:gitlab-complete',
+  ACCOUNT_LIST: 'account:list',
+  ACCOUNT_SET_ACTIVE: 'account:set-active',
+  ACCOUNT_REMOVE: 'account:remove',
+
+  GITHUB_LIST_REPOS: 'github:list-repos',
+  GITLAB_LIST_REPOS: 'gitlab:list-repos'
+} as const;
+
+export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

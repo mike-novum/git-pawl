@@ -18,7 +18,7 @@
 | [TASK-021.md](TASK-021.md) | 3 | git: status, log, diff, rev-parse | TASK-020 | ⏳ |
 | [TASK-022.md](TASK-022.md) | 3 | git: clone, fetch, pull, push | TASK-020 | ⏳ |
 | [TASK-023.md](TASK-023.md) | 3 | git: commit, stash, merge, rebase | TASK-020 | ⏳ |
-| [TASK-024.md](TASK-024.md) | 3 | git: reset, revert, amend, checkout, branch | TASK-020 | ⏳ |
+| [TASK-024.md](TASK-024.md) | 3 | git: reset, revert, amend, checkout, branch | TASK-020 | ✅ |
 | [TASK-025.md](TASK-025.md) | 3 | git: tags, patch, config, hooks | TASK-020 | ⏳ |
 | [TASK-026.md](TASK-026.md) | 3 | fs: размер, иконка, workspace | TASK-020 | ⏳ |
 | [TASK-027.md](TASK-027.md) | 3 | Entity: repository | TASK-021, TASK-026 | ⏳ |
