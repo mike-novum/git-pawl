@@ -13,7 +13,7 @@
 | [TASK-006.md](TASK-006.md) | 1 | Storybook сборка | TASK-002..004 | ⏳ |
 | [TASK-010.md](TASK-010.md) | 2 | App-shell, роутинг, IPC bridge | TASK-000 | ✅ |
 | [TASK-011.md](TASK-011.md) | 2 | Store + electron-store | TASK-010 | ✅ |
-| [TASK-012.md](TASK-012.md) | 2 | Переключение тем | TASK-001, TASK-011 | ⏳ |
+| [TASK-012.md](TASK-012.md) | 2 | Переключение тем | TASK-001, TASK-011 | ✅ |
 | [TASK-020.md](TASK-020.md) | 3 | IPC-мост с валидацией | TASK-010 | ✅ |
 | [TASK-021.md](TASK-021.md) | 3 | git: status, log, diff, rev-parse | TASK-020 | ⏳ |
 | [TASK-022.md](TASK-022.md) | 3 | git: clone, fetch, pull, push | TASK-020 | ⏳ |
