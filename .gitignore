@@ -14,3 +14,4 @@ yarn-error.log*
 coverage
 .storybook-out
 storybook-static
+.claude/worktrees/
