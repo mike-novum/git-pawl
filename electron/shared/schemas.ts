@@ -90,28 +90,36 @@ export const gitRebaseSchema = z.object({
 export const gitResetSchema = z.object({
   repoPath: z.string(),
   mode: z.union([z.literal('soft'), z.literal('mixed'), z.literal('hard')]),
-  target: z.string().optional()
+  ref: z.string().optional()
 });
 
 export const gitRevertSchema = z.object({
   repoPath: z.string(),
-  commit: z.string()
+  commit: z.string(),
+  noEdit: z.boolean().optional()
 });
 
 export const gitAmendSchema = z.object({
-  repoPath: z.string()
+  repoPath: z.string(),
+  message: z.string().optional(),
+  noVerify: z.boolean().optional()
 });
 
 export const gitCheckoutSchema = z.object({
   repoPath: z.string(),
-  target: z.string(),
+  ref: z.string(),
   create: z.boolean().optional()
 });
 
 export const gitBranchSchema = z.object({
   repoPath: z.string(),
   action: z.union([z.literal('list'), z.literal('create'), z.literal('delete')]),
-  name: z.string().optional()
+  name: z.string().optional(),
+  force: z.boolean().optional()
+});
+
+export const currentBranchSchema = z.object({
+  repoPath: z.string()
 });
 
 export const gitTagSchema = z.object({
@@ -192,6 +200,7 @@ export type GitRevertArgs = z.infer<typeof gitRevertSchema>;
 export type GitAmendArgs = z.infer<typeof gitAmendSchema>;
 export type GitCheckoutArgs = z.infer<typeof gitCheckoutSchema>;
 export type GitBranchArgs = z.infer<typeof gitBranchSchema>;
+export type CurrentBranchArgs = z.infer<typeof currentBranchSchema>;
 export type GitTagArgs = z.infer<typeof gitTagSchema>;
 export type GitPatchArgs = z.infer<typeof gitPatchSchema>;
 export type GitConfigArgs = z.infer<typeof gitConfigSchema>;

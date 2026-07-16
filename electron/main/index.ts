@@ -8,6 +8,7 @@ import {
   accountSetActiveSchema,
   authGithubCompleteSchema,
   authGitlabCompleteSchema,
+  currentBranchSchema,
   fsIconSchema,
   fsSizeSchema,
   fsWorkspaceListSchema,
@@ -38,9 +39,15 @@ import {
 import { safeHandle, safeHandleNoArgs } from '../shared/handler';
 
 import { storeDelete, storeGet, storeSet } from './services/store';
+import { gitAmend } from './services/git/amend';
+import { gitBranch } from './services/git/branch';
+import { gitCheckout } from './services/git/checkout';
 import { gitClone } from './services/git/clone';
+import { currentBranch } from './services/git/currentBranch';
 import { gitFetch, gitPull, gitPush } from './services/git/network';
 import { emitCloneProgress } from './services/git/progress';
+import { gitReset } from './services/git/reset';
+import { gitRevert } from './services/git/revert';
 
 const isDev = !app.isPackaged;
 
@@ -128,11 +135,22 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_STASH, gitStashSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_MERGE, gitMergeSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_REBASE, gitRebaseSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_RESET, gitResetSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_REVERT, gitRevertSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_AMEND, gitAmendSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_CHECKOUT, gitCheckoutSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_BRANCH, gitBranchSchema, echo);
+
+  safeHandle(IPC_CHANNELS.GIT_RESET, gitResetSchema, async (args) => {
+    await gitReset(args);
+  });
+  safeHandle(IPC_CHANNELS.GIT_REVERT, gitRevertSchema, async (args) => {
+    await gitRevert(args);
+  });
+  safeHandle(IPC_CHANNELS.GIT_AMEND, gitAmendSchema, async (args) => gitAmend(args));
+  safeHandle(IPC_CHANNELS.GIT_CHECKOUT, gitCheckoutSchema, async (args) => {
+    await gitCheckout(args);
+  });
+  safeHandle(IPC_CHANNELS.GIT_BRANCH, gitBranchSchema, async (args) => gitBranch(args));
+  safeHandle(IPC_CHANNELS.GIT_CURRENT_BRANCH, currentBranchSchema, async (args) =>
+    currentBranch(args.repoPath)
+  );
+
   safeHandle(IPC_CHANNELS.GIT_TAG, gitTagSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_PATCH, gitPatchSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_CONFIG, gitConfigSchema, echo);

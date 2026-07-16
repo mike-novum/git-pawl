@@ -22,6 +22,7 @@ export const IPC_CHANNELS = {
   GIT_AMEND: 'git:amend',
   GIT_CHECKOUT: 'git:checkout',
   GIT_BRANCH: 'git:branch',
+  GIT_CURRENT_BRANCH: 'git:current-branch',
   GIT_TAG: 'git:tag',
   GIT_PATCH: 'git:patch',
   GIT_CONFIG: 'git:config',
