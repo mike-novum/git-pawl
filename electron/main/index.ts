@@ -2,6 +2,20 @@ import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { IPC_CHANNELS } from '../shared/ipc-channels';
+import { safeHandle } from '../shared/handler';
+import {
+  gitCommitSchema,
+  gitMergeSchema,
+  gitRebaseSchema,
+  gitStashSchema
+} from '../shared/schemas';
+
+import { gitCommit } from './services/git/commit';
+import { gitMerge } from './services/git/merge';
+import { gitRebase } from './services/git/rebase';
+import { gitStash } from './services/git/stash';
+
 const isDev = !app.isPackaged;
 
 const iconPath = join(__dirname, '../../build/icon.png');
@@ -51,12 +65,17 @@ const createWindow = async (): Promise<void> => {
 };
 
 const registerIpcHandlers = (): void => {
-  ipcMain.handle('app:info', () => ({
+  ipcMain.handle(IPC_CHANNELS.APP_INFO, () => ({
     name: app.getName(),
     version: app.getVersion(),
     electron: process.versions.electron,
     node: process.versions.node
   }));
+
+  safeHandle(IPC_CHANNELS.GIT_COMMIT, gitCommitSchema, gitCommit);
+  safeHandle(IPC_CHANNELS.GIT_STASH, gitStashSchema, gitStash);
+  safeHandle(IPC_CHANNELS.GIT_MERGE, gitMergeSchema, gitMerge);
+  safeHandle(IPC_CHANNELS.GIT_REBASE, gitRebaseSchema, gitRebase);
 };
 
 app.whenReady().then(async () => {
