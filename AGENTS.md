@@ -32,3 +32,24 @@
 - код должен быть простым и понятным для другого разработчика
 - добавляй отступы в коде между блоками кода, разделяй их логически (код не должен превращаться в кашу)
 - при именовании файлов, компонентов, функций старайся не использовать слишком много слов, 4-5 слов в названии это максимум за который лучше не заходить
+
+
+# Git 
+
+- Для коммитов используй Convetional Commits Angular anotation https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines
+
+- Сообщения коммитов пиши на русском
+- не делай коммиты слишком мелкими 1 бизнес-фича - 1 коммит
+
+- ветки называй по паттерну  `тип-задачи/краткое-описание-сути`, например `feat/list-of-repos` (типы задачи полностью повторяют type из Convetional Commits - build, chore, ci, test, feat, fix, perf, refactor, docs, style)
+
+Расшифровка типов:
+build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+docs: Documentation only changes
+feat: A new feature
+fix: A bug fix
+perf: A code change that improves performance
+refactor: A code change that neither fixes a bug nor adds a feature
+style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+test: Adding missing tests or correcting existing tests
