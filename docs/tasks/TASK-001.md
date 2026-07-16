@@ -28,11 +28,11 @@
 8. Story `Theme` в Storybook — кнопка переключения dark/light.
 
 ## Acceptance criteria
-- [ ] Tailwind-класс `bg-background`, `text-foreground`, `bg-primary` работает.
-- [ ] `[data-theme="light"]` переключает фон/цвет через CSS-переменные.
-- [ ] По умолчанию (без атрибута) применяется dark-палитра.
-- [ ] `useTheme()` переключает тему мгновенно без перезагрузки.
-- [ ] Сборка story показывает 3 примера: light/dark/side-by-side.
+- [x] Tailwind-класс `bg-background`, `text-foreground`, `bg-primary` работает.
+- [x] `[data-theme="light"]` переключает фон/цвет через CSS-переменные.
+- [x] По умолчанию (без атрибута) применяется dark-палитра.
+- [x] `useTheme()` переключает тему мгновенно без перезагрузки.
+- [x] Сборка story показывает 3 примера: light/dark/side-by-side.
 
 ## Зависит от
 - TASK-000
@@ -45,3 +45,26 @@
 - `src/shared/lib/theme/index.ts`
 - `src/shared/lib/theme/cn.ts` (clsx + tailwind-merge)
 - `.storybook/themes.stories.tsx`
+
+## Статус: DONE — дизайн-токены и тема-переключатель на месте
+
+## Что сделано
+- Разнёс токены на три файла: `theme.css` (тёмная палитра по умолчанию через `@theme`), `light.css` (overrides `[data-theme="light"]`), `globals.css` (только импорты + базовый сброс).
+- Добавил все семантические токены на OKLCH: background/foreground, card (+foreground), primary/secondary/muted/accent (+ каждому foreground), destructive (+foreground), border/input/ring + радиусы sm/md/lg + duration fast/base + ease-fast. Primary — оранжевый `oklch(0.72 0.18 50)`.
+- Реализовал `useTheme()` в `src/shared/lib/theme`: читает DOM/data-theme, инициализируется из localStorage, прокидывает `theme`, `setTheme`, `toggle` и сразу синхронизирует dataset.theme и localStorage через `useEffect`.
+- Добавил утилиту `cn(...inputs)` через `clsx + tailwind-merge` и публичный API слайса (`index.ts`).
+- Сделал UI-компонент `ThemeToggle` (кнопка с Sun/Moon из `lucide-react`) в `src/shared/ui/theme-toggle/` с `ThemeToggle.types.ts` отдельным файлом и собственным stories-файлом.
+- Добавил `theme.stories.tsx` со сценариями `Dark`, `Light`, `SideBySideAll` — отдельные изолированные контейнеры с data-theme, внутри каждого сватчи и три демо-кнопки для проверки работы утилит-классов.
+
+## Acceptance criteria (отметить выполненные)
+- [x] Tailwind-класс `bg-background`, `text-foreground`, `bg-primary` работает.
+- [x] `[data-theme="light"]` переключает фон/цвет через CSS-переменные.
+- [x] По умолчанию (без атрибута) применяется dark-палитра.
+- [x] `useTheme()` переключает тему мгновенно без перезагрузки.
+- [x] Сборка story показывает 3 примера: light/dark/side-by-side.
+
+## Заметки для ревьюера
+- Persist пока через `localStorage` (ключ `git-pawl.theme`) — переезд на `electron-store` запланирован в TASK-012, как и указано в задании.
+- В `theme.stories.tsx` `Meta` без generic — все stories используют render-функции и не зависят от args, типизация проходит `tsc` без замечаний.
+- `src/shared/lib/theme` намеренно лежит в `shared/lib`, а не в `features/theme-toggle`: переключение темы — кросс-приложение, относится к фундаменту, а не к пользовательской фиче (в духе FSD).
+- `index.html` уже содержал `<html lang="en" data-theme="dark">` (был сделан в TASK-000), оставил как есть.

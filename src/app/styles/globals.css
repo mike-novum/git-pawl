@@ -1,31 +1,7 @@
 @import 'tailwindcss';
 
-@theme {
-  --color-background: oklch(0.18 0.02 270);
-  --color-foreground: oklch(0.95 0.01 270);
-  --color-primary: oklch(0.72 0.18 50);
-  --color-primary-foreground: oklch(0.18 0.02 270);
-  --color-muted: oklch(0.3 0.02 270);
-  --color-muted-foreground: oklch(0.7 0.02 270);
-  --color-border: oklch(0.35 0.02 270);
-  --color-ring: oklch(0.72 0.18 50);
-
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-
-  --duration-fast: 120ms;
-  --duration-base: 180ms;
-  --ease-fast: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-[data-theme='light'] {
-  --color-background: oklch(0.99 0.005 270);
-  --color-foreground: oklch(0.18 0.02 270);
-  --color-muted: oklch(0.94 0.01 270);
-  --color-muted-foreground: oklch(0.45 0.02 270);
-  --color-border: oklch(0.88 0.01 270);
-}
+@import './theme.css';
+@import './light.css';
 
 html,
 body,
