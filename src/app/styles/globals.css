@@ -13,3 +13,9 @@ body,
   font-family:
     -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
 }
+
+html {
+  transition:
+    background-color var(--duration-base) var(--ease-fast),
+    color var(--duration-base) var(--ease-fast);
+}
