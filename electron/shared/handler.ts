@@ -14,14 +14,14 @@ const formatIssues = (issues: z.ZodIssue[]): string =>
 export const safeHandle = <TSchema extends z.ZodTypeAny>(
   channel: IpcChannel,
   schema: TSchema,
-  handler: (args: z.infer<TSchema>) => unknown
+  handler: (args: z.infer<TSchema>, event?: IpcMainInvokeEvent) => unknown
 ): void => {
-  ipcMain.handle(channel, async (_event: IpcMainInvokeEvent, args: unknown) => {
+  ipcMain.handle(channel, async (event: IpcMainInvokeEvent, args: unknown) => {
     const parsed = schema.safeParse(args);
     if (!parsed.success) {
       throw new Error(`Invalid ${channel} payload: ${formatIssues(parsed.error.issues)}`);
     }
-    return handler(parsed.data as z.infer<TSchema>);
+    return handler(parsed.data as z.infer<TSchema>, event);
   });
 };
 
