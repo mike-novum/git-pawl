@@ -43,11 +43,15 @@ import { gitAmend } from './services/git/amend';
 import { gitBranch } from './services/git/branch';
 import { gitCheckout } from './services/git/checkout';
 import { gitClone } from './services/git/clone';
+import { gitCommit } from './services/git/commit';
 import { currentBranch } from './services/git/currentBranch';
 import { gitFetch, gitPull, gitPush } from './services/git/network';
+import { gitMerge } from './services/git/merge';
 import { emitCloneProgress } from './services/git/progress';
+import { gitRebase } from './services/git/rebase';
 import { gitReset } from './services/git/reset';
 import { gitRevert } from './services/git/revert';
+import { gitStash } from './services/git/stash';
 
 const isDev = !app.isPackaged;
 
@@ -131,10 +135,10 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_FETCH, gitFetchSchema, (args) => gitFetch(args));
   safeHandle(IPC_CHANNELS.GIT_PULL, gitPullSchema, (args) => gitPull(args));
   safeHandle(IPC_CHANNELS.GIT_PUSH, gitPushSchema, (args) => gitPush(args));
-  safeHandle(IPC_CHANNELS.GIT_COMMIT, gitCommitSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_STASH, gitStashSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_MERGE, gitMergeSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_REBASE, gitRebaseSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_COMMIT, gitCommitSchema, gitCommit);
+  safeHandle(IPC_CHANNELS.GIT_STASH, gitStashSchema, gitStash);
+  safeHandle(IPC_CHANNELS.GIT_MERGE, gitMergeSchema, gitMerge);
+  safeHandle(IPC_CHANNELS.GIT_REBASE, gitRebaseSchema, gitRebase);
 
   safeHandle(IPC_CHANNELS.GIT_RESET, gitResetSchema, async (args) => {
     await gitReset(args);

@@ -62,7 +62,9 @@ export const gitPushSchema = z.object({
 
 export const gitCommitSchema = z.object({
   repoPath: z.string(),
-  message: z.string().min(1),
+  message: z.union([z.string(), z.object({ header: z.string(), body: z.string().optional(), footer: z.string().optional() })]),
+  files: z.array(z.string()).optional(),
+  author: z.string().optional(),
   noVerify: z.boolean().optional()
 });
 
@@ -74,17 +76,21 @@ export const gitStashSchema = z.object({
     z.literal('apply'),
     z.literal('drop')
   ]),
-  message: z.string().optional()
+  message: z.string().optional(),
+  ref: z.string().optional()
 });
 
 export const gitMergeSchema = z.object({
   repoPath: z.string(),
-  branch: z.string()
+  branch: z.string(),
+  noFF: z.boolean().optional(),
+  message: z.string().optional()
 });
 
 export const gitRebaseSchema = z.object({
   repoPath: z.string(),
-  branch: z.string()
+  branch: z.string(),
+  onto: z.string().optional()
 });
 
 export const gitResetSchema = z.object({
