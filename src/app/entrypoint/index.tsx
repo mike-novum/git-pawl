@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { AppProviders } from '@/app/providers';
 import '@/app/styles/globals.css';
 
 import { App } from './App';
@@ -13,6 +14,8 @@ if (!container) {
 
 createRoot(container).render(
   <StrictMode>
-    <App />
+    <AppProviders>
+      <App />
+    </AppProviders>
   </StrictMode>
 );
