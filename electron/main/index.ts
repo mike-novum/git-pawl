@@ -1,9 +1,21 @@
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron';
+import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
 const isDev = !app.isPackaged;
 
+const iconPath = join(__dirname, '../../build/icon.png');
+
+const loadAppIcon = (): ReturnType<typeof nativeImage.createFromPath> | undefined => {
+  if (!existsSync(iconPath)) {
+    return undefined;
+  }
+  return nativeImage.createFromPath(iconPath);
+};
+
 const createWindow = async (): Promise<void> => {
+  const icon = loadAppIcon();
+
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -11,6 +23,7 @@ const createWindow = async (): Promise<void> => {
     minHeight: 600,
     show: false,
     title: 'git-pawl',
+    ...(icon ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: true,
@@ -48,6 +61,14 @@ const registerIpcHandlers = (): void => {
 
 app.whenReady().then(async () => {
   registerIpcHandlers();
+
+  if (process.platform === 'darwin') {
+    const dockIcon = loadAppIcon();
+    if (dockIcon) {
+      app.dock.setIcon(dockIcon);
+    }
+  }
+
   await createWindow();
 
   app.on('activate', async () => {

@@ -9,7 +9,7 @@
 | [TASK-002.md](TASK-002.md) | 1 | UI-кит (пакет 1) | TASK-001 | ⏳ |
 | [TASK-003.md](TASK-003.md) | 1 | UI-кит (пакет 2) | TASK-001 | ⏳ |
 | [TASK-004.md](TASK-004.md) | 1 | UI-кит (пакет 3) | TASK-001 | ⏳ |
-| [TASK-005.md](TASK-005.md) | 1 | Иконка приложения (cat paw) | TASK-000 | ⏳ |
+| [TASK-005.md](TASK-005.md) | 1 | Иконка приложения (cat paw) | TASK-000 | ✅ |
 | [TASK-006.md](TASK-006.md) | 1 | Storybook сборка | TASK-002..004 | ⏳ |
 | [TASK-010.md](TASK-010.md) | 2 | App-shell, роутинг, IPC bridge | TASK-000 | ⏳ |
 | [TASK-011.md](TASK-011.md) | 2 | Store + electron-store | TASK-010 | ⏳ |

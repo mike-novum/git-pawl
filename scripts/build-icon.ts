@@ -1,18 +1,68 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import sharp from 'sharp';
+import { BICUBIC, createICNS } from 'png2icons';
 
 const root = process.cwd();
+
+const sourceSvgPath = join(root, 'assets', 'icon.svg');
 const buildDir = join(root, 'build');
+const masterPngPath = join(buildDir, 'icon-master.png');
+const standardPngPath = join(buildDir, 'icon.png');
+const icnsPath = join(buildDir, 'icon.icns');
 
-mkdirSync(buildDir, { recursive: true });
+const masterSize = 1024;
+const standardSize = 512;
 
-const svgPlaceholder = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <circle cx="256" cy="256" r="240" fill="#f4a460"/>
-  <text x="256" y="290" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="120" fill="#1a1a1a">git</text>
-</svg>
-`;
+const ensureDir = (path: string): void => {
+  mkdirSync(path, { recursive: true });
+};
 
-const out = join(buildDir, 'icon.svg');
-writeFileSync(out, svgPlaceholder, 'utf8');
+const sourceNewerThanOutputs = (): boolean => {
+  if (!existsSync(sourceSvgPath)) {
+    throw new Error(`Source SVG not found: ${sourceSvgPath}`);
+  }
+  const sourceMtime = statSync(sourceSvgPath).mtimeMs;
+  const targets = [masterPngPath, standardPngPath, icnsPath];
+  return targets.some((target) => !existsSync(target) || statSync(target).mtimeMs < sourceMtime);
+};
 
-console.warn(`Icon placeholder written to ${out}`);
+const buildAll = async (): Promise<void> => {
+  ensureDir(dirname(masterPngPath));
+
+  const svgBuffer = readFileSync(sourceSvgPath);
+
+  await sharp(svgBuffer)
+    .resize(masterSize, masterSize, { fit: 'contain', background: { r: 255, g: 251, b: 245, alpha: 1 } })
+    .png()
+    .toFile(masterPngPath);
+
+  await sharp(svgBuffer)
+    .resize(standardSize, standardSize, { fit: 'contain', background: { r: 255, g: 251, b: 245, alpha: 1 } })
+    .png()
+    .toFile(standardPngPath);
+
+  const masterPngBuffer = readFileSync(masterPngPath);
+  const icnsBuffer = createICNS(masterPngBuffer, BICUBIC, 0);
+  if (!icnsBuffer) {
+    throw new Error('Failed to create ICNS file from master PNG');
+  }
+  writeFileSync(icnsPath, icnsBuffer);
+};
+
+const main = async (): Promise<void> => {
+  ensureDir(buildDir);
+
+  if (!sourceNewerThanOutputs()) {
+    console.warn(`Icons are up to date, skipping rebuild.`);
+    return;
+  }
+
+  await buildAll();
+  console.warn(`Icons written to ${buildDir}`);
+};
+
+main().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
+});
