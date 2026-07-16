@@ -38,6 +38,9 @@ import {
 import { safeHandle, safeHandleNoArgs } from '../shared/handler';
 
 import { storeDelete, storeGet, storeSet } from './services/store';
+import { gitClone } from './services/git/clone';
+import { gitFetch, gitPull, gitPush } from './services/git/network';
+import { emitCloneProgress } from './services/git/progress';
 
 const isDev = !app.isPackaged;
 
@@ -114,10 +117,13 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_CLONE, gitCloneSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_FETCH, gitFetchSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_PULL, gitPullSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_PUSH, gitPushSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_CLONE, gitCloneSchema, (args, event) => {
+    if (!event) throw new Error('Missing IPC event for clone progress');
+    return gitClone(args, (msg) => emitCloneProgress(event.sender, msg));
+  });
+  safeHandle(IPC_CHANNELS.GIT_FETCH, gitFetchSchema, (args) => gitFetch(args));
+  safeHandle(IPC_CHANNELS.GIT_PULL, gitPullSchema, (args) => gitPull(args));
+  safeHandle(IPC_CHANNELS.GIT_PUSH, gitPushSchema, (args) => gitPush(args));
   safeHandle(IPC_CHANNELS.GIT_COMMIT, gitCommitSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_STASH, gitStashSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_MERGE, gitMergeSchema, echo);
