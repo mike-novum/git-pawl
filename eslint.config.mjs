@@ -13,6 +13,7 @@ export default [
       'build/**',
       'node_modules/**',
       'storybook-static/**',
+      '.claude/worktrees/**',
       '*.config.js',
       '*.config.ts'
     ]
