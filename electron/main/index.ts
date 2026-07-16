@@ -2,6 +2,8 @@ import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 
+import { storeDelete, storeGet, storeSet } from './services/store';
+
 const isDev = !app.isPackaged;
 
 const iconPath = join(__dirname, '../../build/icon.png');
@@ -57,6 +59,19 @@ const registerIpcHandlers = (): void => {
     electron: process.versions.electron,
     node: process.versions.node
   }));
+
+  ipcMain.handle('store:get', (_event, args: { key: string }) =>
+    storeGet(args.key)
+  );
+  ipcMain.handle(
+    'store:set',
+    (_event, args: { key: string; value: unknown }) => {
+      storeSet(args.key, args.value);
+    }
+  );
+  ipcMain.handle('store:delete', (_event, args: { key: string }) => {
+    storeDelete(args.key);
+  });
 };
 
 app.whenReady().then(async () => {
