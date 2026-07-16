@@ -5,8 +5,19 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
-export default tseslint.config(
-  { ignores: ['out', 'dist', 'build', 'node_modules', 'storybook-static', '*.config.js', '*.config.ts'] },
+export default [
+  {
+    ignores: [
+      'out/**',
+      'dist/**',
+      'build/**',
+      'node_modules/**',
+      'storybook-static/**',
+      '*.config.js',
+      '*.config.ts'
+    ]
+  },
+  js.configs.recommended,
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
@@ -30,14 +41,22 @@ export default tseslint.config(
       'react-refresh': reactRefresh
     },
     rules: {
-      ...js.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       'prefer-const': 'error'
     }
+  },
+  {
+    files: ['.storybook/**/*.{ts,tsx}', '*.config.ts'],
+    rules: {
+      '@typescript-eslint/no-var-requires': 'off'
+    }
   }
-);
+];

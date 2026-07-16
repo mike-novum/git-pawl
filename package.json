@@ -22,7 +22,7 @@
     "start": "electron-vite preview"
   },
   "dependencies": {
-    "@base-ui-components/react": "1.0.0-beta.7",
+    "@base-ui/react": "^1.6.0",
     "@gitbeaker/node": "^35.8.0",
     "@octokit/rest": "^21.0.0",
     "@tanstack/react-query": "^5.62.0",
