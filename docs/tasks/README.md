@@ -39,21 +39,21 @@
 | [TASK-053.md](TASK-053.md) | 6 | Feature: search-repos | TASK-027 | ✅ |
 | [TASK-054.md](TASK-054.md) | 6 | Widget: repository-tree | TASK-027 | ✅ |
 | [TASK-060.md](TASK-060.md) | 7 | Widget: terminal-output | TASK-002 | ✅ |
-| [TASK-061.md](TASK-061.md) | 7 | Feature: git-pull | TASK-022 | ⏳ |
-| [TASK-062.md](TASK-062.md) | 7 | Feature: git-push | TASK-022 | ⏳ |
-| [TASK-063.md](TASK-063.md) | 7 | Feature: git-fetch | TASK-022 | ⏳ |
-| [TASK-064.md](TASK-064.md) | 7 | Feature: git-stash | TASK-023, TASK-028 | ⏳ |
-| [TASK-065.md](TASK-065.md) | 7 | Feature: git-merge / rebase | TASK-023 | ⏳ |
-| [TASK-066.md](TASK-066.md) | 7 | Feature: git-reset / revert / amend | TASK-024 | ⏳ |
-| [TASK-067.md](TASK-067.md) | 7 | Feature: manage-tags | TASK-025, TASK-028 | ⏳ |
-| [TASK-068.md](TASK-068.md) | 7 | Feature: create-patch | TASK-025 | ⏳ |
-| [TASK-069.md](TASK-069.md) | 7 | Feature: bypass-hooks | TASK-023 | ⏳ |
-| [TASK-070.md](TASK-070.md) | 7 | Repo config | TASK-025 | ⏳ |
-| [TASK-080.md](TASK-080.md) | 8 | Widget: file-changes-panel | TASK-028 | ⏳ |
-| [TASK-081.md](TASK-081.md) | 8 | Feature: select-files | TASK-080 | ⏳ |
-| [TASK-082.md](TASK-082.md) | 8 | Feature: preview-diff | TASK-021 | ⏳ |
-| [TASK-083.md](TASK-083.md) | 8 | Widget: commit-message-form | TASK-002 | ⏳ |
-| [TASK-084.md](TASK-084.md) | 8 | Feature: commit-changes | TASK-081, TASK-083, TASK-023, TASK-069 | ⏳ |
+| [TASK-061.md](TASK-061.md) | 7 | Feature: git-pull | TASK-022 | ✅ |
+| [TASK-062.md](TASK-062.md) | 7 | Feature: git-push | TASK-022 | ✅ |
+| [TASK-063.md](TASK-063.md) | 7 | Feature: git-fetch | TASK-022 | ✅ |
+| [TASK-064.md](TASK-064.md) | 7 | Feature: git-stash | TASK-023, TASK-028 | ✅ |
+| [TASK-065.md](TASK-065.md) | 7 | Feature: git-merge / rebase | TASK-023 | ✅ |
+| [TASK-066.md](TASK-066.md) | 7 | Feature: git-reset / revert / amend | TASK-024 | ✅ |
+| [TASK-067.md](TASK-067.md) | 7 | Feature: manage-tags | TASK-025, TASK-028 | ✅ |
+| [TASK-068.md](TASK-068.md) | 7 | Feature: create-patch | TASK-025 | ✅ |
+| [TASK-069.md](TASK-069.md) | 7 | Feature: bypass-hooks | TASK-023 | ✅ |
+| [TASK-070.md](TASK-070.md) | 7 | Repo config | TASK-025 | ✅ |
+| [TASK-080.md](TASK-080.md) | 8 | Widget: file-changes-panel | TASK-028 | ✅ |
+| [TASK-081.md](TASK-081.md) | 8 | Feature: select-files | TASK-080 | ✅ |
+| [TASK-082.md](TASK-082.md) | 8 | Feature: preview-diff | TASK-021 | ✅ |
+| [TASK-083.md](TASK-083.md) | 8 | Widget: commit-message-form | TASK-002 | ✅ |
+| [TASK-084.md](TASK-084.md) | 8 | Feature: commit-changes | TASK-081, TASK-083, TASK-023, TASK-069 | ✅ |
 | [TASK-090.md](TASK-090.md) | 9 | Entity: commit-relations | TASK-028 | ⏳ |
 | [TASK-091.md](TASK-091.md) | 9 | Widget: commit-graph | TASK-090 | ⏳ |
 | [TASK-092.md](TASK-092.md) | 9 | Page: repository (сборка) | TASK-080, TASK-083, TASK-091 | ⏳ |
@@ -75,12 +75,12 @@
 | 4 — Auth | 6 | 1 | 5 |
 | 5 — Workspaces | 4 | 0 | 4 |
 | 6 — Clone & listing | 5 | 0 | 5 |
-| 7 — UI для git-операций | 11 | 0 | 11 |
-| 8 — Changes & commit | 5 | 0 | 5 |
+| 7 — UI для git-операций | 11 | 1 | 10 |
+| 8 — Changes & commit | 5 | 1 | 4 |
 | 9 — Commit graph | 3 | 0 | 3 |
 | 10 — Полировка | 5 | 0 | 5 |
 | 11 — Code review | 1 | 0 | 1 |
-| **Итого** | **61** | **17** | **44** |
+| **Итого** | **61** | **19** | **42** |
 
 ## Порядок работы
 
