@@ -26,7 +26,7 @@
 | [TASK-030.md](TASK-030.md) | 4 | Entity: account | TASK-011 | ✅ |
 | [TASK-031.md](TASK-031.md) | 4 | GitHub auth | TASK-030 | ✅ |
 | [TASK-032.md](TASK-032.md) | 4 | GitLab auth | TASK-030 | ✅ |
-| [TASK-033.md](TASK-033.md) | 4 | Feature: auth-login | TASK-031, TASK-032 | ⏳ |
+| [TASK-033.md](TASK-033.md) | 4 | Feature: auth-login | TASK-031, TASK-032 | ✅ |
 | [TASK-034.md](TASK-034.md) | 4 | Feature: auth-switch | TASK-030 | ⏳ |
 | [TASK-035.md](TASK-035.md) | 4 | Page: accounts | TASK-033, TASK-034 | ⏳ |
 | [TASK-040.md](TASK-040.md) | 5 | Entity: workspace | TASK-011, TASK-026 | ⏳ |
