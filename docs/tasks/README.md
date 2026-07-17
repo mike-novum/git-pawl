@@ -39,7 +39,7 @@
 | [TASK-053.md](TASK-053.md) | 6 | Feature: search-repos | TASK-027 | ✅ |
 | [TASK-054.md](TASK-054.md) | 6 | Widget: repository-tree | TASK-027 | ✅ |
 | [TASK-060.md](TASK-060.md) | 7 | Widget: terminal-output | TASK-002 | ✅ |
-| [TASK-061.md](TASK-061.md) | 7 | Feature: git-pull | TASK-022 | ⏳ |
+| [TASK-061.md](TASK-061.md) | 7 | Feature: git-pull | TASK-022 | ✅ |
 | [TASK-062.md](TASK-062.md) | 7 | Feature: git-push | TASK-022 | ⏳ |
 | [TASK-063.md](TASK-063.md) | 7 | Feature: git-fetch | TASK-022 | ⏳ |
 | [TASK-064.md](TASK-064.md) | 7 | Feature: git-stash | TASK-023, TASK-028 | ⏳ |
