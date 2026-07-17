@@ -50,7 +50,7 @@
 | [TASK-069.md](TASK-069.md) | 7 | Feature: bypass-hooks | TASK-023 | ✅ |
 | [TASK-070.md](TASK-070.md) | 7 | Repo config | TASK-025 | ✅ |
 | [TASK-080.md](TASK-080.md) | 8 | Widget: file-changes-panel | TASK-028 | ✅ |
-| [TASK-081.md](TASK-081.md) | 8 | Feature: select-files | TASK-080 | ⏳ |
+| [TASK-081.md](TASK-081.md) | 8 | Feature: select-files | TASK-080 | ✅ |
 | [TASK-082.md](TASK-082.md) | 8 | Feature: preview-diff | TASK-021 | ⏳ |
 | [TASK-083.md](TASK-083.md) | 8 | Widget: commit-message-form | TASK-002 | ⏳ |
 | [TASK-084.md](TASK-084.md) | 8 | Feature: commit-changes | TASK-081, TASK-083, TASK-023, TASK-069 | ⏳ |
