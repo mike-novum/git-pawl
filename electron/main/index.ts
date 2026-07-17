@@ -9,7 +9,10 @@ import {
   authGithubCompleteSchema,
   authGitlabCompleteSchema,
   currentBranchSchema,
+  fsBuildRepoIdSchema,
+  fsDetectReposSchema,
   fsIconSchema,
+  fsScanReposSchema,
   fsSizeSchema,
   fsWorkspaceCreateSchema,
   gitAmendSchema,
@@ -46,6 +49,11 @@ import {
   workspaceCreate,
   workspaceList
 } from './services/fs';
+import {
+  buildRepoId,
+  detectRepos,
+  scanRepos
+} from './services/fs-scanner';
 import { storeDelete, storeGet, storeSet } from './services/store';
 import { gitAmend } from './services/git/amend';
 import { gitBranch } from './services/git/branch';
@@ -202,6 +210,9 @@ const registerIpcHandlers = (): void => {
   });
   safeHandleNoArgs(IPC_CHANNELS.FS_WORKSPACE_LIST, workspaceList);
   safeHandle(IPC_CHANNELS.FS_WORKSPACE_CREATE, fsWorkspaceCreateSchema, workspaceCreate);
+  safeHandle(IPC_CHANNELS.FS_DETECT_REPOS, fsDetectReposSchema, detectRepos);
+  safeHandle(IPC_CHANNELS.FS_BUILD_REPO_ID, fsBuildRepoIdSchema, buildRepoId);
+  safeHandle(IPC_CHANNELS.FS_SCAN_REPOS, fsScanReposSchema, scanRepos);
 
   safeHandleNoArgs(IPC_CHANNELS.AUTH_GITHUB_START, () => null);
   safeHandle(IPC_CHANNELS.AUTH_GITHUB_COMPLETE, authGithubCompleteSchema, (args) =>

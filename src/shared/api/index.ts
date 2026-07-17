@@ -27,7 +27,10 @@ export {
   gitHooks,
   fsSize,
   fsIcon,
-  fsWorkspaceList
+  fsWorkspaceList,
+  fsDetectRepos,
+  fsBuildRepoId,
+  fsScanRepos
 } from './ipc';
 
 export type { ApiSchema, AppInfo, IpcApi } from './ipc';

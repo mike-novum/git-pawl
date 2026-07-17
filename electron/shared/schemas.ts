@@ -185,6 +185,20 @@ export const fsWorkspaceCreateSchema = z.object({
   name: z.string().optional()
 });
 
+export const fsDetectReposSchema = z.object({
+  path: z.string(),
+  maxDepth: z.number().int().positive().optional()
+});
+
+export const fsBuildRepoIdSchema = z.object({
+  path: z.string()
+});
+
+export const fsScanReposSchema = z.object({
+  path: z.string(),
+  maxDepth: z.number().int().positive().optional()
+});
+
 export const authGithubCompleteSchema = z.object({
   code: z.string()
 });
@@ -238,6 +252,9 @@ export type FsIconRemoveArgs = Extract<FsIconArgs, { action: 'remove' }>;
 export type FsSelectDirectoryArgs = z.infer<typeof fsSelectDirectorySchema>;
 export type FsWorkspaceListArgs = z.infer<typeof fsWorkspaceListSchema>;
 export type FsWorkspaceCreateArgs = z.infer<typeof fsWorkspaceCreateSchema>;
+export type FsDetectReposArgs = z.infer<typeof fsDetectReposSchema>;
+export type FsBuildRepoIdArgs = z.infer<typeof fsBuildRepoIdSchema>;
+export type FsScanReposArgs = z.infer<typeof fsScanReposSchema>;
 export type GitTagArgs = z.infer<typeof gitTagSchema>;
 export type GitPatchArgs = z.infer<typeof gitPatchSchema>;
 export type GitConfigArgs = z.infer<typeof gitConfigSchema>;

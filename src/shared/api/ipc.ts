@@ -25,6 +25,9 @@ import type {
   FsSizeArgs,
   FsIconArgs,
   FsWorkspaceCreateArgs,
+  FsDetectReposArgs,
+  FsBuildRepoIdArgs,
+  FsScanReposArgs,
   StoreGetArgs,
   StoreSetArgs,
   StoreDeleteArgs
@@ -161,6 +164,15 @@ export const fsWorkspaceCreate = async (
 ): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsWorkspaceCreate(args), null);
 
+export const fsDetectRepos = async (args: FsDetectReposArgs): Promise<string[]> =>
+  safeInvoke<string[]>((bridge) => bridge.fsDetectRepos(args), []);
+
+export const fsBuildRepoId = async (args: FsBuildRepoIdArgs): Promise<string> =>
+  safeInvoke<string>((bridge) => bridge.fsBuildRepoId(args), '');
+
+export const fsScanRepos = async (args: FsScanReposArgs): Promise<string[]> =>
+  safeInvoke<string[]>((bridge) => bridge.fsScanRepos(args), []);
+
 export const api = {
   getAppInfo,
   storeGet,
@@ -191,7 +203,10 @@ export const api = {
   fsSize,
   fsIcon,
   fsWorkspaceList,
-  fsWorkspaceCreate
+  fsWorkspaceCreate,
+  fsDetectRepos,
+  fsBuildRepoId,
+  fsScanRepos
 };
 
 export type IpcApi = typeof api;

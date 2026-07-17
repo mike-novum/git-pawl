@@ -33,6 +33,9 @@ export const IPC_CHANNELS = {
   FS_ICON: 'fs:icon',
   FS_WORKSPACE_LIST: 'fs:workspace-list',
   FS_WORKSPACE_CREATE: 'fs:workspace-create',
+  FS_DETECT_REPOS: 'fs:detect-repos',
+  FS_BUILD_REPO_ID: 'fs:build-repo-id',
+  FS_SCAN_REPOS: 'fs:scan-repos',
 
   AUTH_GITHUB_START: 'auth:github-start',
   AUTH_GITHUB_COMPLETE: 'auth:github-complete',

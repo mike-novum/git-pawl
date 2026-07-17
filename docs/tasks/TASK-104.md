@@ -12,3 +12,19 @@
 
 ## Зависит от
 - Все выше.
+
+## Status
+
+**Build: NOT passing** — `npm run build` собирает `out/main/index.js` и `out/preload/index.js`, но падает на renderer-bundle.
+
+Причина — renderer через хуки `useRepository` / `useCreateWorkspaceFlow` импортирует node-only модули из renderer-достижимого слоя:
+
+- `src/entities/repository/lib/detectRepos.ts` (`node:fs`, `node:path`)
+- `src/entities/repository/lib/buildRepository.ts` (`node:crypto`, `node:path`)
+- `src/entities/workspace/lib/scanRepos.ts` (`node:fs`, `node:path`)
+
+Rollup выдаёт: `"promises" is not exported by "__vite-browser-external"`. Архитектурное решение (не входило в scope этой задачи): перенести эти файлы из `src/entities/*/lib/` под `electron/services/` или `electron/ipc/` и вызывать через preload-bridge, как остальные fs/git операции.
+
+Дополнительно формальный AC-критерий `npm run dist` собирает `.dmg` не проверялся — без зелёного `build` `electron-builder` не запустить.
+
+**README: добавлен** — `/Users/mikenovum/projects/git-pawl/README.md` (описание, стек, все скрипты, dev-инструкции).

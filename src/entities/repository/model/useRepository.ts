@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import type { GitStatus } from '@electron/shared/types/git';
@@ -52,13 +53,38 @@ export const useRepositorySize = (
 export const useRepository = (repoPath: string | null): RepositoryQueryResult => {
   const statusQuery = useRepositoryStatus(repoPath);
   const sizeQuery = useRepositorySize(repoPath);
+  const [repository, setRepository] = useState<Repository | null>(null);
 
-  const status = statusQuery.data ?? null;
-  const size = sizeQuery.data ?? null;
+  useEffect(() => {
+    if (!repoPath) {
+      setRepository(null);
+      return;
+    }
 
-  const data = repoPath
-    ? buildRepository(repoPath, status, size, defaultIconPath(repoPath))
-    : null;
+    let cancelled = false;
+    setRepository(null);
+
+    void buildRepository(
+      repoPath,
+      statusQuery.data ?? null,
+      sizeQuery.data ?? null,
+      defaultIconPath(repoPath)
+    )
+      .then((built) => {
+        if (!cancelled) {
+          setRepository(built);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setRepository(null);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [repoPath, statusQuery.data, sizeQuery.data]);
 
   const isLoading = Boolean(repoPath) && (statusQuery.isLoading || sizeQuery.isLoading);
   const isError = statusQuery.isError || sizeQuery.isError;
@@ -70,7 +96,7 @@ export const useRepository = (repoPath: string | null): RepositoryQueryResult =>
     void sizeQuery.refetch();
   };
 
-  return { data, isLoading, isError, error, refetch };
+  return { data: repository, isLoading, isError, error, refetch };
 };
 
 export const useRepositoryList = (
