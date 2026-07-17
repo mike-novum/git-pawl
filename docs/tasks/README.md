@@ -37,7 +37,7 @@
 | [TASK-051.md](TASK-051.md) | 6 | Feature: clone-repo (URL) | TASK-002, TASK-022 | ✅ |
 | [TASK-052.md](TASK-052.md) | 6 | Feature: clone-repo (аккаунт) | TASK-050, TASK-051 | ✅ |
 | [TASK-053.md](TASK-053.md) | 6 | Feature: search-repos | TASK-027 | ✅ |
-| [TASK-054.md](TASK-054.md) | 6 | Widget: repository-tree | TASK-027 | ⏳ |
+| [TASK-054.md](TASK-054.md) | 6 | Widget: repository-tree | TASK-027 | ✅ |
 | [TASK-060.md](TASK-060.md) | 7 | Widget: terminal-output | TASK-002 | ⏳ |
 | [TASK-061.md](TASK-061.md) | 7 | Feature: git-pull | TASK-022 | ⏳ |
 | [TASK-062.md](TASK-062.md) | 7 | Feature: git-push | TASK-022 | ⏳ |
