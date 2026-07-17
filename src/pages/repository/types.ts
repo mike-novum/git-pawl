@@ -1,1 +1,1 @@
-export type RepositoryPageProps = Record<string, never>;
+export type { RepositoryPageProps } from './ui/types';

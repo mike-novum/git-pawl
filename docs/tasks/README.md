@@ -56,7 +56,7 @@
 | [TASK-084.md](TASK-084.md) | 8 | Feature: commit-changes | TASK-081, TASK-083, TASK-023, TASK-069 | ✅ |
 | [TASK-090.md](TASK-090.md) | 9 | Entity: commit-relations | TASK-028 | ✅ |
 | [TASK-091.md](TASK-091.md) | 9 | Widget: commit-graph | TASK-090 | ✅ |
-| [TASK-092.md](TASK-092.md) | 9 | Page: repository (сборка) | TASK-080, TASK-083, TASK-091 | ⏳ |
+| [TASK-092.md](TASK-092.md) | 9 | Page: repository (сборка) | TASK-080, TASK-083, TASK-091 | ✅ |
 | [TASK-100.md](TASK-100.md) | 10 | Feature: set-repo-icon | TASK-026 | ⏳ |
 | [TASK-101.md](TASK-101.md) | 10 | Feature: total-size | TASK-026 | ⏳ |
 | [TASK-102.md](TASK-102.md) | 10 | Анимации | TASK-002, TASK-012 | ⏳ |
