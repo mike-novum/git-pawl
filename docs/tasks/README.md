@@ -41,7 +41,7 @@
 | [TASK-060.md](TASK-060.md) | 7 | Widget: terminal-output | TASK-002 | ✅ |
 | [TASK-061.md](TASK-061.md) | 7 | Feature: git-pull | TASK-022 | ✅ |
 | [TASK-062.md](TASK-062.md) | 7 | Feature: git-push | TASK-022 | ✅ |
-| [TASK-063.md](TASK-063.md) | 7 | Feature: git-fetch | TASK-022 | ⏳ |
+| [TASK-063.md](TASK-063.md) | 7 | Feature: git-fetch | TASK-022 | ✅ |
 | [TASK-064.md](TASK-064.md) | 7 | Feature: git-stash | TASK-023, TASK-028 | ⏳ |
 | [TASK-065.md](TASK-065.md) | 7 | Feature: git-merge / rebase | TASK-023 | ⏳ |
 | [TASK-066.md](TASK-066.md) | 7 | Feature: git-reset / revert / amend | TASK-024 | ⏳ |
