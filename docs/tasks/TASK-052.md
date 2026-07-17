@@ -32,5 +32,5 @@
 - Импортирует `Account`/`AccountBadge`/`AccountAvatar` из `@/entities/account`, `useCloneRepo` из `@/features/clone-repo`, `useAccountRepos` из `@/features/account-repos` — зависимости FSD-слоёв соблюдены.
 - `useAccountRepos` всегда вызывается с провайдером/идентификатором; для случая без выбранного аккаунта передаётся sentinel `'__none__'`, чтобы хук был вызван в одном и том же месте дерева рендера (правила React Hooks).
 - Кнопка «Clone» блокируется, если нет активного workspace; пользователю показывается toast с предложением выбрать workspace.
-- Storybook-история не добавлялась: срез `storybook` ещё не подключён в этом репозитории (TASK-006 ⏳) — добавится вместе с другими историями в рамках отдельной задачи.
+- Storybook-история не добавлялась: срез `storybook` подключён в рамках TASK-006 ✅ — компонент `AccountList` будет добавлен в отдельной задаче.
 
