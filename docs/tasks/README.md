@@ -48,7 +48,7 @@
 | [TASK-067.md](TASK-067.md) | 7 | Feature: manage-tags | TASK-025, TASK-028 | ✅ |
 | [TASK-068.md](TASK-068.md) | 7 | Feature: create-patch | TASK-025 | ✅ |
 | [TASK-069.md](TASK-069.md) | 7 | Feature: bypass-hooks | TASK-023 | ✅ |
-| [TASK-070.md](TASK-070.md) | 7 | Repo config | TASK-025 | ⏳ |
+| [TASK-070.md](TASK-070.md) | 7 | Repo config | TASK-025 | ✅ |
 | [TASK-080.md](TASK-080.md) | 8 | Widget: file-changes-panel | TASK-028 | ⏳ |
 | [TASK-081.md](TASK-081.md) | 8 | Feature: select-files | TASK-080 | ⏳ |
 | [TASK-082.md](TASK-082.md) | 8 | Feature: preview-diff | TASK-021 | ⏳ |
