@@ -33,7 +33,7 @@
 | [TASK-041.md](TASK-041.md) | 5 | Feature: workspace-create | TASK-040 | ✅ |
 | [TASK-042.md](TASK-042.md) | 5 | Widget: workspace-switcher | TASK-040 | ✅ |
 | [TASK-043.md](TASK-043.md) | 5 | Page: workspace | TASK-027, TASK-040 | ✅ |
-| [TASK-050.md](TASK-050.md) | 6 | API: список репо GitHub/GitLab | TASK-031, TASK-032 | ⏳ |
+| [TASK-050.md](TASK-050.md) | 6 | API: список репо GitHub/GitLab | TASK-031, TASK-032 | ✅ |
 | [TASK-051.md](TASK-051.md) | 6 | Feature: clone-repo (URL) | TASK-002, TASK-022 | ⏳ |
 | [TASK-052.md](TASK-052.md) | 6 | Feature: clone-repo (аккаунт) | TASK-050, TASK-051 | ⏳ |
 | [TASK-053.md](TASK-053.md) | 6 | Feature: search-repos | TASK-027 | ⏳ |
