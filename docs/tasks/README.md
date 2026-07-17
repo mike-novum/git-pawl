@@ -5,33 +5,22 @@
 | Файл | Фаза | Название | Зависит от | Статус |
 |---|---|---|---|---|
 | [TASK-000.md](TASK-000.md) | 0 | Инициализация проекта | — | ✅ |
-<<<<<<< HEAD
 | [TASK-001.md](TASK-001.md) | 1 | Дизайн-токены и темы | TASK-000 | ✅ |
 | [TASK-002.md](TASK-002.md) | 1 | UI-кит (пакет 1) | TASK-001 | ✅ |
-| [TASK-003.md](TASK-003.md) | 1 | UI-кит (пакет 2) | TASK-001 | ⏳ |
-<<<<<<< HEAD
-=======
-| [TASK-001.md](TASK-001.md) | 1 | Дизайн-токены и темы | TASK-000 | ⏳ |
-| [TASK-002.md](TASK-002.md) | 1 | UI-кит (пакет 1) | TASK-001 | ⏳ |
 | [TASK-003.md](TASK-003.md) | 1 | UI-кит (пакет 2) | TASK-001 | ✅ |
->>>>>>> worktree-agent-ad054fd6fcb5aa30f
-| [TASK-004.md](TASK-004.md) | 1 | UI-кит (пакет 3) | TASK-001 | ⏳ |
-| [TASK-005.md](TASK-005.md) | 1 | Иконка приложения (cat paw) | TASK-000 | ✅ |
-=======
 | [TASK-004.md](TASK-004.md) | 1 | UI-кит (пакет 3) | TASK-001 | ✅ |
-| [TASK-005.md](TASK-005.md) | 1 | Иконка приложения (cat paw) | TASK-000 | ⏳ |
->>>>>>> worktree-agent-a8622428d248e6fcf
+| [TASK-005.md](TASK-005.md) | 1 | Иконка приложения (cat paw) | TASK-000 | ✅ |
 | [TASK-006.md](TASK-006.md) | 1 | Storybook сборка | TASK-002..004 | ⏳ |
 | [TASK-010.md](TASK-010.md) | 2 | App-shell, роутинг, IPC bridge | TASK-000 | ✅ |
 | [TASK-011.md](TASK-011.md) | 2 | Store + electron-store | TASK-010 | ✅ |
 | [TASK-012.md](TASK-012.md) | 2 | Переключение тем | TASK-001, TASK-011 | ✅ |
 | [TASK-020.md](TASK-020.md) | 3 | IPC-мост с валидацией | TASK-010 | ✅ |
-| [TASK-021.md](TASK-021.md) | 3 | git: status, log, diff, rev-parse | TASK-020 | ⏳ |
+| [TASK-021.md](TASK-021.md) | 3 | git: status, log, diff, rev-parse | TASK-020 | ✅ |
 | [TASK-022.md](TASK-022.md) | 3 | git: clone, fetch, pull, push | TASK-020 | ✅ |
 | [TASK-023.md](TASK-023.md) | 3 | git: commit, stash, merge, rebase | TASK-020 | ✅ |
 | [TASK-024.md](TASK-024.md) | 3 | git: reset, revert, amend, checkout, branch | TASK-020 | ✅ |
 | [TASK-025.md](TASK-025.md) | 3 | git: tags, patch, config, hooks | TASK-020 | ✅ |
-| [TASK-026.md](TASK-026.md) | 3 | fs: размер, иконка, workspace | TASK-020 | ⏳ |
+| [TASK-026.md](TASK-026.md) | 3 | fs: размер, иконка, workspace | TASK-020 | ✅ |
 | [TASK-027.md](TASK-027.md) | 3 | Entity: repository | TASK-021, TASK-026 | ⏳ |
 | [TASK-028.md](TASK-028.md) | 3 | Entity: commit, branch, tag, stash, file-change | TASK-021 | ⏳ |
 | [TASK-030.md](TASK-030.md) | 4 | Entity: account | TASK-011 | ⏳ |
@@ -71,14 +60,47 @@
 | [TASK-100.md](TASK-100.md) | 10 | Feature: set-repo-icon | TASK-026 | ⏳ |
 | [TASK-101.md](TASK-101.md) | 10 | Feature: total-size | TASK-026 | ⏳ |
 | [TASK-102.md](TASK-102.md) | 10 | Анимации | TASK-002, TASK-012 | ⏳ |
-| [TASK-103.md](TASK-103.md) | 10 | Глобальные настройки | TASK-012 | ⏳ |
+| [TASK-103.md](TASK-103.md) | 10 | Глобальные настройки | TASK-103 | ⏳ |
 | [TASK-104.md](TASK-104.md) | 10 | Финальная сборка | Все выше | ⏳ |
 | [TASK-200.md](TASK-200.md) | 11 | Code review | — | ⏳ |
 
+## Сводка по фазам
+
+| Фаза | Задач | Готово | Осталось |
+|---|---|---|---|
+| 0 — инициализация | 1 | 1 | 0 |
+| 1 — UI-фундамент | 6 | 5 | 1 (TASK-006 Storybook) |
+| 2 — App shell | 3 | 3 | 0 |
+| 3 — Доменные сущности (ipc/git/fs/entity:repository) | 11 | 8 | 3 (TASK-027 entity:repository, TASK-028 entities) |
+| 4 — Auth | 6 | 0 | 6 |
+| 5 — Workspaces | 4 | 0 | 4 |
+| 6 — Clone & listing | 5 | 0 | 5 |
+| 7 — UI для git-операций | 11 | 0 | 11 |
+| 8 — Changes & commit | 5 | 0 | 5 |
+| 9 — Commit graph | 3 | 0 | 3 |
+| 10 — Полировка | 5 | 0 | 5 |
+| 11 — Code review | 1 | 0 | 1 |
+| **Итого** | **61** | **16** | **45** |
+
+## Порядок работы
+
+1. Сначала доделать Фазу 3 (TASK-027, TASK-028 — обе на чистых файлах в `src/entities/`, без конфликтов с shared).
+2. Затем Фаза 4 (auth).
+3. Дальше по фазам.
+
+**Правило:**
+- Каждую фазу делаем последовательно (один сабагент → мердж → проверка → следующая).
+- Параллелить можно, только если сабагенты НЕ трогают общие файлы (никаких shared/*, никаких preload/main/index.ts между ними).
+- Если есть риск конфликта — последовательно.
+
 ## Статусы
+
 - ⏳ pending
 - 🔧 in_progress
 - ✅ done
 - ⚠️ blocked
 
-После завершения задачи сабагент ОБЯЗАН обновить статус в этом README.
+Когда сабагент заканчивает задачу, он ОБЯЗАН:
+1. Дописать блок «Что сделано» + «Acceptance criteria (отметить)» в свой файл `TASK-NNN.md`.
+2. Обновить ОДНУ строку в `docs/tasks/README.md` (не плодить дубли).
+3. Сообщить main-агенту.
