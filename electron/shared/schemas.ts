@@ -132,23 +132,32 @@ export const gitTagSchema = z.object({
   repoPath: z.string(),
   action: z.union([z.literal('list'), z.literal('create'), z.literal('delete')]),
   name: z.string().optional(),
-  target: z.string().optional()
+  target: z.string().optional(),
+  message: z.string().optional(),
+  annotated: z.boolean().optional(),
+  force: z.boolean().optional()
 });
 
 export const gitPatchSchema = z.object({
   repoPath: z.string(),
-  range: z.string()
+  range: z.string().optional(),
+  destDir: z.string().optional(),
+  apply: z.boolean().optional(),
+  threeWay: z.boolean().optional(),
+  file: z.string().optional()
 });
 
 export const gitConfigSchema = z.object({
   repoPath: z.string(),
-  key: z.string(),
-  value: z.string().optional()
+  scope: z.union([z.literal('local'), z.literal('global'), z.literal('system')]).optional(),
+  key: z.string().min(1).optional(),
+  value: z.string().optional(),
+  list: z.boolean().optional()
 });
 
 export const gitHooksSchema = z.object({
   repoPath: z.string(),
-  list: z.literal(true)
+  list: z.boolean().optional()
 });
 
 export const fsSizeSchema = z.object({
@@ -207,12 +216,12 @@ export type GitAmendArgs = z.infer<typeof gitAmendSchema>;
 export type GitCheckoutArgs = z.infer<typeof gitCheckoutSchema>;
 export type GitBranchArgs = z.infer<typeof gitBranchSchema>;
 export type CurrentBranchArgs = z.infer<typeof currentBranchSchema>;
+export type FsSizeArgs = z.infer<typeof fsSizeSchema>;
+export type FsIconArgs = z.infer<typeof fsIconSchema>;
 export type GitTagArgs = z.infer<typeof gitTagSchema>;
 export type GitPatchArgs = z.infer<typeof gitPatchSchema>;
 export type GitConfigArgs = z.infer<typeof gitConfigSchema>;
 export type GitHooksArgs = z.infer<typeof gitHooksSchema>;
-export type FsSizeArgs = z.infer<typeof fsSizeSchema>;
-export type FsIconArgs = z.infer<typeof fsIconSchema>;
 export type FsWorkspaceListArgs = z.infer<typeof fsWorkspaceListSchema>;
 export type AuthGithubCompleteArgs = z.infer<typeof authGithubCompleteSchema>;
 export type AuthGitlabCompleteArgs = z.infer<typeof authGitlabCompleteSchema>;

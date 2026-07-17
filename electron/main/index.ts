@@ -49,6 +49,10 @@ import { gitFetch, gitPull, gitPush } from './services/git/network';
 import { gitMerge } from './services/git/merge';
 import { emitCloneProgress } from './services/git/progress';
 import { gitRebase } from './services/git/rebase';
+import { gitTag } from './services/git/tag';
+import { createPatch } from './services/git/patch';
+import { gitGetConfig, gitSetConfig } from './services/git/config';
+import { listHooks } from './services/git/hooks';
 import { gitReset } from './services/git/reset';
 import { gitRevert } from './services/git/revert';
 import { gitStash } from './services/git/stash';
@@ -155,10 +159,13 @@ const registerIpcHandlers = (): void => {
     currentBranch(args.repoPath)
   );
 
-  safeHandle(IPC_CHANNELS.GIT_TAG, gitTagSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_PATCH, gitPatchSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_CONFIG, gitConfigSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_HOOKS, gitHooksSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_TAG, gitTagSchema, gitTag);
+  safeHandle(IPC_CHANNELS.GIT_PATCH, gitPatchSchema, createPatch);
+  safeHandle(IPC_CHANNELS.GIT_CONFIG, gitConfigSchema, async (args) => {
+    if (args.value === undefined) return gitGetConfig(args);
+    return gitSetConfig(args);
+  });
+  safeHandle(IPC_CHANNELS.GIT_HOOKS, gitHooksSchema, listHooks);
 
   safeHandle(IPC_CHANNELS.FS_SIZE, fsSizeSchema, echo);
   safeHandle(IPC_CHANNELS.FS_ICON, fsIconSchema, echo);

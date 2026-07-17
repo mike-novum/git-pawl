@@ -13,3 +13,15 @@ export type CommitResult = {
 };
 
 export type BranchListResult = string[];
+
+export type GitTagListResult = Array<{
+  name: string;
+  type: 'annotated' | 'lightweight';
+  target: string;
+}>;
+
+export type GitPatchResult = { files: string[] };
+
+export type GitConfigResult = string | Record<string, string>;
+
+export type GitHooksResult = Record<string, boolean>;
