@@ -65,6 +65,12 @@ import { gitTag } from './services/git/tag';
 import { createPatch } from './services/git/patch';
 import { gitGetConfig, gitSetConfig } from './services/git/config';
 import { listHooks } from './services/git/hooks';
+import {
+  disconnectGitHub,
+  listGitHubAccounts,
+  listGitHubRepos,
+  connectGitHubWithToken
+} from './services/git-host/github';
 
 const isDev = !app.isPackaged;
 
@@ -194,14 +200,22 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.FS_WORKSPACE_CREATE, fsWorkspaceCreateSchema, workspaceCreate);
 
   safeHandleNoArgs(IPC_CHANNELS.AUTH_GITHUB_START, () => null);
-  safeHandle(IPC_CHANNELS.AUTH_GITHUB_COMPLETE, authGithubCompleteSchema, echo);
+  safeHandle(IPC_CHANNELS.AUTH_GITHUB_COMPLETE, authGithubCompleteSchema, (args) =>
+    connectGitHubWithToken(args.code)
+  );
   safeHandleNoArgs(IPC_CHANNELS.AUTH_GITLAB_START, () => null);
   safeHandle(IPC_CHANNELS.AUTH_GITLAB_COMPLETE, authGitlabCompleteSchema, echo);
-  safeHandleNoArgs(IPC_CHANNELS.ACCOUNT_LIST, () => []);
-  safeHandle(IPC_CHANNELS.ACCOUNT_SET_ACTIVE, accountSetActiveSchema, echo);
-  safeHandle(IPC_CHANNELS.ACCOUNT_REMOVE, accountRemoveSchema, echo);
+  safeHandleNoArgs(IPC_CHANNELS.ACCOUNT_LIST, () => listGitHubAccounts());
+  safeHandle(IPC_CHANNELS.ACCOUNT_SET_ACTIVE, accountSetActiveSchema, (args) => {
+    storeSet('active-account-id', args.id);
+  });
+  safeHandle(IPC_CHANNELS.ACCOUNT_REMOVE, accountRemoveSchema, (args) => {
+    disconnectGitHub(args.id);
+  });
 
-  safeHandle(IPC_CHANNELS.GITHUB_LIST_REPOS, githubListReposSchema, echo);
+  safeHandle(IPC_CHANNELS.GITHUB_LIST_REPOS, githubListReposSchema, (args) =>
+    listGitHubRepos(args.accountId)
+  );
   safeHandle(IPC_CHANNELS.GITLAB_LIST_REPOS, gitlabListReposSchema, echo);
 };
 

@@ -19,3 +19,19 @@
 
 ## Зависит от
 - TASK-030
+
+## Статус: DONE — GitHub PAT auth через @octokit/rest
+
+### Что сделано
+- `electron/shared/types/account.ts` — Account/AccountProvider типы
+- `electron/shared/types/git-host.ts` — RepoInfo
+- `electron/main/services/git-host/github.ts` — connectGitHub (валидация PAT через octokit.users.getAuthenticated, сохранение токена в encrypted electron-store), listGitHubAccounts, listGitHubRepos (octokit.paginate), disconnectGitHub, connectGitHubWithToken (записывает activeAccountId)
+- IPC wiring: account:list реальный, account:set-active → storeSet, account:remove → disconnectGitHub, auth:github-complete → connectGitHubWithToken, github:list-repos → listGitHubRepos
+
+### Acceptance criteria
+- [x] Успешная авторизация возвращает профиль
+- [x] Невалидный токен → ошибка
+- [x] Токен не покидает main
+
+### Заметки
+- Сабагент упал по rate-limit; доделал вручную (финальный wiring)

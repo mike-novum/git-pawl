@@ -24,7 +24,7 @@
 | [TASK-027.md](TASK-027.md) | 3 | Entity: repository | TASK-021, TASK-026 | ✅ |
 | [TASK-028.md](TASK-028.md) | 3 | Entity: commit, branch, tag, stash, file-change | TASK-021 | ✅ |
 | [TASK-030.md](TASK-030.md) | 4 | Entity: account | TASK-011 | ✅ |
-| [TASK-031.md](TASK-031.md) | 4 | GitHub auth | TASK-030 | ⏳ |
+| [TASK-031.md](TASK-031.md) | 4 | GitHub auth | TASK-030 | ✅ |
 | [TASK-032.md](TASK-032.md) | 4 | GitLab auth | TASK-030 | ⏳ |
 | [TASK-033.md](TASK-033.md) | 4 | Feature: auth-login | TASK-031, TASK-032 | ⏳ |
 | [TASK-034.md](TASK-034.md) | 4 | Feature: auth-switch | TASK-030 | ⏳ |
