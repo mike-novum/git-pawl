@@ -45,17 +45,18 @@ import { gitCheckout } from './services/git/checkout';
 import { gitClone } from './services/git/clone';
 import { gitCommit } from './services/git/commit';
 import { currentBranch } from './services/git/currentBranch';
+import { gitDiff, gitLog, gitRevParse, gitStatus } from './services/git';
 import { gitFetch, gitPull, gitPush } from './services/git/network';
 import { gitMerge } from './services/git/merge';
 import { emitCloneProgress } from './services/git/progress';
 import { gitRebase } from './services/git/rebase';
+import { gitReset } from './services/git/reset';
+import { gitRevert } from './services/git/revert';
+import { gitStash } from './services/git/stash';
 import { gitTag } from './services/git/tag';
 import { createPatch } from './services/git/patch';
 import { gitGetConfig, gitSetConfig } from './services/git/config';
 import { listHooks } from './services/git/hooks';
-import { gitReset } from './services/git/reset';
-import { gitRevert } from './services/git/revert';
-import { gitStash } from './services/git/stash';
 
 const isDev = !app.isPackaged;
 
@@ -128,10 +129,10 @@ const registerIpcHandlers = (): void => {
     storeDelete(args.key);
   });
 
-  safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, echo);
-  safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, echo);
+  safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, (args) => gitStatus(args));
+  safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, (args) => gitLog(args));
+  safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, (args) => gitDiff(args));
+  safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, (args) => gitRevParse(args));
   safeHandle(IPC_CHANNELS.GIT_CLONE, gitCloneSchema, (args, event) => {
     if (!event) throw new Error('Missing IPC event for clone progress');
     return gitClone(args, (msg) => emitCloneProgress(event.sender, msg));
@@ -158,6 +159,11 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_CURRENT_BRANCH, currentBranchSchema, async (args) =>
     currentBranch(args.repoPath)
   );
+
+  safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, (args) => gitStatus(args));
+  safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, (args) => gitLog(args));
+  safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, (args) => gitDiff(args));
+  safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, (args) => gitRevParse(args));
 
   safeHandle(IPC_CHANNELS.GIT_TAG, gitTagSchema, gitTag);
   safeHandle(IPC_CHANNELS.GIT_PATCH, gitPatchSchema, createPatch);
