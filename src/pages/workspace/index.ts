@@ -18,5 +18,3 @@ export type {
   NoResultsStateProps,
   WorkspacePageProps
 } from './types';
-export { useRepoSearch, filterRepos } from './model';
-export type { UseRepoSearchResult } from './model';

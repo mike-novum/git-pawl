@@ -3,12 +3,11 @@ import type { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
+import { useRepoSearch } from '@/features/search-repos';
 import { useActiveWorkspace } from '@/entities/workspace';
 import { useRepositoryList } from '@/entities/repository';
 import type { Repository } from '@/entities/repository';
 import { Spinner, useToast, Button } from '@/shared/ui';
-
-import { useRepoSearch } from '../model';
 
 import { NoReposState } from './NoReposState';
 import { NoResultsState } from './NoResultsState';
@@ -25,11 +24,9 @@ export const WorkspacePage: FC<WorkspacePageProps> = () => {
   const active = useActiveWorkspace();
   const workspacePath = active?.path ?? null;
   const { data, isLoading, isError, refetch } = useRepositoryList(workspacePath);
-  const { query, setQuery, filter } = useRepoSearch();
-  const [createOpen, setCreateOpen] = useState(false);
-
   const repos = data ?? [];
-  const visibleRepos = filter(repos);
+  const { query, setQuery, results: visibleRepos } = useRepoSearch(repos);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const handleAddRepo = useCallback((): void => {
     if (!active) return;
