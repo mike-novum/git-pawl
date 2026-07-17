@@ -17,3 +17,5 @@ export const EmptyState: FC<EmptyStateProps> = ({
     </div>
   );
 };
+
+EmptyState.displayName = 'EmptyState';
