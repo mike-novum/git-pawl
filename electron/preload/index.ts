@@ -37,9 +37,11 @@ export type GitPatchArgs = { repoPath: string; range: string };
 export type GitConfigArgs = { repoPath: string; key: string; value?: string };
 export type GitHooksArgs = { repoPath: string; list: true };
 
-export type FsSizeArgs = { path: string };
-export type FsIconArgs = { path: string };
-export type FsWorkspaceListArgs = Record<string, never>;
+export type FsSizeArgs = { repoPath: string };
+export type FsIconArgs =
+  | { action: 'set'; repoPath: string; sourceImagePath: string }
+  | { action: 'remove'; repoPath: string };
+export type FsWorkspaceCreateArgs = { path: string; name?: string };
 
 export type ApiSchema = {
   getAppInfo: () => Promise<AppInfo>;
@@ -70,9 +72,11 @@ export type ApiSchema = {
   gitConfig: (args: GitConfigArgs) => Promise<unknown>;
   gitHooks: (args: GitHooksArgs) => Promise<unknown>;
 
+  fsSelectDirectory: () => Promise<string | null>;
   fsSize: (args: FsSizeArgs) => Promise<unknown>;
-  fsIcon: (args: FsIconArgs) => Promise<unknown>;
-  fsWorkspaceList: (args: FsWorkspaceListArgs) => Promise<unknown>;
+  fsIcon: (args: FsIconArgs) => Promise<void>;
+  fsWorkspaceList: () => Promise<unknown>;
+  fsWorkspaceCreate: (args: FsWorkspaceCreateArgs) => Promise<unknown>;
 
   authGithubStart: () => Promise<unknown>;
   authGithubComplete: (args: { code: string }) => Promise<unknown>;
@@ -118,9 +122,11 @@ const api: ApiSchema = {
   gitConfig: (args) => invoke('git:config', args),
   gitHooks: (args) => invoke('git:hooks', args),
 
+  fsSelectDirectory: () => invoke('fs:select-directory') as Promise<string | null>,
   fsSize: (args) => invoke('fs:size', args),
-  fsIcon: (args) => invoke('fs:icon', args),
-  fsWorkspaceList: (args) => invoke('fs:workspace-list', args),
+  fsIcon: (args) => invoke('fs:icon', args) as Promise<void>,
+  fsWorkspaceList: () => invoke('fs:workspace-list'),
+  fsWorkspaceCreate: (args) => invoke('fs:workspace-create', args),
 
   authGithubStart: () => invoke('auth:github-start'),
   authGithubComplete: (args) => invoke('auth:github-complete', args),

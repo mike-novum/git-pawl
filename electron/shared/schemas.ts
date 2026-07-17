@@ -160,15 +160,30 @@ export const gitHooksSchema = z.object({
   list: z.boolean().optional()
 });
 
+export const fsSelectDirectorySchema = z.undefined();
+
 export const fsSizeSchema = z.object({
-  path: z.string()
+  repoPath: z.string()
 });
 
-export const fsIconSchema = z.object({
-  path: z.string()
-});
+export const fsIconSchema = z.discriminatedUnion('action', [
+  z.object({
+    action: z.literal('set'),
+    repoPath: z.string(),
+    sourceImagePath: z.string()
+  }),
+  z.object({
+    action: z.literal('remove'),
+    repoPath: z.string()
+  })
+]);
 
-export const fsWorkspaceListSchema = z.object({});
+export const fsWorkspaceListSchema = z.undefined();
+
+export const fsWorkspaceCreateSchema = z.object({
+  path: z.string(),
+  name: z.string().optional()
+});
 
 export const authGithubCompleteSchema = z.object({
   code: z.string()
@@ -218,11 +233,15 @@ export type GitBranchArgs = z.infer<typeof gitBranchSchema>;
 export type CurrentBranchArgs = z.infer<typeof currentBranchSchema>;
 export type FsSizeArgs = z.infer<typeof fsSizeSchema>;
 export type FsIconArgs = z.infer<typeof fsIconSchema>;
+export type FsIconSetArgs = Extract<FsIconArgs, { action: 'set' }>;
+export type FsIconRemoveArgs = Extract<FsIconArgs, { action: 'remove' }>;
+export type FsSelectDirectoryArgs = z.infer<typeof fsSelectDirectorySchema>;
+export type FsWorkspaceListArgs = z.infer<typeof fsWorkspaceListSchema>;
+export type FsWorkspaceCreateArgs = z.infer<typeof fsWorkspaceCreateSchema>;
 export type GitTagArgs = z.infer<typeof gitTagSchema>;
 export type GitPatchArgs = z.infer<typeof gitPatchSchema>;
 export type GitConfigArgs = z.infer<typeof gitConfigSchema>;
 export type GitHooksArgs = z.infer<typeof gitHooksSchema>;
-export type FsWorkspaceListArgs = z.infer<typeof fsWorkspaceListSchema>;
 export type AuthGithubCompleteArgs = z.infer<typeof authGithubCompleteSchema>;
 export type AuthGitlabCompleteArgs = z.infer<typeof authGitlabCompleteSchema>;
 export type AccountSetActiveArgs = z.infer<typeof accountSetActiveSchema>;
