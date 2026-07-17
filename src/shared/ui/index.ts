@@ -1,38 +1,68 @@
 export { Accordion } from './accordion/index';
-export type { AccordionRootProps } from './accordion/index';
+export {
+  AvatarRoot as Avatar,
+  AvatarImage,
+  AvatarFallback
+} from './avatar/index';
+export { Badge, badgeVariants } from './badge/index';
 export { Button, buttonVariants } from './button/index';
-export type { ButtonProps, ButtonVariant, ButtonSize } from './button/index';
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter
+} from './card/index';
 export { Checkbox } from './checkbox/index';
-export type { CheckboxProps } from './checkbox/index';
 export { Command } from './command/index';
-export type { CommandRootProps } from './command/index';
 export { Dialog } from './dialog/index';
-export type { DialogRootProps } from './dialog/index';
+export {
+  DropdownMenuRoot as DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuPortal,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from './dropdown-menu/index';
 export { Empty } from './empty/index';
-export type { EmptyProps } from './empty/index';
 export { Input, inputVariants } from './input/index';
-export type { InputProps, InputSize } from './input/index';
+export { Kbd } from './kbd/index';
 export { Popover } from './popover/index';
-export type { PopoverRootProps } from './popover/index';
 export { Progress } from './progress/index';
-export type { ProgressRootProps } from './progress/index';
-export { ResizablePanel } from './resizable-panel/index';
-export type { ResizablePanelRootProps } from './resizable-panel/index';
+export { ResizablePanel, PanelGroup, Panel, PanelResizeHandle } from './resizable-panel/index';
+export {
+  ScrollAreaRoot as ScrollArea,
+  ScrollAreaViewport,
+  ScrollAreaScrollbar,
+  ScrollAreaThumb
+} from './scroll-area/index';
 export { Select } from './select/index';
-export type { SelectProps } from './select/index';
+export { Separator } from './separator/index';
+export {
+  SheetRoot as Sheet,
+  SheetTrigger,
+  SheetPortal,
+  SheetClose,
+  SheetBackdrop,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetFooter
+} from './sheet/index';
+export { Skeleton } from './skeleton/index';
 export { Slider } from './slider/index';
-export type { SliderRootProps } from './slider/index';
 export { Spinner } from './spinner/index';
-export type { SpinnerProps, SpinnerSize } from './spinner/index';
 export { Switch } from './switch/index';
-export type { SwitchRootProps } from './switch/index';
-export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './table/index';
-export type { TableProps } from './table/index';
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell
+} from './table/index';
 export { Tabs } from './tabs/index';
-export type { TabsTabProps } from './tabs/index';
 export { ThemeToggle } from './theme-toggle/index';
-export type { ThemeToggleProps } from './theme-toggle/index';
 export { Toast, useToast } from './toast/index';
-export type { ToastProviderProps } from './toast/index';
 export { Tooltip } from './tooltip/index';
-export type { TooltipProps } from './tooltip/index';
