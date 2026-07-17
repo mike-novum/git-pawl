@@ -45,7 +45,7 @@
 | [TASK-064.md](TASK-064.md) | 7 | Feature: git-stash | TASK-023, TASK-028 | ✅ |
 | [TASK-065.md](TASK-065.md) | 7 | Feature: git-merge / rebase | TASK-023 | ✅ |
 | [TASK-066.md](TASK-066.md) | 7 | Feature: git-reset / revert / amend | TASK-024 | ✅ |
-| [TASK-067.md](TASK-067.md) | 7 | Feature: manage-tags | TASK-025, TASK-028 | ⏳ |
+| [TASK-067.md](TASK-067.md) | 7 | Feature: manage-tags | TASK-025, TASK-028 | ✅ |
 | [TASK-068.md](TASK-068.md) | 7 | Feature: create-patch | TASK-025 | ⏳ |
 | [TASK-069.md](TASK-069.md) | 7 | Feature: bypass-hooks | TASK-023 | ⏳ |
 | [TASK-070.md](TASK-070.md) | 7 | Repo config | TASK-025 | ⏳ |
