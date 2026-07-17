@@ -24,7 +24,7 @@ import type {
   GitHooksArgs,
   FsSizeArgs,
   FsIconArgs,
-  FsWorkspaceListArgs,
+  FsWorkspaceCreateArgs,
   StoreGetArgs,
   StoreSetArgs,
   StoreDeleteArgs
@@ -144,16 +144,22 @@ export const gitConfig = async (args: GitConfigArgs): Promise<unknown> =>
 export const gitHooks = async (args: GitHooksArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.gitHooks(args), []);
 
+export const fsSelectDirectory = async (): Promise<string | null> =>
+  safeInvoke<string | null>((bridge) => bridge.fsSelectDirectory(), null);
+
 export const fsSize = async (args: FsSizeArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsSize(args), 0);
 
-export const fsIcon = async (args: FsIconArgs): Promise<unknown> =>
-  safeInvoke<unknown>((bridge) => bridge.fsIcon(args), null);
+export const fsIcon = async (args: FsIconArgs): Promise<void> =>
+  safeInvoke<void>((bridge) => bridge.fsIcon(args), undefined);
 
-export const fsWorkspaceList = async (
-  args: FsWorkspaceListArgs = {}
+export const fsWorkspaceList = async (): Promise<unknown> =>
+  safeInvoke<unknown>((bridge) => bridge.fsWorkspaceList(), []);
+
+export const fsWorkspaceCreate = async (
+  args: FsWorkspaceCreateArgs
 ): Promise<unknown> =>
-  safeInvoke<unknown>((bridge) => bridge.fsWorkspaceList(args), []);
+  safeInvoke<unknown>((bridge) => bridge.fsWorkspaceCreate(args), null);
 
 export const api = {
   getAppInfo,
@@ -181,9 +187,11 @@ export const api = {
   gitPatch,
   gitConfig,
   gitHooks,
+  fsSelectDirectory,
   fsSize,
   fsIcon,
-  fsWorkspaceList
+  fsWorkspaceList,
+  fsWorkspaceCreate
 };
 
 export type IpcApi = typeof api;

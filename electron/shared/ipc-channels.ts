@@ -27,9 +27,11 @@ export const IPC_CHANNELS = {
   GIT_CONFIG: 'git:config',
   GIT_HOOKS: 'git:hooks',
 
+  FS_SELECT_DIRECTORY: 'fs:select-directory',
   FS_SIZE: 'fs:size',
   FS_ICON: 'fs:icon',
   FS_WORKSPACE_LIST: 'fs:workspace-list',
+  FS_WORKSPACE_CREATE: 'fs:workspace-create',
 
   AUTH_GITHUB_START: 'auth:github-start',
   AUTH_GITHUB_COMPLETE: 'auth:github-complete',

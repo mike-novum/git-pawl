@@ -10,7 +10,7 @@ import {
   authGitlabCompleteSchema,
   fsIconSchema,
   fsSizeSchema,
-  fsWorkspaceListSchema,
+  fsWorkspaceCreateSchema,
   gitAmendSchema,
   gitBranchSchema,
   gitCheckoutSchema,
@@ -37,6 +37,14 @@ import {
 } from '../shared/schemas';
 import { safeHandle, safeHandleNoArgs } from '../shared/handler';
 
+import {
+  getRepoSize,
+  removeRepoIcon,
+  selectDirectory,
+  setRepoIcon,
+  workspaceCreate,
+  workspaceList
+} from './services/fs';
 import { storeDelete, storeGet, storeSet } from './services/store';
 
 const isDev = !app.isPackaged;
@@ -132,9 +140,17 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_CONFIG, gitConfigSchema, echo);
   safeHandle(IPC_CHANNELS.GIT_HOOKS, gitHooksSchema, echo);
 
-  safeHandle(IPC_CHANNELS.FS_SIZE, fsSizeSchema, echo);
-  safeHandle(IPC_CHANNELS.FS_ICON, fsIconSchema, echo);
-  safeHandle(IPC_CHANNELS.FS_WORKSPACE_LIST, fsWorkspaceListSchema, echo);
+  safeHandleNoArgs(IPC_CHANNELS.FS_SELECT_DIRECTORY, selectDirectory);
+  safeHandle(IPC_CHANNELS.FS_SIZE, fsSizeSchema, getRepoSize);
+  safeHandle(IPC_CHANNELS.FS_ICON, fsIconSchema, async (args) => {
+    if (args.action === 'set') {
+      await setRepoIcon(args);
+      return;
+    }
+    await removeRepoIcon(args);
+  });
+  safeHandleNoArgs(IPC_CHANNELS.FS_WORKSPACE_LIST, workspaceList);
+  safeHandle(IPC_CHANNELS.FS_WORKSPACE_CREATE, fsWorkspaceCreateSchema, workspaceCreate);
 
   safeHandleNoArgs(IPC_CHANNELS.AUTH_GITHUB_START, () => null);
   safeHandle(IPC_CHANNELS.AUTH_GITHUB_COMPLETE, authGithubCompleteSchema, echo);
