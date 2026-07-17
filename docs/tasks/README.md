@@ -43,7 +43,7 @@
 | [TASK-062.md](TASK-062.md) | 7 | Feature: git-push | TASK-022 | ✅ |
 | [TASK-063.md](TASK-063.md) | 7 | Feature: git-fetch | TASK-022 | ✅ |
 | [TASK-064.md](TASK-064.md) | 7 | Feature: git-stash | TASK-023, TASK-028 | ✅ |
-| [TASK-065.md](TASK-065.md) | 7 | Feature: git-merge / rebase | TASK-023 | ⏳ |
+| [TASK-065.md](TASK-065.md) | 7 | Feature: git-merge / rebase | TASK-023 | ✅ |
 | [TASK-066.md](TASK-066.md) | 7 | Feature: git-reset / revert / amend | TASK-024 | ⏳ |
 | [TASK-067.md](TASK-067.md) | 7 | Feature: manage-tags | TASK-025, TASK-028 | ⏳ |
 | [TASK-068.md](TASK-068.md) | 7 | Feature: create-patch | TASK-025 | ⏳ |
