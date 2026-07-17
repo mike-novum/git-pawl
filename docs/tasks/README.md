@@ -25,7 +25,7 @@
 | [TASK-028.md](TASK-028.md) | 3 | Entity: commit, branch, tag, stash, file-change | TASK-021 | ✅ |
 | [TASK-030.md](TASK-030.md) | 4 | Entity: account | TASK-011 | ✅ |
 | [TASK-031.md](TASK-031.md) | 4 | GitHub auth | TASK-030 | ✅ |
-| [TASK-032.md](TASK-032.md) | 4 | GitLab auth | TASK-030 | ⏳ |
+| [TASK-032.md](TASK-032.md) | 4 | GitLab auth | TASK-030 | ✅ |
 | [TASK-033.md](TASK-033.md) | 4 | Feature: auth-login | TASK-031, TASK-032 | ⏳ |
 | [TASK-034.md](TASK-034.md) | 4 | Feature: auth-switch | TASK-030 | ⏳ |
 | [TASK-035.md](TASK-035.md) | 4 | Page: accounts | TASK-033, TASK-034 | ⏳ |
@@ -72,7 +72,7 @@
 | 1 — UI-фундамент | 6 | 5 | 1 (TASK-006 Storybook) |
 | 2 — App shell | 3 | 3 | 0 |
 | 3 — Доменные сущности (ipc/git/fs/entity:repository) | 11 | 8 | 3 (TASK-027 entity:repository, TASK-028 entities) |
-| 4 — Auth | 6 | 0 | 6 |
+| 4 — Auth | 6 | 1 | 5 |
 | 5 — Workspaces | 4 | 0 | 4 |
 | 6 — Clone & listing | 5 | 0 | 5 |
 | 7 — UI для git-операций | 11 | 0 | 11 |
@@ -80,7 +80,7 @@
 | 9 — Commit graph | 3 | 0 | 3 |
 | 10 — Полировка | 5 | 0 | 5 |
 | 11 — Code review | 1 | 0 | 1 |
-| **Итого** | **61** | **16** | **45** |
+| **Итого** | **61** | **17** | **44** |
 
 ## Порядок работы
 

@@ -71,6 +71,12 @@ import {
   listGitHubRepos,
   connectGitHubWithToken
 } from './services/git-host/github';
+import {
+  connectGitLabWithToken,
+  disconnectGitLab,
+  listGitLabAccounts,
+  listGitLabRepos
+} from './services/git-host/gitlab';
 
 const isDev = !app.isPackaged;
 
@@ -119,8 +125,6 @@ const createWindow = async (): Promise<void> => {
 
   return Promise.resolve();
 };
-
-const echo = async (args: unknown): Promise<unknown> => args;
 
 const registerIpcHandlers = (): void => {
   ipcMain.handle(IPC_CHANNELS.APP_INFO, () => ({
@@ -204,19 +208,30 @@ const registerIpcHandlers = (): void => {
     connectGitHubWithToken(args.code)
   );
   safeHandleNoArgs(IPC_CHANNELS.AUTH_GITLAB_START, () => null);
-  safeHandle(IPC_CHANNELS.AUTH_GITLAB_COMPLETE, authGitlabCompleteSchema, echo);
-  safeHandleNoArgs(IPC_CHANNELS.ACCOUNT_LIST, () => listGitHubAccounts());
+  safeHandle(IPC_CHANNELS.AUTH_GITLAB_COMPLETE, authGitlabCompleteSchema, (args) =>
+    connectGitLabWithToken(args.code)
+  );
+  safeHandleNoArgs(IPC_CHANNELS.ACCOUNT_LIST, () => [
+    ...listGitHubAccounts(),
+    ...listGitLabAccounts()
+  ]);
   safeHandle(IPC_CHANNELS.ACCOUNT_SET_ACTIVE, accountSetActiveSchema, (args) => {
     storeSet('active-account-id', args.id);
   });
   safeHandle(IPC_CHANNELS.ACCOUNT_REMOVE, accountRemoveSchema, (args) => {
+    if (args.id.startsWith('gitlab:')) {
+      disconnectGitLab(args.id);
+      return;
+    }
     disconnectGitHub(args.id);
   });
 
   safeHandle(IPC_CHANNELS.GITHUB_LIST_REPOS, githubListReposSchema, (args) =>
     listGitHubRepos(args.accountId)
   );
-  safeHandle(IPC_CHANNELS.GITLAB_LIST_REPOS, gitlabListReposSchema, echo);
+  safeHandle(IPC_CHANNELS.GITLAB_LIST_REPOS, gitlabListReposSchema, (args) =>
+    listGitLabRepos(args.accountId)
+  );
 };
 
 app.whenReady().then(async () => {
