@@ -52,7 +52,7 @@
 | [TASK-080.md](TASK-080.md) | 8 | Widget: file-changes-panel | TASK-028 | ✅ |
 | [TASK-081.md](TASK-081.md) | 8 | Feature: select-files | TASK-080 | ✅ |
 | [TASK-082.md](TASK-082.md) | 8 | Feature: preview-diff | TASK-021 | ✅ |
-| [TASK-083.md](TASK-083.md) | 8 | Widget: commit-message-form | TASK-002 | ⏳ |
+| [TASK-083.md](TASK-083.md) | 8 | Widget: commit-message-form | TASK-002 | ✅ |
 | [TASK-084.md](TASK-084.md) | 8 | Feature: commit-changes | TASK-081, TASK-083, TASK-023, TASK-069 | ⏳ |
 | [TASK-090.md](TASK-090.md) | 9 | Entity: commit-relations | TASK-028 | ⏳ |
 | [TASK-091.md](TASK-091.md) | 9 | Widget: commit-graph | TASK-090 | ⏳ |
