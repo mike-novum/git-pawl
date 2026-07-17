@@ -46,7 +46,7 @@
 | [TASK-065.md](TASK-065.md) | 7 | Feature: git-merge / rebase | TASK-023 | ✅ |
 | [TASK-066.md](TASK-066.md) | 7 | Feature: git-reset / revert / amend | TASK-024 | ✅ |
 | [TASK-067.md](TASK-067.md) | 7 | Feature: manage-tags | TASK-025, TASK-028 | ✅ |
-| [TASK-068.md](TASK-068.md) | 7 | Feature: create-patch | TASK-025 | ⏳ |
+| [TASK-068.md](TASK-068.md) | 7 | Feature: create-patch | TASK-025 | ✅ |
 | [TASK-069.md](TASK-069.md) | 7 | Feature: bypass-hooks | TASK-023 | ⏳ |
 | [TASK-070.md](TASK-070.md) | 7 | Repo config | TASK-025 | ⏳ |
 | [TASK-080.md](TASK-080.md) | 8 | Widget: file-changes-panel | TASK-028 | ⏳ |
@@ -75,12 +75,12 @@
 | 4 — Auth | 6 | 1 | 5 |
 | 5 — Workspaces | 4 | 0 | 4 |
 | 6 — Clone & listing | 5 | 0 | 5 |
-| 7 — UI для git-операций | 11 | 0 | 11 |
+| 7 — UI для git-операций | 11 | 1 | 10 |
 | 8 — Changes & commit | 5 | 0 | 5 |
 | 9 — Commit graph | 3 | 0 | 3 |
 | 10 — Полировка | 5 | 0 | 5 |
 | 11 — Code review | 1 | 0 | 1 |
-| **Итого** | **61** | **17** | **44** |
+| **Итого** | **61** | **18** | **43** |
 
 ## Порядок работы
 
