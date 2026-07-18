@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
 import { useRepoSearch } from '@/features/search-repos';
-import { useActiveWorkspace } from '@/entities/workspace';
+import { useAddExistingRepo } from '@/features/add-existing-repo';
+import {
+  useActiveWorkspace,
+  useWorkspaceExtraRepoPaths
+} from '@/entities/workspace';
 import { useRepositoryList } from '@/entities/repository';
 import type { Repository } from '@/entities/repository';
 import { Spinner, useToast, Button } from '@/shared/ui';
@@ -18,23 +22,49 @@ import { WorkspaceHeader } from './WorkspaceHeader';
 
 import type { WorkspacePageProps } from '../types';
 
+const basename = (path: string): string => {
+  const cleaned = path.replace(/[\\/]+$/, '');
+  const parts = cleaned.split(/[\\/]/);
+  return parts[parts.length - 1] ?? cleaned;
+};
+
 export const WorkspacePage: FC<WorkspacePageProps> = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const active = useActiveWorkspace();
   const workspacePath = active?.path ?? null;
-  const { data, isLoading, isError, refetch } = useRepositoryList(workspacePath);
+  const workspaceId = active?.id ?? null;
+  const { data: extraRepoPaths = [] } = useWorkspaceExtraRepoPaths(workspaceId);
+  const { data, isLoading, isError, refetch } = useRepositoryList(
+    workspacePath,
+    extraRepoPaths
+  );
   const repos = data ?? [];
   const { query, setQuery, results: visibleRepos } = useRepoSearch(repos);
   const [createOpen, setCreateOpen] = useState(false);
+  const { mutate: addExistingRepo } = useAddExistingRepo();
 
   const handleAddRepo = useCallback((): void => {
-    if (!active) return;
-    toast.info({
-      title: 'Add repository',
-      description: 'Adding existing repositories will be available soon.'
-    });
-  }, [active, toast]);
+    if (!workspaceId) return;
+    addExistingRepo(
+      { workspaceId },
+      {
+        onSuccess: (result) => {
+          if (!result) return;
+          toast.success({
+            title: 'Repository added',
+            description: basename(result.repoPath)
+          });
+        },
+        onError: (error) => {
+          toast.error({
+            title: 'Failed to add repository',
+            description: error.message
+          });
+        }
+      }
+    );
+  }, [addExistingRepo, toast, workspaceId]);
 
   const handleClone = useCallback((): void => {
     navigate('/clone');

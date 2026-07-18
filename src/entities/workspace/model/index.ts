@@ -11,4 +11,8 @@ export {
   WORKSPACE_LIST_QUERY_KEY
 } from './workspaceQueries';
 export type { WorkspaceCreateResult } from './workspaceQueries';
+export {
+  useWorkspaceExtraRepoPaths,
+  WORKSPACE_EXTRA_REPOS_QUERY_KEY
+} from './useWorkspaceExtraRepoPaths';
 export type { Workspace, WorkspaceCreateArgs, WorkspaceListResult } from './types';

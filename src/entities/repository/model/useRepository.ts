@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import type { GitStatus } from '@electron/shared/types/git';
@@ -13,7 +13,8 @@ import {
   fetchRepoSize,
   gitStatusQueryKey,
   repoSizeQueryKey,
-  repositoryListQueryKey
+  repositoryListQueryKey,
+  repositoryQueryKey
 } from './repositoryQueries';
 
 export type RepositoryQueryResult = {
@@ -27,80 +28,95 @@ export type RepositoryQueryResult = {
 const DISABLED_STATUS_KEY = ['git-status', 'disabled'] as const;
 const DISABLED_SIZE_KEY = ['repo-size', 'disabled'] as const;
 const DISABLED_LIST_KEY = ['repository-list', 'disabled'] as const;
+const DISABLED_REPOSITORY_KEY = ['repository', 'disabled'] as const;
 
 export const useRepositoryStatus = (
   repoPath: string | null
-): UseQueryResult<GitStatus | null> =>
-  useQuery({
-    queryKey: repoPath ? gitStatusQueryKey(repoPath) : DISABLED_STATUS_KEY,
-    queryFn: ({ signal }) =>
-      repoPath ? fetchGitStatus(repoPath, signal) : Promise.resolve(null),
-    enabled: Boolean(repoPath)
-  });
+): UseQueryResult<GitStatus | null> => {
+  const options = useMemo(
+    () => ({
+      queryKey: repoPath
+        ? gitStatusQueryKey(repoPath)
+        : DISABLED_STATUS_KEY,
+      queryFn: ({ signal }: { signal?: AbortSignal }): Promise<GitStatus | null> =>
+        repoPath ? fetchGitStatus(repoPath, signal) : Promise.resolve(null),
+      enabled: Boolean(repoPath)
+    }),
+    [repoPath]
+  );
+  return useQuery(options);
+};
 
 export const useRepositorySize = (
   repoPath: string | null
-): UseQueryResult<RepoSize | null> =>
-  useQuery({
-    queryKey: repoPath ? repoSizeQueryKey(repoPath) : DISABLED_SIZE_KEY,
-    queryFn: ({ signal }) =>
-      repoPath ? fetchRepoSize(repoPath, signal) : Promise.resolve(null),
-    enabled: Boolean(repoPath),
-    refetchInterval: 30_000,
-    refetchIntervalInBackground: false
-  });
+): UseQueryResult<RepoSize | null> => {
+  const options = useMemo(
+    () => ({
+      queryKey: repoPath
+        ? repoSizeQueryKey(repoPath)
+        : DISABLED_SIZE_KEY,
+      queryFn: ({ signal }: { signal?: AbortSignal }): Promise<RepoSize | null> =>
+        repoPath ? fetchRepoSize(repoPath, signal) : Promise.resolve(null),
+      enabled: Boolean(repoPath),
+      refetchInterval: 30_000,
+      refetchIntervalInBackground: false
+    }),
+    [repoPath]
+  );
+  return useQuery(options);
+};
 
 export const useRepository = (repoPath: string | null): RepositoryQueryResult => {
   const statusQuery = useRepositoryStatus(repoPath);
   const sizeQuery = useRepositorySize(repoPath);
-  const [repository, setRepository] = useState<Repository | null>(null);
 
-  useEffect(() => {
-    if (!repoPath) {
-      setRepository(null);
-      return;
-    }
+  const options = useMemo(
+    () => ({
+      queryKey: repoPath
+        ? repositoryQueryKey(repoPath)
+        : DISABLED_REPOSITORY_KEY,
+      queryFn: async ({ signal }: { signal?: AbortSignal }): Promise<Repository | null> => {
+        if (!repoPath) return null;
+        const [status, size] = await Promise.all([
+          fetchGitStatus(repoPath, signal).catch(() => null),
+          fetchRepoSize(repoPath, signal).catch(() => null)
+        ]);
+        return buildRepository(
+          repoPath,
+          status,
+          size,
+          defaultIconPath(repoPath)
+        );
+      },
+      enabled: Boolean(repoPath)
+    }),
+    [repoPath]
+  );
 
-    let cancelled = false;
-    setRepository(null);
+  const repoQuery = useQuery(options);
 
-    void buildRepository(
-      repoPath,
-      statusQuery.data ?? null,
-      sizeQuery.data ?? null,
-      defaultIconPath(repoPath)
-    )
-      .then((built) => {
-        if (!cancelled) {
-          setRepository(built);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setRepository(null);
-        }
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [repoPath, statusQuery.data, sizeQuery.data]);
-
-  const isLoading = Boolean(repoPath) && (statusQuery.isLoading || sizeQuery.isLoading);
-  const isError = statusQuery.isError || sizeQuery.isError;
+  const isLoading =
+    Boolean(repoPath) &&
+    (statusQuery.isLoading || sizeQuery.isLoading || repoQuery.isLoading);
+  const isError = statusQuery.isError || sizeQuery.isError || repoQuery.isError;
   const error =
-    (statusQuery.error as Error | null) ?? (sizeQuery.error as Error | null) ?? null;
+    (statusQuery.error as Error | null) ??
+    (sizeQuery.error as Error | null) ??
+    (repoQuery.error as Error | null) ??
+    null;
 
   const refetch = (): void => {
     void statusQuery.refetch();
     void sizeQuery.refetch();
+    void repoQuery.refetch();
   };
 
-  return { data: repository, isLoading, isError, error, refetch };
+  return { data: repoQuery.data ?? null, isLoading, isError, error, refetch };
 };
 
 export const useRepositoryList = (
-  workspacePath: string | null
+  workspacePath: string | null,
+  extraRepoPaths: string[] = []
 ): UseQueryResult<Repository[]> =>
   useQuery({
     queryKey: workspacePath
@@ -108,7 +124,15 @@ export const useRepositoryList = (
       : DISABLED_LIST_KEY,
     queryFn: async ({ signal }) => {
       if (!workspacePath) return [];
-      const paths = await detectRepos(workspacePath, { signal });
+      const detected = await detectRepos(workspacePath, { signal });
+      const seen = new Set<string>();
+      const paths: string[] = [];
+      for (const candidate of [...detected, ...extraRepoPaths]) {
+        if (typeof candidate !== 'string' || candidate.length === 0) continue;
+        if (seen.has(candidate)) continue;
+        seen.add(candidate);
+        paths.push(candidate);
+      }
       const repos = await Promise.all(
         paths.map(async (repoPath) => {
           const [status, size] = await Promise.all([

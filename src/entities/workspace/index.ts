@@ -2,7 +2,8 @@ export {
   useActiveWorkspace,
   useCreateWorkspace,
   useWorkspace,
-  useWorkspaceList
+  useWorkspaceList,
+  useWorkspaceExtraRepoPaths
 } from './model';
 export type { UseCreateWorkspaceResult } from './model';
 export {
