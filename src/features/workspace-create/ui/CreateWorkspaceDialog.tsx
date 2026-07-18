@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FC } from 'react';
 import { FolderSearch, FolderTree, Search } from 'lucide-react';
 
@@ -24,13 +24,18 @@ export const CreateWorkspaceDialog: FC<CreateWorkspaceDialogProps> = ({
   const [name, setName] = useState('');
   const [pickError, setPickError] = useState<string | null>(null);
 
+  const resetRef = useRef(reset);
+  useEffect(() => {
+    resetRef.current = reset;
+  });
+
   useEffect(() => {
     if (!open) {
       setName('');
       setPickError(null);
-      reset();
+      resetRef.current();
     }
-  }, [open, reset]);
+  }, [open]);
 
   const handlePick = async (): Promise<void> => {
     try {

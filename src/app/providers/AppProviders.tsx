@@ -4,6 +4,7 @@ import type { FC } from 'react';
 import { HashRouter } from 'react-router-dom';
 
 import { ThemeProvider } from '@/shared/lib/theme';
+import { Toast } from '@/shared/ui';
 
 import type { AppProvidersProps } from './types';
 
@@ -23,7 +24,13 @@ export const AppProviders: FC<AppProvidersProps> = ({ children }) => {
   return (
     <QueryClientProvider client={client}>
       <ThemeProvider>
-        <HashRouter>{children}</HashRouter>
+        <Toast.Provider>
+          <HashRouter>{children}</HashRouter>
+          <Toast.Portal>
+            <Toast.Viewport />
+            <Toast.List />
+          </Toast.Portal>
+        </Toast.Provider>
       </ThemeProvider>
     </QueryClientProvider>
   );
