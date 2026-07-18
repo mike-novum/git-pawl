@@ -1,38 +1,25 @@
-// @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/shared/api', () => ({
   fsScanRepos: vi.fn(),
+  gitRevParse: vi.fn(),
   gitStatus: vi.fn()
 }));
 
-vi.mock('node:fs', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('node:fs')>();
-  return {
-    ...actual,
-    promises: {
-      ...actual.promises,
-      access: vi.fn()
-    }
-  };
-});
-
-import { promises as fs } from 'node:fs';
-
-import { fsScanRepos, gitStatus } from '@/shared/api';
+import { fsScanRepos, gitRevParse, gitStatus } from '@/shared/api';
 
 import { getCachedWorkspaceStatus } from './computeWorkspaceStatus';
 
 const fsScanReposMock = vi.mocked(fsScanRepos);
+const gitRevParseMock = vi.mocked(gitRevParse);
 const gitStatusMock = vi.mocked(gitStatus);
-const fsAccessMock = vi.mocked(fs.access);
 
 describe('getCachedWorkspaceStatus', () => {
   beforeEach(() => {
     fsScanReposMock.mockReset();
+    gitRevParseMock.mockReset();
     gitStatusMock.mockReset();
-    fsAccessMock.mockReset();
-    fsAccessMock.mockResolvedValue(undefined);
+    gitRevParseMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -53,7 +40,7 @@ describe('getCachedWorkspaceStatus', () => {
 
   it('returns danger when a repo has no .git folder', async () => {
     fsScanReposMock.mockResolvedValueOnce(['/ws-nogit/repo1']);
-    fsAccessMock.mockRejectedValueOnce(new Error('ENOENT'));
+    gitRevParseMock.mockRejectedValueOnce(new Error('ENOENT'));
     gitStatusMock.mockResolvedValueOnce({
       branch: { detached: false },
       files: [],
@@ -80,8 +67,8 @@ describe('getCachedWorkspaceStatus', () => {
 
   it('returns danger when any repo is broken even if another is dirty', async () => {
     fsScanReposMock.mockResolvedValueOnce(['/ws-mixed/bad', '/ws-mixed/ok']);
-    fsAccessMock.mockImplementation(async (target) => {
-      if (String(target).includes('/ws-mixed/bad')) {
+    gitRevParseMock.mockImplementation(async ({ repoPath }) => {
+      if (repoPath === '/ws-mixed/bad') {
         throw new Error('ENOENT');
       }
       return undefined;

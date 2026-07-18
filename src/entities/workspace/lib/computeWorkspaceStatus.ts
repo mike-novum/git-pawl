@@ -1,9 +1,6 @@
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
-
 import type { GitStatus } from '@electron/shared/types/git';
 
-import { fsScanRepos, gitStatus } from '@/shared/api';
+import { fsScanRepos, gitRevParse, gitStatus } from '@/shared/api';
 
 export type WorkspaceStatus = 'clean' | 'warning' | 'danger' | 'unknown';
 
@@ -36,7 +33,7 @@ export const getCachedWorkspaceStatus = async (
       const idx = cursor++;
       const repoPath = repoPaths[idx];
       try {
-        await fs.access(path.join(repoPath, '.git'));
+        await gitRevParse({ repoPath });
       } catch {
         status = 'danger';
         return;
