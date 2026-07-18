@@ -15,6 +15,7 @@ import {
   fetchWorkspaceList,
   WORKSPACE_LIST_QUERY_KEY
 } from './workspaceQueries';
+import { getCachedSize, invalidateWorkspaceSize } from './workspaceSizeCache';
 import type { Workspace, WorkspaceCreateArgs } from './types';
 
 export type UseCreateWorkspaceResult = UseMutationResult<
@@ -78,3 +79,21 @@ export const useCreateWorkspace = (): UseCreateWorkspaceResult => {
 
 export type { Workspace };
 export { createWorkspace };
+
+export const useWorkspaceSize = (
+  workspacePath: string | null
+): { totalBytes: number | null; scannedAt: number | null } => {
+  const query = useQuery({
+    queryKey: ['workspace-size', workspacePath],
+    queryFn: () => getCachedSize(workspacePath as string),
+    enabled: !!workspacePath,
+    staleTime: 5 * 60 * 1000
+  });
+
+  return {
+    totalBytes: query.data?.totalBytes ?? null,
+    scannedAt: query.data?.scannedAt ?? null
+  };
+};
+
+export { invalidateWorkspaceSize };

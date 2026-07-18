@@ -2,7 +2,9 @@ export {
   useActiveWorkspace,
   useCreateWorkspace,
   useWorkspace,
-  useWorkspaceList
+  useWorkspaceList,
+  useWorkspaceSize,
+  invalidateWorkspaceSize
 } from './useWorkspace';
 export type { UseCreateWorkspaceResult } from './useWorkspace';
 export {
