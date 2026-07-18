@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 
 import { ErrorBoundary } from '@/app/providers';
-import { useTheme } from '@/shared/lib/theme';
+import { ThemeToggle } from '@/shared/ui/theme-toggle';
 import { WorkspaceSwitcher } from '@/widgets/workspace-switcher';
 
 import type { AppLayoutProps, NavItem } from './types';
@@ -22,44 +22,31 @@ const navLinkClass = ({ isActive }: { isActive: boolean }): string =>
       : 'text-muted-foreground hover:bg-muted hover:text-foreground'
   ].join(' ');
 
-export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
-  const { theme, toggleTheme } = useTheme();
-
-  return (
-    <div className="bg-background text-foreground flex h-screen w-screen overflow-hidden">
-      <aside className="border-border bg-muted/30 flex w-64 shrink-0 flex-col border-r">
-        <div className="border-border border-b p-4">
-          <div className="text-muted-foreground text-xs uppercase tracking-wide">
-            Workspace
-          </div>
-          <WorkspaceSwitcher className="mt-2 flex w-full items-center justify-between rounded-md text-sm transition-colors duration-(--duration-fast) ease-(--ease-fast) hover:bg-muted" />
+export const AppLayout: FC<AppLayoutProps> = ({ children }) => (
+  <div className="bg-background text-foreground flex h-screen w-screen overflow-hidden">
+    <aside className="border-border bg-muted/30 flex w-64 shrink-0 flex-col border-r">
+      <div className="border-border border-b p-4">
+        <div className="text-muted-foreground text-xs uppercase tracking-wide">
+          Workspace
         </div>
+        <WorkspaceSwitcher className="mt-2 flex w-full items-center justify-between rounded-md text-sm transition-colors duration-(--duration-fast) ease-(--ease-fast) hover:bg-muted" />
+      </div>
 
-        <nav className="flex-1 space-y-1 p-3">
-          {NAV_ITEMS.map((item) => (
-            <NavLink key={item.to} to={item.to} className={navLinkClass}>
-              {item.label}
-            </NavLink>
-          ))}
-        </nav>
+      <nav className="flex-1 space-y-1 p-3">
+        {NAV_ITEMS.map((item) => (
+          <NavLink key={item.to} to={item.to} className={navLinkClass}>
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
 
-        <div className="border-border border-t p-3">
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="border-border bg-background hover:bg-muted flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm transition-colors duration-(--duration-fast) ease-(--ease-fast)"
-          >
-            <span className="text-foreground">Theme</span>
-            <span className="text-muted-foreground text-xs uppercase">
-              {theme}
-            </span>
-          </button>
-        </div>
-      </aside>
+      <div className="border-border flex justify-end border-t p-3">
+        <ThemeToggle />
+      </div>
+    </aside>
 
-      <main className="bg-background flex-1 overflow-auto">
-        <ErrorBoundary>{children ?? <Outlet />}</ErrorBoundary>
-      </main>
-    </div>
-  );
-};
+    <main className="bg-background flex-1 overflow-auto">
+      <ErrorBoundary>{children ?? <Outlet />}</ErrorBoundary>
+    </main>
+  </div>
+);
