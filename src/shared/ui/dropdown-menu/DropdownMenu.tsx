@@ -57,7 +57,7 @@ const DropdownMenuContent: FC<DropdownMenuContentProps> = ({
 }) => (
   <BaseMenu.Popup
     className={cn(
-      'bg-popover text-popover-foreground z-50 min-w-32 overflow-hidden rounded-md border p-1 shadow-md',
+      'bg-card text-card-foreground z-50 min-w-32 overflow-hidden rounded-md border border-border p-1 shadow-md',
       'origin-[var(--transform-origin)] transition-[transform,opacity]',
       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
       'data-[starting-style]:scale-95 data-[ending-style]:scale-95',
