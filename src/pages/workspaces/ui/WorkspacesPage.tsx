@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
 import {
-  useActiveWorkspace,
   useWorkspaceList,
   useWorkspaceSize,
   useWorkspaceStatus
@@ -22,7 +21,6 @@ import type { RecentActivityItem } from './RecentActivity';
 export const WorkspacesPage: FC = () => {
   const navigate = useNavigate();
   const { data: workspaces = [], isLoading } = useWorkspaceList();
-  const active = useActiveWorkspace();
   const [createOpen, setCreateOpen] = useState(false);
 
   const handleCreate = useCallback((): void => {
@@ -66,7 +64,6 @@ export const WorkspacesPage: FC = () => {
             <p className="text-muted-foreground text-sm">
               {workspaces.length}{' '}
               {workspaces.length === 1 ? 'workspace' : 'workspaces'}
-              {active ? ` · last activity ...` : ''}
             </p>
           </div>
           <Button type="button" onClick={handleCreate}>
@@ -104,10 +101,7 @@ const WorkspaceTileWrapper: FC<{
   const { totalBytes } = useWorkspaceSize(workspace.path);
   const { status } = useWorkspaceStatus(workspace.path);
 
-  const lastActivity = repos.reduce<number | null>((acc, repo) => {
-    if (repo.currentBranch === null) return acc;
-    return acc;
-  }, null);
+  const lastActivity: number | null = null;
 
   return (
     <WorkspaceTile
