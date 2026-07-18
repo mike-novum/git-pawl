@@ -7,11 +7,13 @@ export type SelectedFilesState = {
   deselectAll: (repoPath: string) => void;
 };
 
+const EMPTY_PATHS: string[] = [];
+
 export const useSelectedFilesStore = create<SelectedFilesState>((set) => ({
   selectedByRepo: {},
   toggle: (repoPath, path) =>
     set((state) => {
-      const current = state.selectedByRepo[repoPath] ?? [];
+      const current = state.selectedByRepo[repoPath] ?? EMPTY_PATHS;
       const next = current.includes(path)
         ? current.filter((item) => item !== path)
         : [...current, path];
@@ -26,7 +28,7 @@ export const useSelectedFilesStore = create<SelectedFilesState>((set) => ({
     })),
   deselectAll: (repoPath) =>
     set((state) => ({
-      selectedByRepo: { ...state.selectedByRepo, [repoPath]: [] }
+      selectedByRepo: { ...state.selectedByRepo, [repoPath]: EMPTY_PATHS }
     }))
 }));
 
@@ -41,7 +43,7 @@ export type SelectedFilesApi = {
 
 export const useSelectedFiles = (repoPath: string): SelectedFilesApi => {
   const selected = useSelectedFilesStore(
-    (state) => state.selectedByRepo[repoPath] ?? []
+    (state) => state.selectedByRepo[repoPath] ?? EMPTY_PATHS
   );
   const toggle = useSelectedFilesStore((state) => state.toggle);
   const selectAll = useSelectedFilesStore((state) => state.selectAll);
