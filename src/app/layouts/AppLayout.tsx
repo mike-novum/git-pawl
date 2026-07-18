@@ -1,7 +1,9 @@
 import type { FC } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 
+import { ErrorBoundary } from '@/app/providers';
 import { useTheme } from '@/shared/lib/theme';
+import { WorkspaceSwitcher } from '@/widgets/workspace-switcher';
 
 import type { AppLayoutProps, NavItem } from './types';
 
@@ -30,13 +32,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
           <div className="text-muted-foreground text-xs uppercase tracking-wide">
             Workspace
           </div>
-          <button
-            type="button"
-            className="border-border bg-background hover:bg-muted mt-2 flex w-full items-center justify-between rounded-md border px-3 py-2 text-sm transition-colors duration-(--duration-fast) ease-(--ease-fast)"
-          >
-            <span className="text-foreground">No workspace</span>
-            <span className="text-muted-foreground text-xs">v</span>
-          </button>
+          <WorkspaceSwitcher className="mt-2 flex w-full items-center justify-between rounded-md text-sm transition-colors duration-(--duration-fast) ease-(--ease-fast) hover:bg-muted" />
         </div>
 
         <nav className="flex-1 space-y-1 p-3">
@@ -61,7 +57,9 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
         </div>
       </aside>
 
-      <main className="bg-background flex-1 overflow-auto">{children ?? <Outlet />}</main>
+      <main className="bg-background flex-1 overflow-auto">
+        <ErrorBoundary>{children ?? <Outlet />}</ErrorBoundary>
+      </main>
     </div>
   );
 };
