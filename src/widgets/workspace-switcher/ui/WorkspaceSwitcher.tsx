@@ -8,6 +8,7 @@ import {
   useWorkspaceList
 } from '@/entities/workspace';
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
+import { cn } from '@/shared/lib/theme';
 import { useToast } from '@/shared/ui';
 import {
   DropdownMenuContent,
@@ -56,27 +57,36 @@ export const WorkspaceSwitcher: FC<WorkspaceSwitcherProps> = ({
           aria-label={
             active ? `Active workspace: ${active.name}` : 'Select workspace'
           }
-          className={className}
+          className={cn(
+            'flex w-full items-center justify-between gap-2 rounded-md border bg-card px-3 py-1.5 text-sm',
+            'transition-colors duration-(--duration-fast) ease-(--ease-fast) hover:bg-muted',
+            active ? 'border-border' : 'border-dashed border-border',
+            className
+          )}
         >
           {active ? (
-            <span className="text-foreground inline-flex max-w-64 items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm">
-              <Folder aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
-              <span className="truncate font-medium">{active.name}</span>
-              <ChevronDown
-                aria-hidden="true"
-                className="text-muted-foreground size-4 shrink-0"
-              />
-            </span>
+            <Folder
+              aria-hidden="true"
+              className="text-muted-foreground size-4 shrink-0"
+            />
           ) : (
-            <span className="text-muted-foreground inline-flex items-center gap-2 rounded-md border border-dashed border-border bg-card px-3 py-1.5 text-sm">
-              <Plus aria-hidden="true" className="size-4" />
-              <span className="truncate font-medium">Select workspace</span>
-              <ChevronDown
-                aria-hidden="true"
-                className="text-muted-foreground size-4 shrink-0"
-              />
-            </span>
+            <Plus
+              aria-hidden="true"
+              className="text-muted-foreground size-4 shrink-0"
+            />
           )}
+          <span
+            className={cn(
+              'flex-1 truncate text-left font-medium',
+              active ? 'text-foreground' : 'text-muted-foreground'
+            )}
+          >
+            {active ? active.name : 'Select workspace'}
+          </span>
+          <ChevronDown
+            aria-hidden="true"
+            className="text-muted-foreground size-4 shrink-0"
+          />
         </DropdownMenuTrigger>
         <DropdownMenuPortal>
           <DropdownMenuPositioner sideOffset={6} align="start">

@@ -29,7 +29,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => (
         <div className="text-muted-foreground text-xs uppercase tracking-wide">
           Workspace
         </div>
-        <WorkspaceSwitcher className="mt-2 flex w-full items-center justify-between rounded-md text-sm transition-colors duration-(--duration-fast) ease-(--ease-fast) hover:bg-muted" />
+        <WorkspaceSwitcher className="mt-2" />
       </div>
 
       <nav className="flex-1 space-y-1 p-3">
