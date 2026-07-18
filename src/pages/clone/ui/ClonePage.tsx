@@ -1,5 +1,6 @@
+import { useCallback } from 'react';
 import type { FC } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { useActiveWorkspace } from '@/entities/workspace';
 
@@ -9,6 +10,11 @@ import type { ClonePageProps } from '../types';
 
 export const ClonePage: FC<ClonePageProps> = () => {
   const workspace = useActiveWorkspace();
+  const navigate = useNavigate();
+
+  const handleCloneSuccess = useCallback((): void => {
+    navigate('/workspace');
+  }, [navigate]);
 
   return (
     <div className="flex h-full w-full flex-col gap-6 p-6">
@@ -33,6 +39,7 @@ export const ClonePage: FC<ClonePageProps> = () => {
               ? { id: workspace.id, name: workspace.name, path: workspace.path }
               : null
           }
+          onSuccess={handleCloneSuccess}
         />
 
         {!workspace && (

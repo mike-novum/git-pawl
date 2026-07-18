@@ -74,7 +74,7 @@ export const CloneByUrlForm: FC<CloneByUrlFormProps> = ({
     mutate(payload, {
       onSuccess: () => {
         toast.success({
-          title: 'Repository cloned',
+          title: 'Репозиторий склонирован',
           description: basename(trimmedDest)
         });
         reset();
