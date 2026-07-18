@@ -1,6 +1,9 @@
 import { app, BrowserWindow, ipcMain, nativeImage, shell } from 'electron';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 import { IPC_CHANNELS } from '../shared/ipc-channels';
 import {
@@ -185,11 +188,6 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_CURRENT_BRANCH, currentBranchSchema, async (args) =>
     currentBranch(args.repoPath)
   );
-
-  safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, (args) => gitStatus(args));
-  safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, (args) => gitLog(args));
-  safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, (args) => gitDiff(args));
-  safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, (args) => gitRevParse(args));
 
   safeHandle(IPC_CHANNELS.GIT_TAG, gitTagSchema, gitTag);
   safeHandle(IPC_CHANNELS.GIT_PATCH, gitPatchSchema, createPatch);

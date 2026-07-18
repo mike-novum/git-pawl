@@ -2,7 +2,7 @@
   "name": "git-pawl",
   "version": "0.1.0",
   "description": "macOS GUI for Git and remote repositories",
-  "main": "out/main/index.js",
+  "main": "out/main/index.mjs",
   "author": "git-pawl team",
   "license": "MIT",
   "private": true,
