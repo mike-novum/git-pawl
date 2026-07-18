@@ -38,6 +38,7 @@ export type GitConfigArgs = { repoPath: string; key: string; value?: string };
 export type GitHooksArgs = { repoPath: string; list: true };
 
 export type FsSizeArgs = { repoPath: string };
+export type FsWorkspaceSizeArgs = { workspacePath: string };
 export type FsIconArgs =
   | { action: 'set'; repoPath: string; sourceImagePath: string }
   | { action: 'remove'; repoPath: string };
@@ -77,6 +78,7 @@ export type ApiSchema = {
 
   fsSelectDirectory: () => Promise<string | null>;
   fsSize: (args: FsSizeArgs) => Promise<unknown>;
+  fsWorkspaceSize: (args: FsWorkspaceSizeArgs) => Promise<{ totalBytes: number }>;
   fsIcon: (args: FsIconArgs) => Promise<void>;
   fsWorkspaceList: () => Promise<unknown>;
   fsWorkspaceCreate: (args: FsWorkspaceCreateArgs) => Promise<unknown>;
@@ -130,6 +132,7 @@ const api: ApiSchema = {
 
   fsSelectDirectory: () => invoke('fs:select-directory') as Promise<string | null>,
   fsSize: (args) => invoke('fs:size', args),
+  fsWorkspaceSize: (args) => invoke('fs:workspace-size', args) as Promise<{ totalBytes: number }>,
   fsIcon: (args) => invoke('fs:icon', args) as Promise<void>,
   fsWorkspaceList: () => invoke('fs:workspace-list'),
   fsWorkspaceCreate: (args) => invoke('fs:workspace-create', args),

@@ -25,7 +25,7 @@ vi.mock('./store', () => ({
   storeSet: vi.fn()
 }));
 
-import { getRepoSize, workspaceCreate, workspaceList } from './fs';
+import { getRepoSize, getWorkspaceSize, workspaceCreate, workspaceList } from './fs';
 
 const WORKSPACE_KEY = 'workspaces';
 
@@ -121,6 +121,40 @@ describe('getRepoSize', () => {
     expect(result.fileCount).toBe(1);
     expect(result.totalBytes).toBe('ok'.length);
     expect(result.gitBytes).toBe('deep'.length + 'top'.length);
+  });
+});
+
+describe('getWorkspaceSize', () => {
+  it('returns zero for an empty workspace', async () => {
+    const result = await getWorkspaceSize({ workspacePath: tmpRoot });
+    expect(result.totalBytes).toBe(0);
+  });
+
+  it('sums file sizes across nested directories', async () => {
+    await write('a.txt', 'hello');
+    await write('sub/b.txt', 'world!');
+    const result = await getWorkspaceSize({ workspacePath: tmpRoot });
+    expect(result.totalBytes).toBe(11);
+  });
+
+  it('skips node_modules', async () => {
+    await write('a.txt', 'ok');
+    await write('node_modules/big.bin', 'x'.repeat(1000));
+    const result = await getWorkspaceSize({ workspacePath: tmpRoot });
+    expect(result.totalBytes).toBe(2);
+  });
+
+  it('skips .git directory', async () => {
+    await write('a.txt', 'ok');
+    await write('.git/objects/pack', 'x'.repeat(5000));
+    const result = await getWorkspaceSize({ workspacePath: tmpRoot });
+    expect(result.totalBytes).toBe(2);
+  });
+
+  it('throws when workspacePath does not exist', async () => {
+    await expect(
+      getWorkspaceSize({ workspacePath: path.join(tmpRoot, 'missing') })
+    ).rejects.toThrow();
   });
 });
 

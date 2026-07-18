@@ -25,6 +25,7 @@ import type {
   FsSizeArgs,
   FsIconArgs,
   FsWorkspaceCreateArgs,
+  FsWorkspaceSizeArgs,
   FsDetectReposArgs,
   FsBuildRepoIdArgs,
   FsScanReposArgs,
@@ -153,6 +154,14 @@ export const fsSelectDirectory = async (): Promise<string | null> =>
 export const fsSize = async (args: FsSizeArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsSize(args), 0);
 
+export const fsWorkspaceSize = async (
+  args: FsWorkspaceSizeArgs
+): Promise<{ totalBytes: number }> =>
+  safeInvoke<{ totalBytes: number }>(
+    (bridge) => bridge.fsWorkspaceSize(args),
+    { totalBytes: 0 }
+  );
+
 export const fsIcon = async (args: FsIconArgs): Promise<void> =>
   safeInvoke<void>((bridge) => bridge.fsIcon(args), undefined);
 
@@ -201,6 +210,7 @@ export const api = {
   gitHooks,
   fsSelectDirectory,
   fsSize,
+  fsWorkspaceSize,
   fsIcon,
   fsWorkspaceList,
   fsWorkspaceCreate,

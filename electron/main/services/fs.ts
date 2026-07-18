@@ -8,7 +8,8 @@ import type {
   FsIconRemoveArgs,
   FsIconSetArgs,
   FsSizeArgs,
-  FsWorkspaceCreateArgs
+  FsWorkspaceCreateArgs,
+  FsWorkspaceSizeArgs
 } from '../../shared/schemas';
 import type { RepoSize, Workspace } from '../../shared/types/fs';
 
@@ -112,6 +113,60 @@ export const getRepoSize = async (args: FsSizeArgs): Promise<RepoSize> => {
   }
 
   return result;
+};
+
+export type WorkspaceSizeResult = { totalBytes: number };
+
+const WORKSPACE_SKIP_DIRS = new Set(['node_modules', '.git']);
+
+export const getWorkspaceSize = async (
+  args: FsWorkspaceSizeArgs
+): Promise<WorkspaceSizeResult> => {
+  const wsPath = await ensureDirectoryExists(args.workspacePath);
+
+  let totalBytes = 0;
+  const dirs: string[] = [wsPath];
+  const inFlight: Set<Promise<void>> = new Set();
+
+  const processDir = async (dir: string): Promise<void> => {
+    let entries: Dirent[];
+    try {
+      entries = await fs.readdir(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+
+    for (const entry of entries) {
+      if (entry.isSymbolicLink()) continue;
+      const fullPath = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (WORKSPACE_SKIP_DIRS.has(entry.name)) continue;
+        dirs.push(fullPath);
+      } else if (entry.isFile()) {
+        try {
+          const stat = await fs.stat(fullPath);
+          totalBytes += stat.size;
+        } catch {
+          continue;
+        }
+      }
+    }
+  };
+
+  while (dirs.length > 0 || inFlight.size > 0) {
+    while (inFlight.size < WALK_CONCURRENCY && dirs.length > 0) {
+      const nextDir = dirs.shift() as string;
+      const promise = processDir(nextDir).finally(() => {
+        inFlight.delete(promise);
+      });
+      inFlight.add(promise);
+    }
+    if (inFlight.size > 0) {
+      await Promise.race(inFlight);
+    }
+  }
+
+  return { totalBytes };
 };
 
 const resolveIconExtension = (sourcePath: string): '.png' | '.jpg' => {

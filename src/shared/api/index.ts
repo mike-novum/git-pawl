@@ -26,6 +26,7 @@ export {
   gitConfig,
   gitHooks,
   fsSize,
+  fsWorkspaceSize,
   fsIcon,
   fsWorkspaceList,
   fsDetectRepos,

@@ -166,6 +166,10 @@ export const fsSizeSchema = z.object({
   repoPath: z.string()
 });
 
+export const fsWorkspaceSizeSchema = z.object({
+  workspacePath: z.string().min(1)
+});
+
 export const fsIconSchema = z.discriminatedUnion('action', [
   z.object({
     action: z.literal('set'),
@@ -246,6 +250,7 @@ export type GitCheckoutArgs = z.infer<typeof gitCheckoutSchema>;
 export type GitBranchArgs = z.infer<typeof gitBranchSchema>;
 export type CurrentBranchArgs = z.infer<typeof currentBranchSchema>;
 export type FsSizeArgs = z.infer<typeof fsSizeSchema>;
+export type FsWorkspaceSizeArgs = z.infer<typeof fsWorkspaceSizeSchema>;
 export type FsIconArgs = z.infer<typeof fsIconSchema>;
 export type FsIconSetArgs = Extract<FsIconArgs, { action: 'set' }>;
 export type FsIconRemoveArgs = Extract<FsIconArgs, { action: 'remove' }>;
