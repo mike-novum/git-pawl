@@ -60,11 +60,11 @@ export const listBranches = (repoPath: string): Promise<string[]> =>
   gitBranch({ repoPath, action: 'list' }) as Promise<string[]>;
 
 export const buildBranches = (
-  rawNames: string[],
+  rawNames: string[] | null | undefined,
   currentBranchName: string | null,
   detached: boolean
 ): Branch[] => {
-  if (rawNames.length === 0) return [];
+  if (!Array.isArray(rawNames) || rawNames.length === 0) return [];
 
   const result = rawNames.map((raw) => {
     const parsed = splitMarker(raw);

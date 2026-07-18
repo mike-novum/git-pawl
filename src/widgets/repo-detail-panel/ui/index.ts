@@ -1,0 +1,1 @@
+export { RepoDetailPanel } from './RepoDetailPanel';

@@ -11,9 +11,10 @@ export const fetchTagList = async (
   signal?: AbortSignal
 ): Promise<Tag[]> => {
   if (signal?.aborted) return [];
-  const promise = listTags(repoPath);
-  if (!promise || typeof (promise as Promise<unknown>).then !== 'function') {
+  try {
+    const result = await listTags(repoPath);
+    return Array.isArray(result) ? result : [];
+  } catch {
     return [];
   }
-  return promise.catch(() => []);
 };

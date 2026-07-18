@@ -1,30 +1,20 @@
-import { useMemo, useState } from 'react';
-import type { FC } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { GitBranch, GitPullRequestArrow, RefreshCw } from 'lucide-react';
+import { useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
 
+import type { Commit } from '@electron/shared/types/git';
+
+import { useCurrentBranch, useBranches } from '@/entities/branch';
 import { useRepository } from '@/entities/repository';
-import { useCurrentBranch } from '@/entities/branch';
-import { useCommit } from '@/features/commit-changes';
-import type { CommitInput } from '@/features/commit-changes';
-import { CommitMessageForm } from '@/widgets/commit-message-form';
-import type { CommitMessage } from '@/widgets/commit-message-form';
-import { CommitGraph } from '@/widgets/commit-graph';
-import { FileChangesPanel } from '@/widgets/file-changes-panel';
-import { TerminalOutput } from '@/widgets/terminal-output';
-import type { TerminalLine } from '@/widgets/terminal-output';
-import {
-  Empty,
-  Panel,
-  PanelGroup,
-  PanelResizeHandle,
-  Spinner
-} from '@/shared/ui';
-import { cn } from '@/shared/lib/theme';
-
-import { BranchTabsSection } from './BranchTabsSection';
-import { RepoHeader } from './RepoHeader';
-
-import type { RepositoryPageProps } from './types';
+import { useStashList } from '@/entities/stash';
+import { useTags } from '@/entities/tag';
+import { gitLog } from '@/shared/api';
+import { Empty, Spinner, useToast } from '@/shared/ui';
+import { RepoDetailPanel } from '@/widgets/repo-detail-panel';
+import { RepoGraph } from '@/widgets/repo-graph-vertical';
+import type { CommitNode } from '@/widgets/repo-graph-vertical';
+import { RepoTree } from '@/widgets/repo-tree';
 
 const decodeRepoId = (id: string | undefined): string | null => {
   if (!id) return null;
@@ -35,103 +25,59 @@ const decodeRepoId = (id: string | undefined): string | null => {
   }
 };
 
-const buildLines = (
-  stdout: string,
-  stderr: string,
-  hash: string
-): TerminalLine[] => {
-  const out: TerminalLine[] = [];
-  const trimmedStdout = stdout.trim();
-  const trimmedStderr = stderr.trim();
-  if (trimmedStdout) {
-    for (const line of trimmedStdout.split('\n')) {
-      out.push({ id: `${hash}-stdout-${out.length}`, kind: 'stdout', text: line });
+const toShortHash = (hash: string): string => hash.slice(0, 7);
+
+const toCommitNodes = (entries: Commit[]): CommitNode[] => {
+  const lanes: number[] = [];
+  return entries.map((e) => {
+    let lane = lanes.indexOf(-1);
+    if (lane === -1) {
+      lane = lanes.length;
+      lanes.push(0);
+    } else {
+      lanes[lane] = e.parents[0] ? 1 : 0;
     }
-  }
-  if (trimmedStderr) {
-    for (const line of trimmedStderr.split('\n')) {
-      out.push({ id: `${hash}-stderr-${out.length}`, kind: 'stderr', text: line });
-    }
-  }
-  return out;
+    return {
+      hash: e.hash,
+      shortHash: toShortHash(e.hash),
+      subject: e.subject,
+      author: e.author.name,
+      timestamp: e.date,
+      parents: e.parents,
+      lane
+    };
+  });
 };
 
-export const RepositoryPage: FC<RepositoryPageProps> = () => {
+export const RepositoryPage: FC = () => {
   const { id } = useParams<{ id: string }>();
   const repoPath = decodeRepoId(id);
+  const toast = useToast();
 
   const { data: repo, isLoading: isRepoLoading } = useRepository(repoPath);
   const branchQuery = useCurrentBranch(repoPath);
-  const commitMutation = useCommit(repoPath ?? '');
+  const { data: branches = [] } = useBranches(repoPath);
+  const { data: tags = [] } = useTags(repoPath);
+  const { data: stash = [] } = useStashList(repoPath);
 
-  const [terminalLines, setTerminalLines] = useState<TerminalLine[]>([]);
+  const logQuery = useQuery({
+    queryKey: ['git-log', repoPath],
+    queryFn: () => gitLog({ repoPath: repoPath as string, maxCount: 100 }),
+    enabled: !!repoPath
+  });
 
-  const appendLines = useMemo(
-    () => (lines: TerminalLine[]) => {
-      setTerminalLines((prev) => [...prev, ...lines]);
-    },
-    []
-  );
+  const commits = Array.isArray(logQuery.data)
+    ? toCommitNodes(logQuery.data as Commit[])
+    : [];
 
-  const handleCommit = (message: CommitMessage): void => {
-    if (!repoPath) return;
-    setTerminalLines([]);
-    commitMutation.mutate(
-      {
-        message,
-        bypassHooks: false
-      } satisfies CommitInput,
-      {
-        onSuccess: (result) => {
-          appendLines(buildLines(result.stdout, result.stderr, result.hash));
-          appendLines([
-            {
-              id: `info-${result.hash}`,
-              kind: 'info',
-              text: `Committed as ${result.hash.slice(0, 7)}`
-            }
-          ]);
-        },
-        onError: (err) => {
-          appendLines([
-            {
-              id: `error-${Date.now()}`,
-              kind: 'stderr',
-              text: err.message
-            }
-          ]);
-        }
-      }
-    );
-  };
-
-  const handleSelectFile = (path: string): void => {
-    appendLines([
-      {
-        id: `select-${path}-${Date.now()}`,
-        kind: 'info',
-        text: `Selected ${path}`
-      }
-    ]);
-  };
-
-  const handleCommitClick = (hash: string): void => {
-    appendLines([
-      {
-        id: `commit-${hash}-${Date.now()}`,
-        kind: 'info',
-        text: `Opened commit ${hash.slice(0, 7)}`
-      }
-    ]);
-  };
+  const [selectedHash, setSelectedHash] = useState<string | null>(null);
 
   if (!repoPath) {
     return (
-      <div className="flex h-full w-full items-center justify-center p-6">
+      <div className="flex h-full items-center justify-center p-6">
         <Empty
           title="No repository selected"
-          description="Open a repository from the workspace to get started."
-          className="max-w-md"
+          description="Open a repository from a workspace."
         />
       </div>
     );
@@ -139,79 +85,97 @@ export const RepositoryPage: FC<RepositoryPageProps> = () => {
 
   if (isRepoLoading) {
     return (
-      <div
-        className="text-muted-foreground flex h-full w-full items-center justify-center gap-2 p-6"
-        role="status"
-        aria-live="polite"
-      >
-        <Spinner className="size-4" />
-        Loading repository...
+      <div className="text-muted-foreground flex h-full items-center justify-center gap-2">
+        <Spinner className="size-4" /> Loading repository...
       </div>
     );
   }
 
   const repoName = repo?.name ?? repoPath.split('/').pop() ?? repoPath;
-  const repoFullPath = repo?.path ?? repoPath;
+  const ahead = branches.reduce((sum, b) => sum + (b.upstream?.ahead ?? 0), 0);
+  const behind = branches.reduce((sum, b) => sum + (b.upstream?.behind ?? 0), 0);
+
+  const selectedCommit = commits.find((c) => c.hash === selectedHash) ?? null;
+
+  const handleCopyHash = (hash: string): void => {
+    void navigator.clipboard.writeText(hash).then(() => {
+      toast.success({ title: 'Hash copied' });
+    });
+  };
 
   return (
     <div className="flex h-full w-full flex-col">
-      <RepoHeader
-        name={repoName}
-        path={repoFullPath}
-        branch={branchQuery.data?.name ?? null}
-        isDetached={branchQuery.data?.detached ?? false}
-        repoPath={repoPath}
-      />
+      <header className="border-border bg-surface flex h-14 shrink-0 items-center justify-between border-b px-4">
+        <div className="flex items-center gap-3">
+          <div className="bg-surface-elevated text-primary flex size-9 items-center justify-center rounded-md">
+            <GitBranch aria-hidden="true" className="size-5" />
+          </div>
+          <div className="flex flex-col">
+            <h1 className="text-foreground text-base font-semibold leading-tight">
+              {repoName}
+            </h1>
+            <div className="text-muted-foreground flex items-center gap-2 font-mono text-xs">
+              <span>{branchQuery.data?.name ?? 'detached'}</span>
+              {ahead > 0 || behind > 0 ? (
+                <span className={behind > 0 ? 'text-warning' : 'text-success'}>
+                  ↑{ahead} ↓{behind}
+                </span>
+              ) : null}
+              <span>
+                {branches.length} branches · {tags.length} tags · {stash.length} stash
+              </span>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            aria-label="Fetch"
+            className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors"
+          >
+            <RefreshCw aria-hidden="true" className="size-4" />
+          </button>
+          <button
+            type="button"
+            aria-label="Pull"
+            className="bg-primary text-primary-foreground hover:shadow-glow flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-all"
+          >
+            <GitPullRequestArrow aria-hidden="true" className="size-3.5" /> Pull
+          </button>
+          <button
+            type="button"
+            aria-label="Push"
+            className="bg-primary text-primary-foreground hover:shadow-glow flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-all"
+          >
+            <GitPullRequestArrow aria-hidden="true" className="size-3.5 -scale-y-100" /> Push
+          </button>
+        </div>
+      </header>
 
-      <div className="min-h-0 flex-1">
-        <PanelGroup orientation="vertical" className="h-full">
-          <Panel defaultSize={55} minSize={25}>
-            <PanelGroup orientation="horizontal" className="h-full">
-              <Panel defaultSize={60} minSize={30}>
-                <CommitGraph
-                  repoPath={repoPath}
-                  className="m-2"
-                  onCommitClick={handleCommitClick}
-                />
-              </Panel>
-              <PanelResizeHandle />
-              <Panel defaultSize={40} minSize={25}>
-                <BranchTabsSection repoPath={repoPath} className="h-full p-2" />
-              </Panel>
-            </PanelGroup>
-          </Panel>
-
-          <PanelResizeHandle />
-
-          <Panel defaultSize={45} minSize={20}>
-            <PanelGroup orientation="horizontal" className="h-full">
-              <Panel defaultSize={55} minSize={30}>
-                <div className={cn('flex h-full min-h-0 flex-col gap-2 p-2')}>
-                  <FileChangesPanel
-                    repoPath={repoPath}
-                    onSelectChange={handleSelectFile}
-                    className="flex-1"
-                  />
-                  <div className="bg-card border-border rounded-md border p-4">
-                    <CommitMessageForm
-                      showBypass
-                      showAmend
-                      isSubmitting={commitMutation.isPending}
-                      onCommit={handleCommit}
-                    />
-                  </div>
-                </div>
-              </Panel>
-              <PanelResizeHandle />
-              <Panel defaultSize={45} minSize={25}>
-                <div className={cn('flex h-full min-h-0 flex-col gap-2 p-2')}>
-                  <h2 className="text-foreground text-sm font-semibold">Output</h2>
-                  <TerminalOutput lines={terminalLines} className="flex-1" />
-                </div>
-              </Panel>
-            </PanelGroup>
-          </Panel>
-        </PanelGroup>
+      <div className="flex min-h-0 flex-1">
+        <RepoTree
+          repoPath={repoPath}
+          selectedCommit={selectedHash}
+          onSelectCommit={setSelectedHash}
+        />
+        <RepoGraph
+          commits={commits}
+          selectedHash={selectedHash}
+          onSelect={setSelectedHash}
+          className="flex-1"
+        />
+        <RepoDetailPanel
+          commit={selectedCommit}
+          onCopyHash={handleCopyHash}
+          onCreatePatch={() => toast.info({ title: 'Patch' })}
+          onRevert={() => toast.info({ title: 'Revert' })}
+          onCherryPick={() => toast.info({ title: 'Cherry-pick' })}
+          onResetToHere={() => toast.info({ title: 'Reset to here' })}
+          uncommittedCount={repo?.status === 'dirty' ? 1 : 0}
+          onCommit={() => toast.info({ title: 'Open commit' })}
+          onStash={() => toast.info({ title: 'Stash' })}
+          onDiscard={() => toast.info({ title: 'Discard' })}
+        />
       </div>
     </div>
   );
