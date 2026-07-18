@@ -1,4 +1,5 @@
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
+import { ChevronDown } from 'lucide-react';
 import type { FC } from 'react';
 
 import { cn } from '@/shared/lib/theme';
@@ -41,12 +42,11 @@ const Trigger: FC<AccordionTriggerProps> = ({ className, children, ...rest }) =>
     {...rest}
   >
     {children}
-    <span
+    <ChevronDown
       aria-hidden
-      className="text-muted-foreground text-xs transition-transform group-data-[panel-open]/trigger:rotate-180"
-    >
-      ▾
-    </span>
+      className="text-muted-foreground shrink-0 transition-transform group-data-[panel-open]/trigger:rotate-180"
+      size={16}
+    />
   </BaseAccordion.Trigger>
 );
 
