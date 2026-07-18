@@ -28,15 +28,25 @@ const decodeRepoId = (id: string | undefined): string | null => {
 const toShortHash = (hash: string): string => hash.slice(0, 7);
 
 const toCommitNodes = (entries: Commit[]): CommitNode[] => {
-  const lanes: number[] = [];
+  const allHashes = new Set(entries.map((e) => e.hash));
+  const laneHeads: (string | null)[] = [];
+
   return entries.map((e) => {
-    let lane = lanes.indexOf(-1);
+    let lane = laneHeads.findIndex(
+      (head) => head !== null && e.parents.includes(head)
+    );
+
     if (lane === -1) {
-      lane = lanes.length;
-      lanes.push(0);
-    } else {
-      lanes[lane] = e.parents[0] ? 1 : 0;
+      lane = laneHeads.findIndex((head) => head === null);
+      if (lane === -1) {
+        lane = laneHeads.length;
+        laneHeads.push(null);
+      }
     }
+
+    const nextParent = e.parents.find((p) => allHashes.has(p));
+    laneHeads[lane] = nextParent ?? null;
+
     return {
       hash: e.hash,
       shortHash: toShortHash(e.hash),
@@ -98,9 +108,14 @@ export const RepositoryPage: FC = () => {
   const selectedCommit = commits.find((c) => c.hash === selectedHash) ?? null;
 
   const handleCopyHash = (hash: string): void => {
-    void navigator.clipboard.writeText(hash).then(() => {
-      toast.success({ title: 'Hash copied' });
-    });
+    void navigator.clipboard
+      .writeText(hash)
+      .then(() => {
+        toast.success({ title: 'Hash copied' });
+      })
+      .catch(() => {
+        toast.error({ title: 'Failed to copy hash' });
+      });
   };
 
   return (
