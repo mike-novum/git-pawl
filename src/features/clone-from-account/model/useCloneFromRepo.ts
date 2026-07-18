@@ -2,16 +2,48 @@ import { useEffect, useState } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
 
 import { useAccountList, type Account } from '@/entities/account';
-import { useCloneRepo, type UseCloneRepoResult } from '@/features/clone-repo';
-import {
-  useAccountRepos,
-  type AccountReposProvider,
-  type RepoInfo
-} from '@/features/account-repos';
 
 export type CloneFromRepoInput = {
   repo: RepoInfo;
   destPath: string;
+};
+
+export type UseCloneRepoInput = {
+  url: string;
+  destPath: string;
+};
+
+export type UseCloneRepoOptions = {
+  onSuccess?: () => void;
+  onError?: (error: Error) => void;
+};
+
+export type UseCloneRepoResult = {
+  mutate: (input: UseCloneRepoInput, options?: UseCloneRepoOptions) => void;
+  isPending: boolean;
+  error: Error | null;
+  progress: string | null;
+};
+
+export type AccountReposProvider = 'github' | 'gitlab';
+
+export type RepoInfo = {
+  id: string;
+  name: string;
+  fullName: string;
+  url: string;
+  defaultBranch: string;
+  isPrivate: boolean;
+};
+
+export type AccountReposArgs = {
+  provider: AccountReposProvider;
+  accountId: string;
+};
+
+export type UseCloneFromRepoDeps = {
+  useCloneRepo: () => UseCloneRepoResult;
+  useAccountRepos: (args: AccountReposArgs) => UseQueryResult<RepoInfo[]>;
 };
 
 export type UseCloneFromRepoResult = {
@@ -39,7 +71,35 @@ export const buildCloneDestPath = (
   return `${root}/${trimmed}`;
 };
 
-export const useCloneFromRepo = (): UseCloneFromRepoResult => {
+const NOOP_USE_CLONE_REPO = (): UseCloneRepoResult => ({
+  mutate: () => undefined,
+  isPending: false,
+  error: null,
+  progress: null
+});
+
+const EMPTY_REPOS_QUERY = {
+  data: [],
+  isLoading: false,
+  isError: false,
+  isPending: false,
+  isFetching: false,
+  isRefetching: false,
+  status: 'success',
+  error: null,
+  fetchStatus: 'idle'
+} as unknown as UseQueryResult<RepoInfo[]>;
+
+const NOOP_USE_ACCOUNT_REPOS = (
+  _args: AccountReposArgs
+): UseQueryResult<RepoInfo[]> => EMPTY_REPOS_QUERY;
+
+export const useCloneFromRepo = (
+  deps?: Partial<UseCloneFromRepoDeps>
+): UseCloneFromRepoResult => {
+  const useCloneRepo = deps?.useCloneRepo ?? NOOP_USE_CLONE_REPO;
+  const useAccountRepos = deps?.useAccountRepos ?? NOOP_USE_ACCOUNT_REPOS;
+
   const accountsQuery = useAccountList();
   const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
   const [cloningRepoId, setCloningRepoId] = useState<string | null>(null);

@@ -21,7 +21,8 @@ import {
 
 import {
   buildCloneDestPath,
-  useCloneFromRepo
+  useCloneFromRepo,
+  type UseCloneFromRepoDeps
 } from '../model';
 
 import type { CloneFromAccountDialogProps } from './types';
@@ -42,7 +43,8 @@ const filterRepos = <T extends { name: string; fullName: string }>(
 export const CloneFromAccountDialog: FC<CloneFromAccountDialogProps> = ({
   open,
   onOpenChange,
-  activeWorkspace
+  activeWorkspace,
+  deps
 }) => {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -55,6 +57,7 @@ export const CloneFromAccountDialog: FC<CloneFromAccountDialogProps> = ({
           <CloneFromAccountDialogBody
             activeWorkspace={activeWorkspace}
             onClose={() => onOpenChange(false)}
+            deps={deps}
           />
         </Dialog.Content>
       </Dialog.Portal>
@@ -65,11 +68,13 @@ export const CloneFromAccountDialog: FC<CloneFromAccountDialogProps> = ({
 type CloneFromAccountDialogBodyProps = {
   activeWorkspace: CloneFromAccountDialogProps['activeWorkspace'];
   onClose: () => void;
+  deps?: Partial<UseCloneFromRepoDeps>;
 };
 
 const CloneFromAccountDialogBody: FC<CloneFromAccountDialogBodyProps> = ({
   activeWorkspace,
-  onClose
+  onClose,
+  deps
 }) => {
   const toast = useToast();
   const {
@@ -84,7 +89,7 @@ const CloneFromAccountDialogBody: FC<CloneFromAccountDialogBodyProps> = ({
     clone,
     cloningRepoId,
     setCloningRepoId
-  } = useCloneFromRepo();
+  } = useCloneFromRepo(deps);
 
   const [search, setSearch] = useState('');
 

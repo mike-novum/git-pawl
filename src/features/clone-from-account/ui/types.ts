@@ -1,3 +1,5 @@
+import type { UseCloneFromRepoDeps } from '../model';
+
 export type ActiveWorkspace = {
   id: string;
   name: string;
@@ -8,4 +10,5 @@ export type CloneFromAccountDialogProps = {
   open: boolean;
   onOpenChange: (next: boolean) => void;
   activeWorkspace: ActiveWorkspace;
+  deps?: Partial<UseCloneFromRepoDeps>;
 };

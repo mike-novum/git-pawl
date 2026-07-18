@@ -1,9 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import type { FC } from 'react';
 import { Check, ChevronDown, LogOut, Plus } from 'lucide-react';
 
 import { AccountAvatar } from '@/entities/account';
-import { ConnectAccountDialog } from '@/features/auth-login';
 import { useToast } from '@/shared/ui';
 import {
   DropdownMenuContent,
@@ -23,7 +22,8 @@ import { useAccountSwitcher } from '../model';
 import type { AccountSwitcherMenuProps } from './types';
 
 export const AccountSwitcherMenu: FC<AccountSwitcherMenuProps> = ({
-  className
+  className,
+  renderConnectDialog
 }) => {
   const {
     accounts,
@@ -35,7 +35,6 @@ export const AccountSwitcherMenu: FC<AccountSwitcherMenuProps> = ({
     remove
   } = useAccountSwitcher();
   const toast = useToast();
-  const [addOpen, setAddOpen] = useState(false);
 
   const others = useMemo(
     () =>
@@ -60,6 +59,11 @@ export const AccountSwitcherMenu: FC<AccountSwitcherMenuProps> = ({
       title: 'Account disconnected',
       description: `@${login}`
     });
+  };
+
+  const handleAdd = (): void => {
+    if (!renderConnectDialog) return;
+    renderConnectDialog();
   };
 
   return (
@@ -191,7 +195,10 @@ export const AccountSwitcherMenu: FC<AccountSwitcherMenuProps> = ({
               ) : null}
 
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => setAddOpen(true)}>
+              <DropdownMenuItem
+                disabled={!renderConnectDialog}
+                onClick={handleAdd}
+              >
                 <Plus
                   aria-hidden="true"
                   className="text-muted-foreground size-4"
@@ -202,8 +209,6 @@ export const AccountSwitcherMenu: FC<AccountSwitcherMenuProps> = ({
           </DropdownMenuPositioner>
         </DropdownMenuPortal>
       </DropdownMenuRoot>
-
-      <ConnectAccountDialog open={addOpen} onOpenChange={setAddOpen} />
     </>
   );
 };

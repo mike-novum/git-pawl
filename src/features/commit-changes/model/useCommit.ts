@@ -4,9 +4,8 @@ import {
   type UseMutationResult
 } from '@tanstack/react-query';
 
+import { useSelectedFiles } from '@/entities/file-change';
 import { useToast } from '@/shared/ui';
-
-import { useSelectedFiles } from '@/features/select-files';
 
 import type { CommitInput, CommitMessage, CommitResult } from './types';
 
