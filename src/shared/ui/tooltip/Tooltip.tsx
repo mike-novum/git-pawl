@@ -41,12 +41,30 @@ Popup.displayName = 'Tooltip.Popup';
 export const Arrow: FC<TooltipArrowProps> = ({ className, ...props }) => (
   <BaseTooltip.Arrow
     className={cn(
-      'fill-background drop-shadow-sm',
-      '[&>svg]:fill-background [&>svg]:stroke-border [&>svg]:[stroke-width:1]',
+      'group/arrow flex items-center justify-center',
+      'data-[side=top]:-bottom-[5px]',
+      'data-[side=bottom]:-top-[5px]',
+      'data-[side=left]:-right-[5px]',
+      'data-[side=right]:-left-[5px]',
       className
     )}
     {...props}
-  />
+  >
+    <svg
+      width="10"
+      height="10"
+      viewBox="0 0 10 10"
+      aria-hidden
+      className={cn(
+        'block fill-background stroke-border [stroke-width:1]',
+        'group-data-[side=top]/arrow:rotate-180',
+        'group-data-[side=left]/arrow:rotate-90',
+        'group-data-[side=right]/arrow:-rotate-90'
+      )}
+    >
+      <path d="M5 0 L10 10 L0 10 Z" />
+    </svg>
+  </BaseTooltip.Arrow>
 );
 
 Arrow.displayName = 'Tooltip.Arrow';

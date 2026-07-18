@@ -21,7 +21,7 @@ export const Default: Story = {
 
 export const SideVariants: Story = {
   render: () => (
-    <div className="flex flex-wrap items-center gap-6 p-12">
+    <div className="flex flex-wrap items-center justify-center gap-12 p-16">
       <Tooltip content="Top tooltip" side="top">
         <Button variant="secondary">Top</Button>
       </Tooltip>
