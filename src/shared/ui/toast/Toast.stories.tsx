@@ -82,3 +82,30 @@ export const Default: Story = {
 export const WithClose: Story = {
   render: () => <NonAutoDemo />
 };
+
+const VariantPreview: FC<{
+  title: string;
+  description: string;
+  type: 'default' | 'success' | 'error' | 'info';
+}> = ({ title, description, type }) => (
+  <Toast.Root toast={{ id: title, title, description, type }}>
+    <Toast.Content>
+      <Toast.Title>{title}</Toast.Title>
+      <Toast.Description>{description}</Toast.Description>
+    </Toast.Content>
+    <Toast.Close />
+  </Toast.Root>
+);
+
+const VariantsPreview: FC = () => (
+  <div className="flex w-[360px] flex-col gap-2">
+    <VariantPreview title="Heads up" description="Something happened." type="default" />
+    <VariantPreview title="Saved" description="Your changes have been saved." type="success" />
+    <VariantPreview title="Error" description="Something failed." type="error" />
+    <VariantPreview title="Info" description="Just letting you know." type="info" />
+  </div>
+);
+
+export const Variants: Story = {
+  render: () => <VariantsPreview />
+};

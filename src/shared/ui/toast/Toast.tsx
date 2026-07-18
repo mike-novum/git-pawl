@@ -67,13 +67,13 @@ export const Root: FC<ToastRootProps> = ({ className, toast, ...props }) => (
   <BaseToast.Root
     toast={toast}
     className={cn(
-      'flex items-start gap-3 rounded-md border border-border bg-background p-4 text-foreground shadow-md',
+      'flex items-start gap-3 rounded-md border border-border bg-gradient-to-br from-card to-background p-4 text-foreground shadow-md',
       'transition-all duration-[var(--duration-base)] ease-[var(--ease-fast)]',
       'data-[starting-style]:translate-x-full data-[starting-style]:opacity-0',
       'data-[ending-style]:translate-x-full data-[ending-style]:opacity-0',
-      'data-[type=success]:border-green-600',
-      'data-[type=error]:border-red-600',
-      'data-[type=info]:border-primary',
+      'data-[type=success]:from-emerald-500/10 data-[type=success]:border-green-600',
+      'data-[type=error]:from-red-500/10 data-[type=error]:border-red-600',
+      'data-[type=info]:from-primary/10 data-[type=info]:border-primary',
       className
     )}
     {...props}
