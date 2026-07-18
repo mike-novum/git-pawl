@@ -41,7 +41,7 @@ export default defineConfig({
     }
   },
   renderer: {
-    root: resolve(__dirname, 'src/app'),
+    root: resolve(__dirname, 'src/app/entrypoint'),
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
