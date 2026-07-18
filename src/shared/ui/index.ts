@@ -53,6 +53,8 @@ export {
 export { Skeleton } from './skeleton/index';
 export { Slider } from './slider/index';
 export { Spinner } from './spinner/index';
+export { StatusDot } from './status-dot/index';
+export type { StatusDotProps, StatusDotVariant } from './status-dot/index';
 export { Switch } from './switch/index';
 export {
   Table,

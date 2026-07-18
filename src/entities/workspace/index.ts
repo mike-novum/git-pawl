@@ -3,9 +3,14 @@ export {
   useCreateWorkspace,
   useWorkspace,
   useWorkspaceList,
-  useWorkspaceExtraRepoPaths
+  useWorkspaceExtraRepoPaths,
+  useWorkspaceSize,
+  useWorkspaceStatus,
+  invalidateWorkspaceSize,
+  invalidateWorkspaceStatus
 } from './model';
 export type { UseCreateWorkspaceResult } from './model';
+export type { WorkspaceStatus } from './model';
 export {
   WORKSPACE_LIST_QUERY_KEY,
   fetchCreateWorkspace,
@@ -20,5 +25,5 @@ export type {
 
 export { createWorkspace, listWorkspaces, selectDirectory } from './api';
 
-export { scanRepos } from './lib';
+export { scanRepos, formatBytes } from './lib';
 export type { ScanReposOptions } from './lib';
