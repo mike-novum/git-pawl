@@ -44,7 +44,7 @@ const Template: FC<TriggerStoryProps> = ({ label }) => (
 );
 
 const meta: Meta<typeof Template> = {
-  title: 'shared/DropdownMenu',
+  title: 'UI/DropdownMenu',
   component: Template,
   args: {
     label: 'Open menu'

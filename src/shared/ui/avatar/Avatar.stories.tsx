@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { AvatarFallback, AvatarImage, AvatarRoot } from './Avatar';
 
 const meta: Meta<typeof AvatarRoot> = {
-  title: 'shared/Avatar',
+  title: 'UI/Avatar',
   component: AvatarRoot,
   args: {
     size: 'md'

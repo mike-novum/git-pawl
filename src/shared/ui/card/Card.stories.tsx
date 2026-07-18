@@ -33,7 +33,7 @@ const Template: FC<CardStoryProps> = ({ title, description, content, footer }) =
 );
 
 const meta: Meta<typeof Template> = {
-  title: 'shared/Card',
+  title: 'UI/Card',
   component: Template,
   args: {
     title: 'Repository',

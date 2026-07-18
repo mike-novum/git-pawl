@@ -56,7 +56,7 @@ const Template: FC<SheetStoryProps> = ({
 );
 
 const meta: Meta<typeof Template> = {
-  title: 'shared/Sheet',
+  title: 'UI/Sheet',
   component: Template,
   args: {
     triggerLabel: 'Open sheet',

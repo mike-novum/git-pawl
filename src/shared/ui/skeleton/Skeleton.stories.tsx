@@ -19,7 +19,7 @@ const CardSkeleton: FC<CardSkeletonProps> = ({ lines }) => (
 );
 
 const meta: Meta<typeof CardSkeleton> = {
-  title: 'shared/Skeleton',
+  title: 'UI/Skeleton',
   component: CardSkeleton,
   args: {
     lines: 3

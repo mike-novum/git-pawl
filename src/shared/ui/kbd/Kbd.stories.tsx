@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Kbd } from './Kbd';
 
 const meta: Meta<typeof Kbd> = {
-  title: 'shared/Kbd',
+  title: 'UI/Kbd',
   component: Kbd
 };
 

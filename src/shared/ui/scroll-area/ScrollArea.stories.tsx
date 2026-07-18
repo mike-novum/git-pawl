@@ -13,7 +13,7 @@ const ITEMS = Array.from({ length: 30 }, (_, i) => ({
 }));
 
 const meta: Meta<typeof ScrollAreaRoot> = {
-  title: 'shared/ScrollArea',
+  title: 'UI/ScrollArea',
   component: ScrollAreaRoot
 };
 

@@ -64,7 +64,7 @@ const ThemePreview: FC<ThemePreviewProps> = ({ mode }) => (
 );
 
 const meta: Meta = {
-  title: 'shared/lib/theme',
+  title: 'UI/Theme',
   parameters: {
     layout: 'fullscreen'
   }
