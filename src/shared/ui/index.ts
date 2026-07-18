@@ -17,6 +17,8 @@ export {
 export { Checkbox } from './checkbox/index';
 export { Command } from './command/index';
 export { Dialog } from './dialog/index';
+export { Drawer } from './drawer/index';
+export type { DrawerProps } from './drawer/index';
 export {
   DropdownMenuRoot as DropdownMenu,
   DropdownMenuTrigger,

@@ -1,44 +1,46 @@
-import type { ReactNode } from 'react';
-
-export type WorkspaceHeaderProps = {
-  name: string;
-  path: string;
-  onAddRepo: () => void;
-  onClone: () => void;
-  className?: string;
-};
-
-export type RepoSearchInputProps = {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  className?: string;
-};
-
-export type RepoGridProps = {
-  repos: import('@/entities/repository').Repository[];
-  onRepoClick: (repo: import('@/entities/repository').Repository) => void;
-  className?: string;
-};
-
-export type NoWorkspaceStateProps = {
-  onCreate: () => void;
-};
-
-export type NoReposStateProps = {
-  onAddRepo: () => void;
-  onClone: () => void;
-};
-
-export type NoResultsStateProps = {
-  query: string;
-  onReset: () => void;
-};
+import type { Repository } from '@/entities/repository';
+import type { Workspace } from '@/entities/workspace';
 
 export type WorkspacePageProps = Record<string, never>;
 
-export type EmptyStateProps = {
-  title: string;
-  description?: string;
-  action?: ReactNode;
+export type WorkspaceHeroProps = {
+  workspace: Workspace;
+  repoCount: number;
+  modifiedCount: number;
+  sizeBytes: number | null;
+  onSettings: () => void;
+};
+
+export type WorkspaceToolbarProps = {
+  query: string;
+  onQueryChange: (q: string) => void;
+  grouped: boolean;
+  onGroupedChange: (g: boolean) => void;
+  onAddRepo: () => void;
+  onClone: () => void;
+};
+
+export type RepoGroupProps = {
+  name: string;
+  repos: Repository[];
+  sizeBytesByRepo: Map<string, number>;
+  onRepoClick: (repo: Repository) => void;
+};
+
+export type RepoCardProps = {
+  repo: Repository;
+  sizeBytes: number | null;
+  onClick: () => void;
+};
+
+export type EmptyWorkspaceProps = {
+  onAddRepo: () => void;
+  onClone: () => void;
+};
+
+export type WorkspaceSettingsDrawerProps = {
+  workspace: Workspace;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onDelete: () => void;
 };

@@ -1,143 +1,157 @@
-import { useCallback, useState } from 'react';
-import type { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useMemo, useState, type FC } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
-import { useRepoSearch } from '@/features/search-repos';
 import { useAddExistingRepo } from '@/features/add-existing-repo';
+import { useRepoSearch } from '@/features/search-repos';
 import {
   useActiveWorkspace,
+  useWorkspaceById,
   useWorkspaceExtraRepoPaths
 } from '@/entities/workspace';
-import { useRepositoryList } from '@/entities/repository';
 import type { Repository } from '@/entities/repository';
-import { Spinner, useToast, Button } from '@/shared/ui';
+import { useRepositoryList } from '@/entities/repository';
+import { useToast } from '@/shared/ui';
 
-import { NoReposState } from './NoReposState';
-import { NoResultsState } from './NoResultsState';
-import { NoWorkspaceState } from './NoWorkspaceState';
-import { RepoGrid } from './RepoGrid';
-import { RepoSearchInput } from './RepoSearchInput';
-import { WorkspaceHeader } from './WorkspaceHeader';
+import { EmptyWorkspace } from './EmptyWorkspace';
+import { RepoGroup } from './RepoGroup';
+import { WorkspaceHero } from './WorkspaceHero';
+import { WorkspaceSettingsDrawer } from './WorkspaceSettingsDrawer';
+import { WorkspaceToolbar } from './WorkspaceToolbar';
 
-import type { WorkspacePageProps } from '../types';
-
-const basename = (path: string): string => {
-  const cleaned = path.replace(/[\\/]+$/, '');
-  const parts = cleaned.split(/[\\/]/);
-  return parts[parts.length - 1] ?? cleaned;
-};
-
-export const WorkspacePage: FC<WorkspacePageProps> = () => {
+export const WorkspacePage: FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const { id } = useParams<{ id: string }>();
+  const setActive = useAppStoreSetActive();
   const active = useActiveWorkspace();
-  const workspacePath = active?.path ?? null;
-  const workspaceId = active?.id ?? null;
+  const explicit = useWorkspaceById(id ?? null);
+  const workspace = explicit ?? active;
+
+  useEffect(() => {
+    if (workspace && id && workspace.id !== id) {
+      setActive(workspace.id);
+    }
+  }, [id, workspace, setActive]);
+
+  const workspacePath = workspace?.path ?? null;
+  const workspaceId = workspace?.id ?? null;
   const { data: extraRepoPaths = [] } = useWorkspaceExtraRepoPaths(workspaceId);
-  const { data, isLoading, isError, refetch } = useRepositoryList(
-    workspacePath,
-    extraRepoPaths
-  );
-  const repos = data ?? [];
+  const { data: repos = [], isLoading } = useRepositoryList(workspacePath, extraRepoPaths);
   const { query, setQuery, results: visibleRepos } = useRepoSearch(repos);
   const [createOpen, setCreateOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [grouped, setGrouped] = useLocalStorageBool('workspace-view-mode', true);
   const { mutate: addExistingRepo } = useAddExistingRepo();
 
   const handleAddRepo = useCallback((): void => {
     if (!workspaceId) return;
-    addExistingRepo(
-      { workspaceId },
-      {
-        onSuccess: (result) => {
-          if (!result) return;
-          toast.success({
-            title: 'Repository added',
-            description: basename(result.repoPath)
-          });
-        },
-        onError: (error) => {
-          toast.error({
-            title: 'Failed to add repository',
-            description: error.message
-          });
-        }
-      }
-    );
-  }, [addExistingRepo, toast, workspaceId]);
+    addExistingRepo({ workspaceId });
+  }, [addExistingRepo, workspaceId]);
 
   const handleClone = useCallback((): void => {
     navigate('/clone');
   }, [navigate]);
 
-  const handleCreateWorkspace = useCallback((): void => {
-    setCreateOpen(true);
-  }, []);
-
   const handleRepoClick = useCallback(
     (repo: Repository): void => {
-      navigate(`/repo/${encodeURIComponent(repo.id)}`);
+      navigate(`/repos/${encodeURIComponent(repo.id)}`);
     },
     [navigate]
   );
 
-  if (!active) {
+  const handleDelete = useCallback((): void => {
+    toast.success({ title: 'Workspace deleted' });
+    navigate('/workspaces');
+  }, [navigate, toast]);
+
+  const groups = useMemo(() => {
+    if (!grouped) {
+      return [{ name: 'All', repos: visibleRepos }];
+    }
+    const byGroup = new Map<string, Repository[]>();
+    for (const repo of visibleRepos) {
+      const rel = workspacePath ? repo.path.replace(workspacePath, '').replace(/^[\\/]/, '') : repo.name;
+      const group = rel.includes('/') ? rel.split('/')[0] ?? 'Root' : 'Root';
+      const arr = byGroup.get(group) ?? [];
+      arr.push(repo);
+      byGroup.set(group, arr);
+    }
+    return Array.from(byGroup.entries()).map(([name, list]) => ({ name, repos: list }));
+  }, [visibleRepos, grouped, workspacePath]);
+
+  if (!workspace) {
     return (
       <>
-        <div className="flex h-full w-full flex-col">
-          <NoWorkspaceState onCreate={handleCreateWorkspace} />
-        </div>
+        <div className="p-8 text-sm text-muted-foreground">Workspace not found.</div>
         <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
       </>
     );
   }
 
+  const modifiedCount = repos.filter((r) => r.status === 'dirty').length;
+
   return (
     <>
-      <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-6">
-        <WorkspaceHeader
-          name={active.name}
-          path={active.path}
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-8">
+        <WorkspaceHero
+          workspace={workspace}
+          repoCount={repos.length}
+          modifiedCount={modifiedCount}
+          sizeBytes={null}
+          onSettings={() => setSettingsOpen(true)}
+        />
+
+        <WorkspaceToolbar
+          query={query}
+          onQueryChange={setQuery}
+          grouped={grouped}
+          onGroupedChange={setGrouped}
           onAddRepo={handleAddRepo}
           onClone={handleClone}
         />
 
-        <RepoSearchInput value={query} onChange={setQuery} />
-
         {isLoading ? (
-          <div
-            className="flex flex-1 items-center justify-center"
-            role="status"
-            aria-label="Loading repositories"
-          >
-            <Spinner size="lg" />
-          </div>
-        ) : isError ? (
-          <div className="border-border bg-muted/30 text-foreground flex flex-1 flex-col items-center justify-center gap-3 rounded-md border border-dashed p-8 text-center">
-            <h2 className="text-lg font-semibold">Failed to load repositories</h2>
-            <p className="text-muted-foreground text-sm">
-              Check the workspace folder and try again.
-            </p>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => {
-                void refetch();
-              }}
-            >
-              Retry
-            </Button>
+          <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+            Loading...
           </div>
         ) : repos.length === 0 ? (
-          <NoReposState onAddRepo={handleAddRepo} onClone={handleClone} />
-        ) : visibleRepos.length === 0 ? (
-          <NoResultsState query={query} onReset={() => setQuery('')} />
+          <EmptyWorkspace onAddRepo={handleAddRepo} onClone={handleClone} />
         ) : (
-          <RepoGrid repos={visibleRepos} onRepoClick={handleRepoClick} />
+          <div className="flex flex-col gap-6">
+            {groups.map((g) => (
+              <RepoGroup
+                key={g.name}
+                name={g.name}
+                repos={g.repos}
+                sizeBytesByRepo={new Map()}
+                onRepoClick={handleRepoClick}
+              />
+            ))}
+          </div>
         )}
       </div>
+
       <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <WorkspaceSettingsDrawer
+        workspace={workspace}
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        onDelete={handleDelete}
+      />
     </>
+  );
+};
+
+import { useEffect } from 'react';
+import { useAppStore } from '@/app/store';
+import { useLocalStorageBool } from '@/shared/lib/framework';
+
+const useAppStoreSetActive = (): ((id: string) => void) => {
+  const setActiveWorkspaceId = useAppStore((s) => s.setActiveWorkspaceId);
+  return useCallback(
+    (wid: string) => setActiveWorkspaceId(wid),
+    [setActiveWorkspaceId]
   );
 };
 

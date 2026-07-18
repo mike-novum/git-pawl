@@ -47,6 +47,12 @@ export const useActiveWorkspace = (): Workspace | null => {
   return useWorkspace(activeId);
 };
 
+export const useWorkspaceById = (id: string | null): Workspace | null => {
+  const { data: workspaces = [] } = useWorkspaceList();
+  if (!id) return null;
+  return workspaces.find((w) => w.id === id) ?? null;
+};
+
 export const useCreateWorkspace = (): UseCreateWorkspaceResult => {
   const queryClient = useQueryClient();
 

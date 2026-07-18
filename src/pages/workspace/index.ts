@@ -1,20 +1,10 @@
-export {
-  WorkspacePage,
-  WorkspaceHeader,
-  RepoSearchInput,
-  RepoGrid,
-  EmptyState,
-  NoWorkspaceState,
-  NoReposState,
-  NoResultsState
-} from './ui';
+export { WorkspacePage } from './ui';
 export type {
-  EmptyStateProps,
-  WorkspaceHeaderProps,
-  RepoSearchInputProps,
-  RepoGridProps,
-  NoWorkspaceStateProps,
-  NoReposStateProps,
-  NoResultsStateProps,
-  WorkspacePageProps
+  WorkspacePageProps,
+  WorkspaceHeroProps,
+  WorkspaceToolbarProps,
+  RepoGroupProps,
+  RepoCardProps,
+  EmptyWorkspaceProps,
+  WorkspaceSettingsDrawerProps
 } from './types';

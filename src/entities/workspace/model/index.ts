@@ -2,6 +2,7 @@ export {
   useActiveWorkspace,
   useCreateWorkspace,
   useWorkspace,
+  useWorkspaceById,
   useWorkspaceList,
   useWorkspaceSize,
   useWorkspaceStatus,
