@@ -39,7 +39,8 @@
 - Для коммитов используй Convetional Commits Angular anotation https://github.com/angular/angular/blob/22b96b9/CONTRIBUTING.md#-commit-message-guidelines
 
 - Сообщения коммитов пиши на русском
-- не делай коммиты слишком мелкими 1 бизнес-фича - 1 коммит
+- действие в сообщении коммита описывай через страдательные причастия (исправлен компонент Х, добавлен новый раздел Y)
+- не делай коммиты слишком мелкими (желательно 1 бизнес-фича - 1 коммит)
 
 - ветки называй по паттерну  `тип-задачи/краткое-описание-сути`, например `feat/list-of-repos` (типы задачи полностью повторяют type из Convetional Commits - build, chore, ci, test, feat, fix, perf, refactor, docs, style)
 
