@@ -1,4 +1,4 @@
-export { SettingsDialog } from './ui';
+export { SettingsDialog, SettingsForm } from './ui';
 export type {
   SettingsDialogProps,
   SettingsFormProps,
