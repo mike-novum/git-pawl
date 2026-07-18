@@ -11,6 +11,12 @@ import { useAppStore } from '@/app/store';
 import { createWorkspace, selectDirectory } from '../api';
 
 import {
+  getCachedWorkspaceStatus,
+  invalidateWorkspaceStatus,
+  type WorkspaceStatus
+} from '../lib/computeWorkspaceStatus';
+
+import {
   fetchCreateWorkspace,
   fetchWorkspaceList,
   WORKSPACE_LIST_QUERY_KEY
@@ -96,4 +102,20 @@ export const useWorkspaceSize = (
   };
 };
 
-export { invalidateWorkspaceSize };
+export const useWorkspaceStatus = (
+  workspacePath: string | null
+): { status: WorkspaceStatus; scannedAt: number | null } => {
+  const query = useQuery({
+    queryKey: ['workspace-status', workspacePath],
+    queryFn: () => getCachedWorkspaceStatus(workspacePath as string),
+    enabled: !!workspacePath,
+    staleTime: 30 * 1000
+  });
+
+  return {
+    status: query.data?.status ?? 'unknown',
+    scannedAt: query.data?.scannedAt ?? null
+  };
+};
+
+export { invalidateWorkspaceSize, invalidateWorkspaceStatus };

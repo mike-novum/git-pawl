@@ -4,7 +4,9 @@ export {
   useWorkspace,
   useWorkspaceList,
   useWorkspaceSize,
-  invalidateWorkspaceSize
+  useWorkspaceStatus,
+  invalidateWorkspaceSize,
+  invalidateWorkspaceStatus
 } from './useWorkspace';
 export type { UseCreateWorkspaceResult } from './useWorkspace';
 export {
@@ -18,3 +20,4 @@ export {
   WORKSPACE_EXTRA_REPOS_QUERY_KEY
 } from './useWorkspaceExtraRepoPaths';
 export type { Workspace, WorkspaceCreateArgs, WorkspaceListResult } from './types';
+export type { WorkspaceStatus } from '../lib/computeWorkspaceStatus';
