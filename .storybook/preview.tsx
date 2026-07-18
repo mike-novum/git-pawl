@@ -1,4 +1,5 @@
 import type { Decorator, Preview } from '@storybook/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import '../src/app/styles/globals.css';
 
@@ -6,6 +7,15 @@ import { ThemeProvider } from '@/shared/lib/theme';
 
 import { ThemeRoot } from './ThemeRoot';
 import type { StorybookTheme } from './types';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false
+    }
+  }
+});
 
 const withTheme: Decorator = (Story, context) => {
   const globals = context.globals as { theme?: StorybookTheme };
@@ -20,8 +30,14 @@ const withTheme: Decorator = (Story, context) => {
   );
 };
 
+const withQueryClient: Decorator = (Story) => (
+  <QueryClientProvider client={queryClient}>
+    <Story />
+  </QueryClientProvider>
+);
+
 const preview: Preview = {
-  decorators: [withTheme],
+  decorators: [withTheme, withQueryClient],
   globalTypes: {
     theme: {
       name: 'Theme',
