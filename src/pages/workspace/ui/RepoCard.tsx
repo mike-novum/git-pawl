@@ -1,7 +1,6 @@
 import { GitBranch } from 'lucide-react';
 import type { FC } from 'react';
 
-import { formatBytes } from '@/entities/workspace';
 import type { Repository } from '@/entities/repository';
 import { StatusDot } from '@/shared/ui';
 import { cn } from '@/shared/lib/theme';
@@ -26,7 +25,7 @@ const relativeTime = (ts: number | null): string => {
   return new Date(ts).toLocaleDateString();
 };
 
-export const RepoCard: FC<RepoCardProps> = ({ repo, sizeBytes, onClick }) => (
+export const RepoCard: FC<RepoCardProps> = ({ repo, onClick }) => (
   <button
     type="button"
     onClick={onClick}
@@ -51,7 +50,7 @@ export const RepoCard: FC<RepoCardProps> = ({ repo, sizeBytes, onClick }) => (
       ) : null}
       <div className="text-muted-foreground flex items-center justify-between text-xs">
         <span>{relativeTime(null)}</span>
-        <span className="font-mono">{sizeBytes !== null ? formatBytes(sizeBytes) : '—'}</span>
+        <span className="font-mono">—</span>
       </div>
     </div>
   </button>

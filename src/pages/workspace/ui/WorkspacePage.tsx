@@ -12,6 +12,7 @@ import {
 import type { Repository } from '@/entities/repository';
 import { useRepositoryList } from '@/entities/repository';
 import { useToast } from '@/shared/ui';
+import { useLocalStorageBool } from '@/shared/lib/framework';
 
 import { EmptyWorkspace } from './EmptyWorkspace';
 import { RepoGroup } from './RepoGroup';
@@ -23,16 +24,9 @@ export const WorkspacePage: FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { id } = useParams<{ id: string }>();
-  const setActive = useAppStoreSetActive();
   const active = useActiveWorkspace();
   const explicit = useWorkspaceById(id ?? null);
   const workspace = explicit ?? active;
-
-  useEffect(() => {
-    if (workspace && id && workspace.id !== id) {
-      setActive(workspace.id);
-    }
-  }, [id, workspace, setActive]);
 
   const workspacePath = workspace?.path ?? null;
   const workspaceId = workspace?.id ?? null;
@@ -124,8 +118,8 @@ export const WorkspacePage: FC = () => {
                 key={g.name}
                 name={g.name}
                 repos={g.repos}
-                sizeBytesByRepo={new Map()}
                 onRepoClick={handleRepoClick}
+                onAddRepo={handleAddRepo}
               />
             ))}
           </div>
@@ -140,18 +134,6 @@ export const WorkspacePage: FC = () => {
         onDelete={handleDelete}
       />
     </>
-  );
-};
-
-import { useEffect } from 'react';
-import { useAppStore } from '@/app/store';
-import { useLocalStorageBool } from '@/shared/lib/framework';
-
-const useAppStoreSetActive = (): ((id: string) => void) => {
-  const setActiveWorkspaceId = useAppStore((s) => s.setActiveWorkspaceId);
-  return useCallback(
-    (wid: string) => setActiveWorkspaceId(wid),
-    [setActiveWorkspaceId]
   );
 };
 

@@ -7,15 +7,10 @@ import { RepoCard } from './RepoCard';
 export const RepoGroup: FC<RepoGroupProps> = ({
   name,
   repos,
-  sizeBytesByRepo,
-  onRepoClick
+  onRepoClick,
+  onAddRepo
 }) => {
   const [collapsed, setCollapsed] = useState(false);
-
-  const totalSize = repos.reduce(
-    (sum, r) => sum + (sizeBytesByRepo.get(r.id) ?? 0),
-    0
-  );
 
   return (
     <section className="flex flex-col gap-3">
@@ -31,8 +26,7 @@ export const RepoGroup: FC<RepoGroupProps> = ({
         )}
         {name}
         <span className="text-muted-foreground font-normal">
-          {repos.length} {repos.length === 1 ? 'repo' : 'repos'} ·{' '}
-          {totalSize > 0 ? `${(totalSize / (1024 * 1024)).toFixed(0)} MB` : '—'}
+          {repos.length} {repos.length === 1 ? 'repo' : 'repos'}
         </span>
       </button>
       {!collapsed ? (
@@ -44,12 +38,13 @@ export const RepoGroup: FC<RepoGroupProps> = ({
             <RepoCard
               key={repo.id}
               repo={repo}
-              sizeBytes={sizeBytesByRepo.get(repo.id) ?? null}
               onClick={() => onRepoClick(repo)}
             />
           ))}
           <button
             type="button"
+            onClick={onAddRepo}
+            aria-label={`Add repository to ${name}`}
             className="border-border hover:border-primary hover:bg-primary/5 flex h-32 items-center justify-center gap-2 rounded-lg border border-dashed text-sm transition-colors"
           >
             <Plus aria-hidden="true" className="text-primary size-4" />

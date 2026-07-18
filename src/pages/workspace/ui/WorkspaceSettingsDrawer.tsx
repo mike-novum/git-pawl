@@ -10,6 +10,7 @@ export const WorkspaceSettingsDrawer: FC<WorkspaceSettingsDrawerProps> = ({
   workspace,
   open,
   onOpenChange,
+  onSave = () => {},
   onDelete
 }) => {
   const [name, setName] = useState(workspace.name);
@@ -18,6 +19,11 @@ export const WorkspaceSettingsDrawer: FC<WorkspaceSettingsDrawerProps> = ({
     if (window.confirm('Delete this workspace? Files on disk will stay intact.')) {
       onDelete();
     }
+  };
+
+  const handleDone = (): void => {
+    onSave(name);
+    onOpenChange(false);
   };
 
   return (
@@ -37,7 +43,7 @@ export const WorkspaceSettingsDrawer: FC<WorkspaceSettingsDrawerProps> = ({
             <Trash2 aria-hidden="true" className="size-4" />
             Delete workspace
           </Button>
-          <Button type="button" onClick={() => onOpenChange(false)}>
+          <Button type="button" onClick={handleDone}>
             Done
           </Button>
         </div>

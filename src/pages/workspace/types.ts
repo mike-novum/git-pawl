@@ -23,13 +23,12 @@ export type WorkspaceToolbarProps = {
 export type RepoGroupProps = {
   name: string;
   repos: Repository[];
-  sizeBytesByRepo: Map<string, number>;
   onRepoClick: (repo: Repository) => void;
+  onAddRepo: () => void;
 };
 
 export type RepoCardProps = {
   repo: Repository;
-  sizeBytes: number | null;
   onClick: () => void;
 };
 
@@ -42,5 +41,6 @@ export type WorkspaceSettingsDrawerProps = {
   workspace: Workspace;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSave?: (name: string) => void;
   onDelete: () => void;
 };

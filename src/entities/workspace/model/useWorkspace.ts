@@ -36,21 +36,15 @@ export const useWorkspaceList = (): UseQueryResult<Workspace[]> =>
     queryFn: ({ signal }) => fetchWorkspaceList(signal)
   });
 
-export const useWorkspace = (id: string | null): Workspace | null => {
-  const query = useWorkspaceList();
-  if (!id) return null;
-  return query.data?.find((workspace) => workspace.id === id) ?? null;
-};
-
-export const useActiveWorkspace = (): Workspace | null => {
-  const activeId = useAppStore((state) => state.activeWorkspaceId);
-  return useWorkspace(activeId);
-};
-
 export const useWorkspaceById = (id: string | null): Workspace | null => {
   const { data: workspaces = [] } = useWorkspaceList();
   if (!id) return null;
   return workspaces.find((w) => w.id === id) ?? null;
+};
+
+export const useActiveWorkspace = (): Workspace | null => {
+  const activeId = useAppStore((state) => state.activeWorkspaceId);
+  return useWorkspaceById(activeId);
 };
 
 export const useCreateWorkspace = (): UseCreateWorkspaceResult => {
