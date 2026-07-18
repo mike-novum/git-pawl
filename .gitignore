@@ -15,3 +15,4 @@ coverage
 .storybook-out
 storybook-static
 .claude/worktrees/
+docs/screenshots
