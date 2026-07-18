@@ -1,2 +1,2 @@
 export { AppLayout } from './AppLayout';
-export type { AppLayoutProps, NavItem } from './types';
+export type { AppLayoutProps } from './types';
