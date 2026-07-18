@@ -2,7 +2,6 @@ import type { StorybookConfig } from '@storybook/react-vite';
 import tailwindcss from '@tailwindcss/vite';
 import { mergeConfig } from 'vite';
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 import { resolve } from 'node:path';
 
 const config: StorybookConfig = {
@@ -19,7 +18,7 @@ const config: StorybookConfig = {
     return mergeConfig(
       viteConfig,
       defineConfig({
-        plugins: [react(), tailwindcss()],
+        plugins: [tailwindcss()],
         resolve: {
           alias: {
             '@': resolve(__dirname, '../src'),
