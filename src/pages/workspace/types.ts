@@ -5,9 +5,6 @@ export type WorkspacePageProps = Record<string, never>;
 
 export type WorkspaceHeroProps = {
   workspace: Workspace;
-  repoCount: number;
-  modifiedCount: number;
-  sizeBytes: number | null;
   onSettings: () => void;
 };
 

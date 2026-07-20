@@ -7,6 +7,7 @@ import { Badge } from '@/shared/ui';
 import { AppHeader } from '@/widgets/app-header';
 import { WorkspaceSelector } from '@/widgets/workspace-selector';
 
+import { WorkspaceHeaderMeta } from './WorkspaceHeaderMeta';
 import type { AppLayoutProps } from './types';
 
 const HOMEPAGE_PATH = '/workspaces';
@@ -103,6 +104,11 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
                 <WorkspaceSelector workspaceId={selectorWorkspaceId} />
               ) : null}
             </div>
+          ) : null
+        }
+        metaSlot={
+          variant === 'workspace' && selectorWorkspaceId ? (
+            <WorkspaceHeaderMeta workspaceId={selectorWorkspaceId} />
           ) : null
         }
       />

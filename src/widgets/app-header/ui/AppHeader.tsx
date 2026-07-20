@@ -40,6 +40,7 @@ const IconButton: FC<{ onClick: () => void; label: string; children: ReactNode }
 export const AppHeader: FC<AppHeaderProps> = ({
   variant,
   leftSlot,
+  metaSlot,
   rightSlot,
   hideSettings = false
 }) => {
@@ -51,7 +52,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
 
   return (
     <header className="bg-surface border-border flex h-12 shrink-0 items-center justify-between border-b px-4">
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         {isHome ? (
           <div className="flex items-center gap-2">
             <Cat aria-hidden="true" className="text-primary size-5" />
@@ -60,6 +61,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
         ) : (
           leftSlot
         )}
+        {metaSlot}
       </div>
       <div className="flex items-center gap-1">
         {rightSlot}
