@@ -3,7 +3,6 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ErrorBoundary } from '@/app/providers';
 import { useAppStore } from '@/app/store';
-import { useRepository } from '@/entities/repository';
 import { Badge } from '@/shared/ui';
 import { AppHeader } from '@/widgets/app-header';
 import { WorkspaceSelector } from '@/widgets/workspace-selector';
@@ -25,6 +24,13 @@ const decodeRepoId = (id: string | undefined): string | null => {
   }
 };
 
+const lastPathSegment = (input: string | null): string | null => {
+  if (!input) return null;
+  const trimmed = input.replace(/[/\\]+$/, '');
+  const parts = trimmed.split(/[/\\]/);
+  return parts[parts.length - 1] ?? null;
+};
+
 const extractWorkspaceIdFromPath = (path: string): string | null => {
   const match = WORKSPACE_ID_PATTERN.exec(path);
   return match ? (match[1] ?? null) : null;
@@ -40,8 +46,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   const isRepository = location.pathname.startsWith(REPOSITORY_PATH_PREFIX);
   const variant = isHome ? 'home' : isRepository ? 'repository' : 'workspace';
   const repoPath = isRepository ? decodeRepoId(params.id) : null;
-  const { data: repo } = useRepository(repoPath);
-  const repoName = repo?.name ?? repoPath?.split('/').pop() ?? repoPath;
+  const repoName = lastPathSegment(repoPath);
   const selectorWorkspaceId =
     variant === 'workspace'
       ? (params.id ??
