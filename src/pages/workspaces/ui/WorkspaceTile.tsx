@@ -57,7 +57,7 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
           <span>{relativeTime(lastActivity)}</span>
         </div>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <span className="text-muted-foreground font-mono text-xs">
           {sizeBytes !== null ? formatBytes(sizeBytes) : '—'}
         </span>
