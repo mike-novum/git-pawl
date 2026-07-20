@@ -1,0 +1,28 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: Workspace
+        - button "Select workspace" [ref=e7]
+      - navigation [ref=e12]:
+        - link "Workspace" [ref=e13] [cursor=pointer]:
+          - /url: "#/workspace"
+        - link "Accounts" [ref=e14] [cursor=pointer]:
+          - /url: "#/accounts"
+        - link "Settings" [ref=e15] [cursor=pointer]:
+          - /url: "#/settings"
+      - button "Switch to dark theme" [ref=e17]
+    - main [ref=e20]:
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - heading "Accounts" [level=1] [ref=e35]
+            - paragraph [ref=e36]: Manage connected GitHub and GitLab accounts. The active account is used for new clones and push operations.
+          - button "Add account" [ref=e37]
+        - generic [ref=e38]:
+          - generic [ref=e41]:
+            - heading "No accounts connected" [level=3] [ref=e42]
+            - paragraph [ref=e43]: Connect a GitHub or GitLab account to clone repositories and push changes.
+          - button "Add account" [ref=e45]
+  - generic:
+    - region "Notifications"

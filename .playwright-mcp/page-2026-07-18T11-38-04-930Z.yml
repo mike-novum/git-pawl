@@ -1,0 +1,54 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: Workspace
+        - button "Select workspace" [ref=e7]
+      - navigation [ref=e12]:
+        - link "Workspace" [ref=e13] [cursor=pointer]:
+          - /url: "#/workspace"
+        - link "Accounts" [ref=e14] [cursor=pointer]:
+          - /url: "#/accounts"
+        - link "Settings" [ref=e15] [cursor=pointer]:
+          - /url: "#/settings"
+      - button "Switch to dark theme" [ref=e17]
+    - main [ref=e20]:
+      - generic [ref=e46]:
+        - generic [ref=e48]:
+          - heading "Settings" [level=1] [ref=e49]
+          - paragraph [ref=e50]: Global preferences for git-pawl. Saved locally and applied to all repositories.
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - heading "Application" [level=3] [ref=e53]
+            - paragraph [ref=e54]: Theme, editor, fetch cadence and diff preferences.
+          - generic [ref=e56]:
+            - generic [ref=e57]:
+              - generic [ref=e58]: Theme
+              - generic [ref=e59]:
+                - combobox [ref=e60]:
+                  - generic [ref=e61]: system
+                - textbox [ref=e65]: system
+            - generic [ref=e66]:
+              - generic [ref=e67]: Default editor (git core.editor)
+              - textbox "Default editor (git core.editor)" [ref=e68]:
+                - /placeholder: code --wait
+            - generic [ref=e69]:
+              - generic [ref=e70]: Auto-fetch interval (minutes)
+              - spinbutton "Auto-fetch interval (minutes)" [ref=e71]: "5"
+            - generic [ref=e72]:
+              - generic [ref=e73]: Diff view mode
+              - generic [ref=e74]:
+                - combobox [ref=e75]:
+                  - generic [ref=e76]: unified
+                - textbox [ref=e80]: unified
+            - generic [ref=e81]:
+              - generic [ref=e82]:
+                - generic [ref=e83]: Confirm before destructive operations
+                - generic [ref=e84]: Force push, drop, reset and similar actions will ask before running.
+              - switch "Confirm before destructive operations Force push, drop, reset and similar actions will ask before running. Confirm before destructive operations" [checked] [ref=e85] [cursor=pointer]
+              - checkbox [checked] [ref=e86]
+            - generic [ref=e87]:
+              - button "Reset defaults" [ref=e88]
+              - button "Save" [disabled]
+  - generic:
+    - region "Notifications"

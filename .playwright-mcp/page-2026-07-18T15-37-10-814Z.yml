@@ -1,0 +1,15 @@
+- generic [active] [ref=f1e1]:
+  - generic [ref=f1e3]:
+    - banner [ref=f1e4]:
+      - button "Back" [ref=f1e7]
+      - generic [ref=f1e10]:
+        - button "Settings" [ref=f1e11]
+        - button "Switch to dark theme" [ref=f1e15]
+    - main [ref=f1e18]:
+      - generic [ref=f1e20]:
+        - heading "Something went wrong" [level=1] [ref=f1e21]
+        - paragraph [ref=f1e22]: Cannot read properties of null (reading 'length')
+        - generic [ref=f1e23]: "TypeError: Cannot read properties of null (reading 'length') at RepositoryPage (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/src/pages/repository/ui/RepositoryPage.tsx:159:20) at renderWithHooks (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:11548:26) at updateFunctionComponent (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:14582:28) at beginWork (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:15924:22) at beginWork$1 (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:19753:22) at performUnitOfWork (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:19198:20) at workLoopSync (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:19137:13) at renderRootSync (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:19116:15) at recoverFromConcurrentError (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:18736:28) at performSyncWorkOnRoot (http://localhost:5173/@fs/Users/mikenovum/projects/git-pawl/node_modules/.vite/deps/chunk-RPCDYKBN.js?v=9cf75fbc:18879:28)"
+        - button "Try again" [ref=f1e24]
+  - generic:
+    - region "Notifications"

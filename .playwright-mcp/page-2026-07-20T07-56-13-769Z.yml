@@ -1,0 +1,45 @@
+- generic [active] [ref=f14e1]:
+  - generic [ref=f14e3]:
+    - banner [ref=f14e4]:
+      - button "Back" [ref=f14e7]
+      - button "Switch to dark theme" [ref=f14e11]
+    - main [ref=f14e14]:
+      - generic [ref=f14e15]:
+        - generic [ref=f14e17]:
+          - heading "Settings" [level=1] [ref=f14e18]
+          - paragraph [ref=f14e19]: Global preferences for git-pawl. Saved locally and applied to all repositories.
+        - generic [ref=f14e20]:
+          - generic [ref=f14e21]:
+            - heading "Application" [level=3] [ref=f14e22]
+            - paragraph [ref=f14e23]: Theme, editor, fetch cadence and diff preferences.
+          - generic [ref=f14e25]:
+            - generic [ref=f14e26]:
+              - generic [ref=f14e27]: Theme
+              - generic [ref=f14e28]:
+                - combobox [ref=f14e29]:
+                  - generic [ref=f14e30]: system
+                - textbox [ref=f14e34]: system
+            - generic [ref=f14e35]:
+              - generic [ref=f14e36]: Default editor (git core.editor)
+              - textbox "Default editor (git core.editor)" [ref=f14e37]:
+                - /placeholder: code --wait
+            - generic [ref=f14e38]:
+              - generic [ref=f14e39]: Auto-fetch interval (minutes)
+              - spinbutton "Auto-fetch interval (minutes)" [ref=f14e40]: "5"
+            - generic [ref=f14e41]:
+              - generic [ref=f14e42]: Diff view mode
+              - generic [ref=f14e43]:
+                - combobox [ref=f14e44]:
+                  - generic [ref=f14e45]: unified
+                - textbox [ref=f14e49]: unified
+            - generic [ref=f14e50]:
+              - generic [ref=f14e51]:
+                - generic [ref=f14e52]: Confirm before destructive operations
+                - generic [ref=f14e53]: Force push, drop, reset and similar actions will ask before running.
+              - switch "Confirm before destructive operations Force push, drop, reset and similar actions will ask before running. Confirm before destructive operations" [checked] [ref=f14e54] [cursor=pointer]
+              - checkbox [checked] [ref=f14e55]
+            - generic [ref=f14e56]:
+              - button "Reset defaults" [ref=f14e57]
+              - button "Save" [disabled]
+  - generic:
+    - region "Notifications"

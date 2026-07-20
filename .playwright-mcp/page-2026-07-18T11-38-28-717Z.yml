@@ -1,0 +1,82 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e6]: Workspace
+        - button "Select workspace" [ref=e7]
+      - navigation [ref=e12]:
+        - link "Workspace" [ref=e13] [cursor=pointer]:
+          - /url: "#/workspace"
+        - link "Accounts" [ref=e14] [cursor=pointer]:
+          - /url: "#/accounts"
+        - link "Settings" [ref=e15] [cursor=pointer]:
+          - /url: "#/settings"
+      - button "Switch to dark theme" [ref=e17]
+    - main [ref=e20]:
+      - generic [ref=e109]:
+        - generic [ref=e110]:
+          - generic [ref=e118]:
+            - heading "foo" [level=1] [ref=e119]
+            - paragraph [ref=e120]: foo
+          - generic [ref=e121]:
+            - generic [ref=e122]: No branch
+            - button "current" [ref=e123]
+            - button "current" [ref=e124]
+            - button "current" [ref=e125]
+        - generic [ref=e127]:
+          - generic [ref=e130]:
+            - status [ref=e133]:
+              - status "Loading" [ref=e134]
+              - text: Loading commit graph...
+            - separator
+            - region "Refs" [ref=e140]:
+              - generic [ref=e141]:
+                - tablist [ref=e142]:
+                  - tab "Branches (0)" [selected] [ref=e143]
+                  - tab "Tags (0)" [ref=e144]
+                  - tab "Stash (0)" [ref=e145]
+                - tabpanel "Branches (0)" [ref=e146]:
+                  - generic [ref=e147]: Loading branches...
+          - separator
+          - generic [ref=e150]:
+            - generic [ref=e153]:
+              - region "File changes" [ref=e154]:
+                - generic [ref=e155]:
+                  - heading "Changes" [level=2] [ref=e156]
+                  - generic [ref=e157]:
+                    - generic [ref=e158]: "total: 0"
+                    - generic [ref=e159]: "staged: 0"
+                    - generic [ref=e160]: "unstaged: 0"
+                - status [ref=e162]:
+                  - status "Loading" [ref=e163]
+                  - text: Loading changes...
+              - form "Commit message" [ref=e168]:
+                - generic [ref=e169]:
+                  - generic [ref=e170]: Header
+                  - textbox "Header" [ref=e171]:
+                    - /placeholder: "feat: short summary"
+                  - generic [ref=e172]:
+                    - generic [ref=e173]: Single line, up to 72 characters.
+                    - generic [ref=e174]: 0 / 72
+                - generic [ref=e175]:
+                  - generic [ref=e176]: Body
+                  - textbox "Body" [ref=e177]:
+                    - /placeholder: Wrap at 72 chars. Use blank line to separate from header.
+                - generic [ref=e178]:
+                  - generic [ref=e179]: Footer
+                  - textbox "Footer" [ref=e180]:
+                    - /placeholder: "Refs, BREAKING CHANGE: notes."
+                - generic [ref=e181]:
+                  - checkbox "Bypass pre-commit and commit-msg hooks (--no-verify)" [ref=e182]
+                  - checkbox [ref=e183]
+                  - generic [ref=e184]: Bypass pre-commit and commit-msg hooks (--no-verify)
+                - generic [ref=e185]:
+                  - button "Amend" [ref=e186]
+                  - button "Commit" [disabled]
+            - separator
+            - generic [ref=e189]:
+              - heading "Output" [level=2] [ref=e190]
+              - generic [ref=e192]:
+                - code
+  - generic:
+    - region "Notifications"

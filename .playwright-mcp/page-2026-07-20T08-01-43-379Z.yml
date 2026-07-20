@@ -1,0 +1,43 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - button "Back" [ref=e7]
+        - generic [ref=e10]: "%E0%A4%A"
+      - generic [ref=e11]:
+        - button "Settings" [ref=e12]
+        - button "Switch to dark theme" [ref=e16]
+    - main [ref=e19]:
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - generic [ref=e28]:
+            - heading "%E0%A4%A" [level=1] [ref=e29]
+            - generic [ref=e30]:
+              - generic [ref=e31]: detached
+              - generic [ref=e32]: 0 branches · 0 tags · 0 stash
+          - generic [ref=e33]:
+            - button "Fetch" [ref=e34]
+            - button "Pull" [ref=e40]
+            - button "Push" [ref=e46]
+        - generic [ref=e52]:
+          - complementary [ref=e53]:
+            - generic [ref=e54]:
+              - button "Branches (0)" [ref=e55]:
+                - text: Branches
+                - generic [ref=e58]: (0)
+              - button "New branch" [ref=e60]
+            - button "Tags (0)" [ref=e63]:
+              - text: Tags
+              - generic [ref=e66]: (0)
+            - button "Stash (0)" [ref=e68]:
+              - text: Stash
+              - generic [ref=e71]: (0)
+          - complementary [ref=e73]:
+            - generic [ref=e74]: Select a commit to see details.
+            - generic [ref=e76]:
+              - generic [ref=e77]: "Uncommitted: 0"
+              - generic [ref=e78]:
+                - button "Stash" [ref=e79]
+                - button "Commit" [ref=e80]
+  - generic:
+    - region "Notifications"

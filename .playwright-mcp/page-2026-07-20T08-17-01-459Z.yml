@@ -1,0 +1,14 @@
+- generic [active] [ref=f3e1]:
+  - generic [ref=f3e3]:
+    - banner [ref=f3e4]:
+      - generic [ref=f3e5]: git-pawl
+      - generic [ref=f3e11]:
+        - button "Settings" [ref=f3e12]
+        - button "Switch to dark theme" [ref=f3e16]
+    - main [ref=f3e19]:
+      - generic [ref=f3e91]:
+        - heading "Create your first workspace" [level=1] [ref=f3e92]
+        - paragraph [ref=f3e93]: Workspaces group your local repositories. Pick a folder and we'll scan it for git repos automatically.
+        - button "Create workspace" [ref=f3e94]
+  - generic:
+    - region "Notifications"

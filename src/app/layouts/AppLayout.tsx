@@ -10,11 +10,8 @@ import { WorkspaceSelector } from '@/widgets/workspace-selector';
 import type { AppLayoutProps } from './types';
 
 const HOMEPAGE_PATH = '/workspaces';
-<<<<<<< HEAD
-const REPOSITORY_PATH_PREFIX = '/repos/';
-=======
 const SETTINGS_PATH = '/settings';
->>>>>>> worktree-agent-a7e6b9fcdf8057c03
+const REPOSITORY_PATH_PREFIX = '/repos/';
 
 const WORKSPACE_ID_PATTERN = /^\/workspaces\/([^/]+)/;
 
@@ -47,15 +44,11 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   const activeWorkspaceId = useAppStore((s) => s.activeWorkspaceId);
 
   const isHome = location.pathname === HOMEPAGE_PATH;
-<<<<<<< HEAD
   const isRepository = location.pathname.startsWith(REPOSITORY_PATH_PREFIX);
+  const isSettings = location.pathname === SETTINGS_PATH;
   const variant = isHome ? 'home' : isRepository ? 'repository' : 'workspace';
   const repoPath = isRepository ? decodeRepoId(params.id) : null;
   const repoName = lastPathSegment(repoPath);
-=======
-  const isSettings = location.pathname === SETTINGS_PATH;
-  const variant = isHome ? 'home' : 'workspace';
->>>>>>> worktree-agent-a7e6b9fcdf8057c03
   const selectorWorkspaceId =
     variant === 'workspace'
       ? (params.id ??

@@ -1,0 +1,37 @@
+- generic [ref=f2e1]:
+  - generic [ref=f2e3]:
+    - banner [ref=f2e4]:
+      - generic [ref=f2e5]: git-pawl
+      - generic [ref=f2e11]:
+        - button [ref=f2e30]
+        - button [ref=f2e31]
+    - main [ref=f2e19]:
+      - generic [ref=f2e26]:
+        - heading [level=1] [ref=f2e32]: Create your first workspace
+        - paragraph [ref=f2e28]: Workspaces group your local repositories. Pick a folder and we'll scan it for git repos automatically.
+        - button [ref=f2e33]: Create workspace
+  - generic:
+    - region "Notifications"
+  - dialog [ref=f2e37]:
+    - generic [ref=f2e38]:
+      - heading "New workspace" [level=2] [ref=f2e39]
+      - paragraph [ref=f2e40]: Pick a folder containing git repositories. We will scan it for you.
+    - generic [ref=f2e42]:
+      - generic [ref=f2e43]:
+        - generic [ref=f2e44]: Workspace name (optional)
+        - textbox "Workspace name (optional)" [active] [ref=f2e45]:
+          - /placeholder: Defaults to folder name
+      - generic [ref=f2e46]:
+        - generic [ref=f2e47]: Directory
+        - generic [ref=f2e48]:
+          - textbox "No folder selected" [ref=f2e49]
+          - button "Browse..." [ref=f2e50]
+      - generic [ref=f2e51]:
+        - generic [ref=f2e52]: Detected repositories
+        - generic [ref=f2e58]:
+          - heading "Pick a folder to scan" [level=3] [ref=f2e59]
+          - paragraph [ref=f2e60]: Choose a directory above to preview the repositories we will add.
+      - generic [ref=f2e61]:
+        - button "Cancel" [ref=f2e62]
+        - button "Create workspace" [disabled]
+    - button "Close dialog" [ref=f2e63]
