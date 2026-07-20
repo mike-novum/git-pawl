@@ -9,7 +9,12 @@ export {
   invalidateWorkspaceSize,
   invalidateWorkspaceStatus
 } from './useWorkspace';
+<<<<<<< HEAD
 export type { UseCreateWorkspaceResult, UseRemoveWorkspaceResult } from './useWorkspace';
+=======
+export type { UseCreateWorkspaceResult } from './useWorkspace';
+export { useSetWorkspaceIcon, setWorkspaceIcon } from './useWorkspaceIcon';
+>>>>>>> worktree-agent-a67d2d3688724655b
 export {
   fetchCreateWorkspace,
   fetchRemoveWorkspace,
@@ -24,7 +29,12 @@ export {
 export type {
   Workspace,
   WorkspaceCreateArgs,
+<<<<<<< HEAD
   WorkspaceListResult,
   WorkspaceRemoveArgs
+=======
+  WorkspaceIconInput,
+  WorkspaceListResult
+>>>>>>> worktree-agent-a67d2d3688724655b
 } from './types';
 export type { WorkspaceStatus } from '../lib/computeWorkspaceStatus';

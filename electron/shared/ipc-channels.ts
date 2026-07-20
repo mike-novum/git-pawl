@@ -29,6 +29,7 @@ export const IPC_CHANNELS = {
   GIT_HOOKS: 'git:hooks',
 
   FS_SELECT_DIRECTORY: 'fs:select-directory',
+  FS_SELECT_FILE: 'fs:select-file',
   FS_SIZE: 'fs:size',
   FS_WORKSPACE_SIZE: 'fs:workspace-size',
   FS_ICON: 'fs:icon',

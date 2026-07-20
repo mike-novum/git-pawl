@@ -152,6 +152,9 @@ export const gitHooks = async (args: GitHooksArgs): Promise<unknown> =>
 export const fsSelectDirectory = async (): Promise<string | null> =>
   safeInvoke<string | null>((bridge) => bridge.fsSelectDirectory(), null);
 
+export const fsSelectFile = async (): Promise<string | null> =>
+  safeInvoke<string | null>((bridge) => bridge.fsSelectFile(), null);
+
 export const fsSize = async (args: FsSizeArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsSize(args), 0);
 
@@ -218,6 +221,7 @@ export const api = {
   gitConfig,
   gitHooks,
   fsSelectDirectory,
+  fsSelectFile,
   fsSize,
   fsWorkspaceSize,
   fsIcon,

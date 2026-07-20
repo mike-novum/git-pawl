@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import type { Commit as GitCommit, DiffHunk, GitStatus } from '../shared/types/git';
+import type { FsSelectFileResult } from '../shared/types/fs';
 
 export type AppInfo = {
   name: string;
@@ -78,6 +79,7 @@ export type ApiSchema = {
   gitHooks: (args: GitHooksArgs) => Promise<unknown>;
 
   fsSelectDirectory: () => Promise<string | null>;
+  fsSelectFile: () => Promise<FsSelectFileResult>;
   fsSize: (args: FsSizeArgs) => Promise<unknown>;
   fsWorkspaceSize: (args: FsWorkspaceSizeArgs) => Promise<{ totalBytes: number }>;
   fsIcon: (args: FsIconArgs) => Promise<void>;
@@ -133,6 +135,7 @@ const api: ApiSchema = {
   gitHooks: (args) => invoke('git:hooks', args),
 
   fsSelectDirectory: () => invoke('fs:select-directory') as Promise<string | null>,
+  fsSelectFile: () => invoke('fs:select-file') as Promise<FsSelectFileResult>,
   fsSize: (args) => invoke('fs:size', args),
   fsWorkspaceSize: (args) => invoke('fs:workspace-size', args) as Promise<{ totalBytes: number }>,
   fsIcon: (args) => invoke('fs:icon', args) as Promise<void>,

@@ -162,6 +162,8 @@ export const gitHooksSchema = z.object({
 
 export const fsSelectDirectorySchema = z.undefined();
 
+export const fsSelectFileSchema = z.undefined();
+
 export const fsSizeSchema = z.object({
   repoPath: z.string()
 });
@@ -259,6 +261,7 @@ export type FsIconArgs = z.infer<typeof fsIconSchema>;
 export type FsIconSetArgs = Extract<FsIconArgs, { action: 'set' }>;
 export type FsIconRemoveArgs = Extract<FsIconArgs, { action: 'remove' }>;
 export type FsSelectDirectoryArgs = z.infer<typeof fsSelectDirectorySchema>;
+export type FsSelectFileArgs = z.infer<typeof fsSelectFileSchema>;
 export type FsWorkspaceListArgs = z.infer<typeof fsWorkspaceListSchema>;
 export type FsWorkspaceCreateArgs = z.infer<typeof fsWorkspaceCreateSchema>;
 export type FsWorkspaceRemoveArgs = z.infer<typeof fsWorkspaceRemoveSchema>;

@@ -7,6 +7,7 @@ export {
   useWorkspaceExtraRepoPaths,
   useWorkspaceSize,
   useWorkspaceStatus,
+  useSetWorkspaceIcon,
   invalidateWorkspaceSize,
   invalidateWorkspaceStatus
 } from './model';
@@ -22,8 +23,13 @@ export type {
   Workspace,
   WorkspaceCreateArgs,
   WorkspaceCreateResult,
+<<<<<<< HEAD
   WorkspaceListResult,
   WorkspaceRemoveArgs
+=======
+  WorkspaceIconInput,
+  WorkspaceListResult
+>>>>>>> worktree-agent-a67d2d3688724655b
 } from './model';
 
 export { createWorkspace, listWorkspaces, removeWorkspace, selectDirectory } from './api';

@@ -51,6 +51,7 @@ import {
   getWorkspaceSize,
   removeRepoIcon,
   selectDirectory,
+  selectFile,
   setRepoIcon,
   workspaceCreate,
   workspaceList,
@@ -202,6 +203,7 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_HOOKS, gitHooksSchema, listHooks);
 
   safeHandleNoArgs(IPC_CHANNELS.FS_SELECT_DIRECTORY, selectDirectory);
+  safeHandleNoArgs(IPC_CHANNELS.FS_SELECT_FILE, selectFile);
   safeHandle(IPC_CHANNELS.FS_SIZE, fsSizeSchema, getRepoSize);
   safeHandle(IPC_CHANNELS.FS_ICON, fsIconSchema, async (args) => {
     if (args.action === 'set') {
