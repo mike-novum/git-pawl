@@ -53,8 +53,12 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
           <span>
             {repoCount} {repoCount === 1 ? 'repo' : 'repos'}
           </span>
-          <span aria-hidden="true">·</span>
-          <span>{relativeTime(lastActivity)}</span>
+          {lastActivity !== null ? (
+            <>
+              <span aria-hidden="true">·</span>
+              <span>{relativeTime(lastActivity)}</span>
+            </>
+          ) : null}
         </div>
       </div>
       <div className="flex items-center justify-between gap-2">
