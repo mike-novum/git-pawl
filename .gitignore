@@ -16,3 +16,4 @@ coverage
 storybook-static
 .claude/worktrees/
 docs/screenshots
+.eslintcache

@@ -1,47 +1,17 @@
 import { Folder, Settings } from 'lucide-react';
 import type { FC } from 'react';
 
-import { formatBytes } from '@/entities/workspace';
-import { Skeleton } from '@/shared/ui';
-
 import type { WorkspaceHeroProps } from '../types';
 
-export const WorkspaceHero: FC<WorkspaceHeroProps> = ({
-  workspace,
-  counters,
-  isReady,
-  onSettings
-}) => (
-  <header className="flex items-start justify-between gap-4">
-    <div className="flex items-start gap-3">
+export const WorkspaceHero: FC<WorkspaceHeroProps> = ({ workspace, onSettings }) => (
+  <header className="flex items-center justify-between gap-4">
+    <div className="flex items-center gap-3">
       <div className="bg-surface-elevated text-primary flex size-10 items-center justify-center rounded-lg">
         <Folder aria-hidden="true" className="size-5" />
       </div>
-      <div className="flex flex-col gap-0.5">
-        <h1 className="text-foreground text-2xl font-semibold tracking-tight">
-          {workspace.name}
-        </h1>
-        <p
-          className="text-muted-foreground/70 truncate font-mono text-xs"
-          title={workspace.path}
-        >
-          {workspace.path}
-        </p>
-
-        {isReady && counters ? (
-          <p className="text-muted-foreground text-xs">
-            {counters.repoCount} {counters.repoCount === 1 ? 'repo' : 'repos'}
-            {counters.modifiedCount > 0 ? ` · ${counters.modifiedCount} modified` : ''}
-            {counters.sizeBytes !== null ? ` · ${formatBytes(counters.sizeBytes)}` : ''}
-          </p>
-        ) : (
-          <div className="mt-0.5 flex items-center gap-2">
-            <Skeleton className="h-3 w-12" />
-            <Skeleton className="h-3 w-16" />
-            <Skeleton className="h-3 w-14" />
-          </div>
-        )}
-      </div>
+      <h1 className="text-foreground text-2xl font-semibold tracking-tight">
+        {workspace.name}
+      </h1>
     </div>
     <button
       type="button"

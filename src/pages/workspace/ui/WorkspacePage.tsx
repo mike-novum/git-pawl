@@ -4,14 +4,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
 import { useAddExistingRepo } from '@/features/add-existing-repo';
 import { useRepoSearch } from '@/features/search-repos';
-import { useWorkspaceCounters } from '@/features/workspace-counters';
 import {
   useActiveWorkspace,
   useRemoveWorkspace,
   useSetWorkspaceIcon,
   useWorkspaceById,
-  useWorkspaceExtraRepoPaths,
-  useWorkspaceSize
+  useWorkspaceExtraRepoPaths
 } from '@/entities/workspace';
 import type { Repository } from '@/entities/repository';
 import { useRepositoryList } from '@/entities/repository';
@@ -37,15 +35,6 @@ export const WorkspacePage: FC = () => {
   const { data: extraRepoPaths = [] } = useWorkspaceExtraRepoPaths(workspaceId);
   const { data: repos = [], isLoading } = useRepositoryList(workspacePath, extraRepoPaths);
   const { query, setQuery, results: visibleRepos } = useRepoSearch(repos);
-  const { totalBytes: workspaceSizeBytes } = useWorkspaceSize(workspacePath);
-
-  const modifiedCount = repos.filter((r) => r.status === 'dirty').length;
-  const { counters, isReady } = useWorkspaceCounters(workspaceId, {
-    repoCount: repos.length,
-    modifiedCount,
-    sizeBytes: workspaceSizeBytes,
-    isLoading
-  });
 
   const [createOpen, setCreateOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -127,8 +116,6 @@ export const WorkspacePage: FC = () => {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-8">
         <WorkspaceHero
           workspace={workspace}
-          counters={counters}
-          isReady={isReady}
           onSettings={() => setSettingsOpen(true)}
         />
 
