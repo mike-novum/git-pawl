@@ -43,5 +43,6 @@ export type WorkspaceSettingsDrawerProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave?: (name: string) => void;
+  onIconChange?: (iconPath: string) => void;
   onDelete: () => void;
 };

@@ -29,11 +29,13 @@ export const IPC_CHANNELS = {
   GIT_HOOKS: 'git:hooks',
 
   FS_SELECT_DIRECTORY: 'fs:select-directory',
+  FS_SELECT_FILE: 'fs:select-file',
   FS_SIZE: 'fs:size',
   FS_WORKSPACE_SIZE: 'fs:workspace-size',
   FS_ICON: 'fs:icon',
   FS_WORKSPACE_LIST: 'fs:workspace-list',
   FS_WORKSPACE_CREATE: 'fs:workspace-create',
+  FS_WORKSPACE_REMOVE: 'fs:workspace-remove',
   FS_DETECT_REPOS: 'fs:detect-repos',
   FS_BUILD_REPO_ID: 'fs:build-repo-id',
   FS_SCAN_REPOS: 'fs:scan-repos',

@@ -9,9 +9,10 @@ import type {
   FsIconSetArgs,
   FsSizeArgs,
   FsWorkspaceCreateArgs,
+  FsWorkspaceRemoveArgs,
   FsWorkspaceSizeArgs
 } from '../../shared/schemas';
-import type { RepoSize, Workspace } from '../../shared/types/fs';
+import type { RepoSize, FsSelectFileResult, Workspace } from '../../shared/types/fs';
 
 import { storeGet, storeSet } from './store';
 
@@ -44,6 +45,26 @@ export const selectDirectory = async (): Promise<string | null> => {
   const options = { properties: ['openDirectory', 'createDirectory'] as Array<
     'openDirectory' | 'createDirectory'
   > };
+  const result = win
+    ? await dialog.showOpenDialog(win, options)
+    : await dialog.showOpenDialog(options);
+  if (result.canceled || result.filePaths.length === 0) {
+    return null;
+  }
+  return result.filePaths[0];
+};
+
+export const selectFile = async (): Promise<FsSelectFileResult> => {
+  const win = pickWindow();
+  const options = {
+    properties: ['openFile'] as Array<'openFile'>,
+    filters: [
+      {
+        name: 'Images',
+        extensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'ico']
+      }
+    ]
+  };
   const result = win
     ? await dialog.showOpenDialog(win, options)
     : await dialog.showOpenDialog(options);
@@ -267,4 +288,15 @@ export const workspaceCreate = async (
   writeWorkspaces(list);
 
   return workspace;
+};
+
+export const workspaceRemove = async (
+  args: FsWorkspaceRemoveArgs
+): Promise<void> => {
+  const list = readWorkspaces();
+  const next = list.filter((w) => w.id !== args.id);
+  if (next.length === list.length) {
+    return;
+  }
+  writeWorkspaces(next);
 };

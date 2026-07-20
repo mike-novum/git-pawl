@@ -18,11 +18,12 @@ import {
 
 import {
   fetchCreateWorkspace,
+  fetchRemoveWorkspace,
   fetchWorkspaceList,
   WORKSPACE_LIST_QUERY_KEY
 } from './workspaceQueries';
 import { getCachedSize, invalidateWorkspaceSize } from './workspaceSizeCache';
-import type { Workspace, WorkspaceCreateArgs } from './types';
+import type { Workspace, WorkspaceCreateArgs, WorkspaceRemoveArgs } from './types';
 
 export type UseCreateWorkspaceResult = UseMutationResult<
   Workspace | null,
@@ -79,6 +80,31 @@ export const useCreateWorkspace = (): UseCreateWorkspaceResult => {
           queryKey: WORKSPACE_LIST_QUERY_KEY
         });
       }
+    }
+  });
+};
+
+export type UseRemoveWorkspaceResult = UseMutationResult<
+  void,
+  Error,
+  WorkspaceRemoveArgs
+>;
+
+export const useRemoveWorkspace = (): UseRemoveWorkspaceResult => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (args: WorkspaceRemoveArgs) => {
+      await fetchRemoveWorkspace(args);
+      const activeId = useAppStore.getState().activeWorkspaceId;
+      if (activeId === args.id) {
+        useAppStore.getState().setActiveWorkspaceId(null);
+      }
+    },
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: WORKSPACE_LIST_QUERY_KEY
+      });
     }
   });
 };

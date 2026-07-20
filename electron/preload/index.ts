@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import type { Commit as GitCommit, DiffHunk, GitStatus } from '../shared/types/git';
+import type { FsSelectFileResult } from '../shared/types/fs';
 
 export type AppInfo = {
   name: string;
@@ -43,6 +44,7 @@ export type FsIconArgs =
   | { action: 'set'; repoPath: string; sourceImagePath: string }
   | { action: 'remove'; repoPath: string };
 export type FsWorkspaceCreateArgs = { path: string; name?: string };
+export type FsWorkspaceRemoveArgs = { id: string };
 export type FsDetectReposArgs = { path: string; maxDepth?: number };
 export type FsBuildRepoIdArgs = { path: string };
 export type FsScanReposArgs = { path: string; maxDepth?: number };
@@ -77,11 +79,13 @@ export type ApiSchema = {
   gitHooks: (args: GitHooksArgs) => Promise<unknown>;
 
   fsSelectDirectory: () => Promise<string | null>;
+  fsSelectFile: () => Promise<FsSelectFileResult>;
   fsSize: (args: FsSizeArgs) => Promise<unknown>;
   fsWorkspaceSize: (args: FsWorkspaceSizeArgs) => Promise<{ totalBytes: number }>;
   fsIcon: (args: FsIconArgs) => Promise<void>;
   fsWorkspaceList: () => Promise<unknown>;
   fsWorkspaceCreate: (args: FsWorkspaceCreateArgs) => Promise<unknown>;
+  fsWorkspaceRemove: (args: FsWorkspaceRemoveArgs) => Promise<unknown>;
   fsDetectRepos: (args: FsDetectReposArgs) => Promise<string[]>;
   fsBuildRepoId: (args: FsBuildRepoIdArgs) => Promise<string>;
   fsScanRepos: (args: FsScanReposArgs) => Promise<string[]>;
@@ -131,11 +135,13 @@ const api: ApiSchema = {
   gitHooks: (args) => invoke('git:hooks', args),
 
   fsSelectDirectory: () => invoke('fs:select-directory') as Promise<string | null>,
+  fsSelectFile: () => invoke('fs:select-file') as Promise<FsSelectFileResult>,
   fsSize: (args) => invoke('fs:size', args),
   fsWorkspaceSize: (args) => invoke('fs:workspace-size', args) as Promise<{ totalBytes: number }>,
   fsIcon: (args) => invoke('fs:icon', args) as Promise<void>,
   fsWorkspaceList: () => invoke('fs:workspace-list'),
   fsWorkspaceCreate: (args) => invoke('fs:workspace-create', args),
+  fsWorkspaceRemove: (args) => invoke('fs:workspace-remove', args),
   fsDetectRepos: (args) => invoke('fs:detect-repos', args) as Promise<string[]>,
   fsBuildRepoId: (args) => invoke('fs:build-repo-id', args) as Promise<string>,
   fsScanRepos: (args) => invoke('fs:scan-repos', args) as Promise<string[]>,

@@ -25,6 +25,7 @@ import type {
   FsSizeArgs,
   FsIconArgs,
   FsWorkspaceCreateArgs,
+  FsWorkspaceRemoveArgs,
   FsWorkspaceSizeArgs,
   FsDetectReposArgs,
   FsBuildRepoIdArgs,
@@ -151,6 +152,9 @@ export const gitHooks = async (args: GitHooksArgs): Promise<unknown> =>
 export const fsSelectDirectory = async (): Promise<string | null> =>
   safeInvoke<string | null>((bridge) => bridge.fsSelectDirectory(), null);
 
+export const fsSelectFile = async (): Promise<string | null> =>
+  safeInvoke<string | null>((bridge) => bridge.fsSelectFile(), null);
+
 export const fsSize = async (args: FsSizeArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsSize(args), 0);
 
@@ -172,6 +176,14 @@ export const fsWorkspaceCreate = async (
   args: FsWorkspaceCreateArgs
 ): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsWorkspaceCreate(args), null);
+
+export const fsWorkspaceRemove = async (
+  args: FsWorkspaceRemoveArgs
+): Promise<void> =>
+  safeInvoke<void>(
+    (bridge) => bridge.fsWorkspaceRemove(args) as Promise<void>,
+    undefined
+  );
 
 export const fsDetectRepos = async (args: FsDetectReposArgs): Promise<string[]> =>
   safeInvoke<string[]>((bridge) => bridge.fsDetectRepos(args), []);
@@ -209,11 +221,13 @@ export const api = {
   gitConfig,
   gitHooks,
   fsSelectDirectory,
+  fsSelectFile,
   fsSize,
   fsWorkspaceSize,
   fsIcon,
   fsWorkspaceList,
   fsWorkspaceCreate,
+  fsWorkspaceRemove,
   fsDetectRepos,
   fsBuildRepoId,
   fsScanRepos

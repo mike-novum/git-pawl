@@ -1,7 +1,8 @@
 import type {
   Workspace,
   WorkspaceCreateArgs,
-  WorkspaceListResult
+  WorkspaceListResult,
+  WorkspaceRemoveArgs
 } from '../model/types';
 
 export type { Workspace, WorkspaceListResult };
@@ -28,6 +29,12 @@ export const createWorkspace = async (
   const result = await api.fsWorkspaceCreate(args);
   if (!result || typeof result !== 'object') return null;
   return result as Workspace;
+};
+
+export const removeWorkspace = async (args: WorkspaceRemoveArgs): Promise<void> => {
+  const api = getBridge();
+  if (!api?.fsWorkspaceRemove) return;
+  await api.fsWorkspaceRemove(args);
 };
 
 export const selectDirectory = async (): Promise<string | null> => {
