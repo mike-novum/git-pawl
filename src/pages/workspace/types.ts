@@ -1,3 +1,4 @@
+import type { WorkspaceCounters } from '@/app/store';
 import type { Repository } from '@/entities/repository';
 import type { Workspace } from '@/entities/workspace';
 
@@ -5,9 +6,8 @@ export type WorkspacePageProps = Record<string, never>;
 
 export type WorkspaceHeroProps = {
   workspace: Workspace;
-  repoCount: number;
-  modifiedCount: number;
-  sizeBytes: number | null;
+  counters: WorkspaceCounters | null;
+  isReady: boolean;
   onSettings: () => void;
 };
 

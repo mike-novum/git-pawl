@@ -1,2 +1,2 @@
 export { useAppStore } from './useAppStore';
-export type { AppState, ThemeMode } from './types';
+export type { AppState, ThemeMode, WorkspaceCounters } from './types';
