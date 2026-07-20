@@ -1,7 +1,7 @@
 import type { BranchListResult } from '../../../shared/types/git';
 import type { GitBranchArgs } from '../../../shared/schemas';
 
-import { parseBranchList, runGit } from './runner';
+import { runGit } from './runner';
 
 export type GitBranchResult = BranchListResult | void;
 
@@ -12,13 +12,25 @@ const requireName = (name: string | undefined, action: string): string => {
   return name;
 };
 
+export const parseBranchRefs = (raw: string): BranchListResult =>
+  raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .map((line) => {
+      const [name = '', target = ''] = line.split('\0');
+
+      return { name, target };
+    })
+    .filter((branch) => branch.name.length > 0 && branch.target.length > 0);
+
 export const gitBranch = async (args: GitBranchArgs): Promise<GitBranchResult> => {
   if (args.action === 'list') {
     const { stdout } = await runGit(
-      ['branch', '--format=%(refname:short)'],
+      ['branch', '--format=%(refname:short)%00%(objectname)'],
       args.repoPath
     );
-    return parseBranchList(stdout);
+    return parseBranchRefs(stdout);
   }
 
   if (args.action === 'create') {

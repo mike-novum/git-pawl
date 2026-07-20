@@ -1,18 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 import { GitBranch, GitPullRequestArrow, RefreshCw } from 'lucide-react';
-import { useState, type FC } from 'react';
+import { useMemo, useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
 
 import type { Commit } from '@electron/shared/types/git';
 
 import { useCurrentBranch, useBranches } from '@/entities/branch';
+import type { Branch } from '@/entities/branch';
 import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
+import type { Tag } from '@/entities/tag';
 import { gitLog } from '@/shared/api';
 import { Empty, Spinner, useToast } from '@/shared/ui';
 import { RepoDetailPanel } from '@/widgets/repo-detail-panel';
-import { RepoGraph } from '@/widgets/repo-graph-vertical';
+import { computeLayout, RepoGraph } from '@/widgets/repo-graph-vertical';
 import type { CommitNode } from '@/widgets/repo-graph-vertical';
 import { RepoTree } from '@/widgets/repo-tree';
 
@@ -27,36 +29,44 @@ const decodeRepoId = (id: string | undefined): string | null => {
 
 const toShortHash = (hash: string): string => hash.slice(0, 7);
 
-const toCommitNodes = (entries: Commit[]): CommitNode[] => {
-  const allHashes = new Set(entries.map((e) => e.hash));
-  const laneHeads: (string | null)[] = [];
+const toCommitNodes = (
+  entries: Commit[],
+  branches: Branch[],
+  tags: Tag[]
+): CommitNode[] => {
+  const branchesByHash = new Map<string, string[]>();
+  const tagsByHash = new Map<string, string[]>();
+  const currentTargets = new Set(
+    branches
+      .filter((branch) => branch.current)
+      .map((branch) => branch.target)
+      .filter(Boolean)
+  );
 
-  return entries.map((e) => {
-    let lane = laneHeads.findIndex(
-      (head) => head !== null && e.parents.includes(head)
-    );
-
-    if (lane === -1) {
-      lane = laneHeads.findIndex((head) => head === null);
-      if (lane === -1) {
-        lane = laneHeads.length;
-        laneHeads.push(null);
-      }
-    }
-
-    const nextParent = e.parents.find((p) => allHashes.has(p));
-    laneHeads[lane] = nextParent ?? null;
-
-    return {
-      hash: e.hash,
-      shortHash: toShortHash(e.hash),
-      subject: e.subject,
-      author: e.author.name,
-      timestamp: e.date,
-      parents: e.parents,
-      lane
-    };
+  branches.forEach((branch) => {
+    const names = branchesByHash.get(branch.target) ?? [];
+    names.push(branch.name);
+    branchesByHash.set(branch.target, names);
   });
+
+  tags.forEach((tag) => {
+    const names = tagsByHash.get(tag.target) ?? [];
+    names.push(tag.name);
+    tagsByHash.set(tag.target, names);
+  });
+
+  return entries.map((entry) => ({
+    hash: entry.hash,
+    shortHash: toShortHash(entry.hash),
+    subject: entry.subject,
+    author: entry.author.name,
+    timestamp: entry.date,
+    parents: entry.parents,
+    lane: 0,
+    branches: branchesByHash.get(entry.hash),
+    tags: tagsByHash.get(entry.hash),
+    isCurrentBranch: currentTargets.has(entry.hash)
+  }));
 };
 
 export const RepositoryPage: FC = () => {
@@ -76,9 +86,14 @@ export const RepositoryPage: FC = () => {
     enabled: !!repoPath
   });
 
-  const commits = Array.isArray(logQuery.data)
-    ? toCommitNodes(logQuery.data as Commit[])
-    : [];
+  const commits = useMemo(
+    () =>
+      Array.isArray(logQuery.data)
+        ? toCommitNodes(logQuery.data as Commit[], branches, tags)
+        : [],
+    [branches, logQuery.data, tags]
+  );
+  const commitLayout = useMemo(() => computeLayout(commits), [commits]);
 
   const [selectedHash, setSelectedHash] = useState<string | null>(null);
 
@@ -105,7 +120,9 @@ export const RepositoryPage: FC = () => {
   const ahead = branches.reduce((sum, b) => sum + (b.upstream?.ahead ?? 0), 0);
   const behind = branches.reduce((sum, b) => sum + (b.upstream?.behind ?? 0), 0);
 
-  const selectedCommit = commits.find((c) => c.hash === selectedHash) ?? null;
+  const selectedCommit =
+    commitLayout.rows.find((row) => row.commit.hash === selectedHash)?.commit ??
+    null;
 
   const handleCopyHash = (hash: string): void => {
     void navigator.clipboard
@@ -187,8 +204,11 @@ export const RepositoryPage: FC = () => {
         />
         <RepoGraph
           commits={commits}
+          layout={commitLayout}
           selectedHash={selectedHash}
           onSelect={setSelectedHash}
+          isLoading={logQuery.isLoading}
+          isError={logQuery.isError}
           className="flex-1"
         />
         <RepoDetailPanel

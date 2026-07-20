@@ -1,8 +1,12 @@
+import type { BranchListResult } from '@electron/shared/types/git';
+
 import { gitBranch, gitStatus } from '@/shared/api';
 
 import type { Branch, BranchUpstream, CurrentBranchInfo } from '../model/types';
 
 export type { Branch, BranchUpstream, CurrentBranchInfo };
+
+type BranchListData = BranchListResult | string[];
 
 const UPSTREAM_PATTERN = /^\[([^\]]+)\]?$/;
 
@@ -56,21 +60,24 @@ const deriveCurrent = (status: {
   return { name, detached: false };
 };
 
-export const listBranches = (repoPath: string): Promise<string[]> =>
-  gitBranch({ repoPath, action: 'list' }) as Promise<string[]>;
+export const listBranches = (repoPath: string): Promise<BranchListData> =>
+  gitBranch({ repoPath, action: 'list' }) as Promise<BranchListData>;
 
 export const buildBranches = (
-  rawNames: string[] | null | undefined,
+  rawBranches: BranchListData | null | undefined,
   currentBranchName: string | null,
   detached: boolean
 ): Branch[] => {
-  if (!Array.isArray(rawNames) || rawNames.length === 0) return [];
+  if (!Array.isArray(rawBranches) || rawBranches.length === 0) return [];
 
-  const result = rawNames.map((raw) => {
-    const parsed = splitMarker(raw);
+  const result = rawBranches.map((rawBranch) => {
+    const name = typeof rawBranch === 'string' ? rawBranch : rawBranch.name;
+    const target = typeof rawBranch === 'string' ? '' : rawBranch.target;
+    const parsed = splitMarker(name);
     const isCurrent = !detached && parsed.name === currentBranchName;
     return {
       name: parsed.name,
+      target,
       current: parsed.current || isCurrent,
       upstream: parsed.upstream
     } satisfies Branch;
@@ -79,6 +86,7 @@ export const buildBranches = (
   if (currentBranchName && !result.some((branch) => branch.current)) {
     result.unshift({
       name: currentBranchName,
+      target: '',
       current: true,
       upstream: undefined
     });

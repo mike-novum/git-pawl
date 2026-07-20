@@ -12,7 +12,10 @@ export type CommitResult = {
   stderr: string;
 };
 
-export type BranchListResult = string[];
+export type BranchListResult = Array<{
+  name: string;
+  target: string;
+}>;
 
 export type GitTagListResult = Array<{
   name: string;

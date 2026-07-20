@@ -6,6 +6,7 @@ export type BranchUpstream = {
 
 export type Branch = {
   name: string;
+  target: string;
   current: boolean;
   upstream?: BranchUpstream;
 };
