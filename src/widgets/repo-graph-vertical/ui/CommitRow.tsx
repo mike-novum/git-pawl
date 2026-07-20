@@ -1,5 +1,5 @@
 import { GitBranch, Tag } from 'lucide-react';
-import type { FC } from 'react';
+import { memo, type FC } from 'react';
 
 import { CommitHash } from '@/entities/commit';
 import { cn } from '@/shared/lib/theme';
@@ -12,8 +12,9 @@ import {
   ROW_HEIGHT
 } from '../lib/computeLayout';
 
-const NODE_RADIUS = 4;
-const CURVE_RADIUS = 4;
+const NODE_RADIUS = 5;
+const NODE_HALO_RADIUS = 9;
+const CURVE_RADIUS = 6;
 
 const relativeTime = (timestamp: number): string => {
   const minutes = Math.max(0, Math.floor((Date.now() - timestamp) / 60000));
@@ -59,7 +60,7 @@ const buildPath = (
   ].join(' ');
 };
 
-export const CommitRow: FC<CommitRowProps> = ({
+const CommitRowComponent: FC<CommitRowProps> = ({
   row,
   rowIndex,
   graphWidth,
@@ -69,24 +70,27 @@ export const CommitRow: FC<CommitRowProps> = ({
   const { commit } = row;
   const isSelected = commit.hash === selectedHash;
   const isActive = row.active;
+  const isHighlighted = isSelected || isActive;
   const references = [
     ...(commit.branches ?? []).map((name) => `Branch: ${name}`),
     ...(commit.tags ?? []).map((name) => `Tag: ${name}`)
   ].join(', ');
 
   return (
-    <li
-      className="border-border/40 relative border-b last:border-b-0"
-      style={{ height: ROW_HEIGHT }}
-    >
+    <li style={{ height: ROW_HEIGHT }} className="relative">
       <button
         type="button"
         onClick={() => onSelect(commit.hash)}
         aria-label={`Select commit ${commit.shortHash}: ${commit.subject || 'no subject'}`}
         aria-pressed={isSelected}
         className={cn(
-          'group hover:bg-surface-elevated focus-visible:ring-ring relative flex h-full w-full items-center text-left transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none',
-          isSelected && 'bg-surface-elevated'
+          'group focus-visible:ring-ring relative flex h-full w-full items-center border-l-2 text-left transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none',
+          isHighlighted
+            ? 'border-primary'
+            : 'border-transparent',
+          isSelected
+            ? 'bg-surface-elevated'
+            : 'hover:bg-surface-elevated/60'
         )}
       >
         <svg
@@ -94,33 +98,53 @@ export const CommitRow: FC<CommitRowProps> = ({
           height={ROW_HEIGHT}
           viewBox={`0 0 ${graphWidth} ${ROW_HEIGHT}`}
           overflow="visible"
-          className="pointer-events-none absolute top-0 left-0 z-10 shrink-0 overflow-visible"
+          className="pointer-events-none absolute top-0 left-0 shrink-0 overflow-visible"
           aria-hidden="true"
         >
-          {row.parents.map((parent) => (
-            <path
-              key={`${commit.hash}-${parent.hash}`}
-              d={buildPath(
-                row.lane,
-                parent.lane,
-                parent.rowIndex - rowIndex
-              )}
-              className={cn(
-                'fill-none stroke-muted-foreground/35 transition-colors group-hover:stroke-primary/70',
-                (isSelected || parent.active) && 'stroke-primary'
-              )}
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+          {row.parents.map((parent) => {
+            const isActiveEdge = parent.active;
+            return (
+              <path
+                key={`${commit.hash}-${parent.hash}`}
+                d={buildPath(
+                  row.lane,
+                  parent.lane,
+                  parent.rowIndex - rowIndex
+                )}
+                className={cn(
+                  'fill-none transition-[stroke,opacity]',
+                  isActiveEdge
+                    ? 'stroke-primary'
+                    : isSelected
+                      ? 'stroke-primary/70'
+                      : 'stroke-muted-foreground/50'
+                )}
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            );
+          })}
+          {isSelected ? (
+            <circle
+              cx={laneCenter(row.lane)}
+              cy={ROW_HEIGHT / 2}
+              r={NODE_HALO_RADIUS}
+              className="fill-none stroke-primary/40"
+              strokeWidth={1}
             />
-          ))}
+          ) : null}
           <circle
             cx={laneCenter(row.lane)}
             cy={ROW_HEIGHT / 2}
             r={NODE_RADIUS}
             className={cn(
-              'fill-muted-foreground stroke-surface transition-colors group-hover:fill-primary',
-              (isSelected || isActive) && 'fill-primary'
+              'stroke-surface origin-center [transform-box:fill-box] transition-transform duration-fast ease-out group-hover:scale-[1.25]',
+              isActive
+                ? 'fill-primary'
+                : isSelected
+                  ? 'fill-ring'
+                  : 'fill-muted-foreground group-hover:fill-primary'
             )}
             strokeWidth={2}
           />
@@ -132,7 +156,7 @@ export const CommitRow: FC<CommitRowProps> = ({
           aria-hidden="true"
         />
 
-        <span className="relative z-20 flex h-full min-w-0 flex-1 flex-col justify-center gap-0.5 pr-3 pl-2">
+        <span className="flex h-full min-w-0 flex-1 flex-col justify-center gap-0.5 pr-3 pl-2">
           <span className="flex min-w-0 items-center gap-2">
             <CommitHash
               hash={commit.hash}
@@ -151,7 +175,7 @@ export const CommitRow: FC<CommitRowProps> = ({
                     key={`branch-${branch}`}
                     variant="outline"
                     size="sm"
-                    className="border-primary/40 text-primary h-5 max-w-32 shrink-0 gap-1 px-1.5"
+                    className="border-primary/40 text-primary h-6 max-w-32 shrink-0 gap-1 px-1.5"
                     title={`Branch: ${branch}`}
                   >
                     <GitBranch aria-hidden="true" className="size-3 shrink-0" />
@@ -163,7 +187,7 @@ export const CommitRow: FC<CommitRowProps> = ({
                     key={`tag-${tag}`}
                     variant="outline"
                     size="sm"
-                    className="h-5 max-w-32 shrink-0 gap-1 px-1.5"
+                    className="h-6 max-w-32 shrink-0 gap-1 px-1.5"
                     title={`Tag: ${tag}`}
                   >
                     <Tag aria-hidden="true" className="size-3 shrink-0" />
@@ -186,4 +210,5 @@ export const CommitRow: FC<CommitRowProps> = ({
   );
 };
 
+export const CommitRow = memo(CommitRowComponent);
 CommitRow.displayName = 'CommitRow';

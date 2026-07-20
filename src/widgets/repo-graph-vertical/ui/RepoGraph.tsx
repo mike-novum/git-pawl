@@ -69,7 +69,10 @@ export const RepoGraph: FC<RepoGraphProps> = ({
       className={cn('bg-surface h-full overflow-auto', className)}
       aria-label="Commit graph"
     >
-      <ul className="min-w-0" style={{ minHeight: graphLayout.height }}>
+      <ul
+        className="divide-border/20 min-w-0 divide-y"
+        style={{ minHeight: graphLayout.height }}
+      >
         {graphLayout.rows.map((row, rowIndex) => (
           <CommitRow
             key={row.commit.hash}
