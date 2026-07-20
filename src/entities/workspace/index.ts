@@ -8,6 +8,7 @@ export {
   useWorkspaceSize,
   useWorkspaceStatus,
   useSetWorkspaceIcon,
+  useWorkspaceIcon,
   invalidateWorkspaceSize,
   invalidateWorkspaceStatus
 } from './model';
@@ -32,3 +33,6 @@ export { createWorkspace, listWorkspaces, removeWorkspace, selectDirectory } fro
 
 export { scanRepos, formatBytes } from './lib';
 export type { ScanReposOptions } from './lib';
+
+export { WorkspaceIcon } from './ui';
+export type { WorkspaceIconProps, WorkspaceIconSize } from './ui';

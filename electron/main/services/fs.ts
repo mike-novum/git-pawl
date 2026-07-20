@@ -7,6 +7,7 @@ import sharp from 'sharp';
 import type {
   FsIconRemoveArgs,
   FsIconSetArgs,
+  FsReadImageDataUrlArgs,
   FsSizeArgs,
   FsWorkspaceCreateArgs,
   FsWorkspaceRemoveArgs,
@@ -242,6 +243,31 @@ export const removeRepoIcon = async (args: FsIconRemoveArgs): Promise<void> => {
       }
     }
   }
+};
+
+const IMAGE_MIME_BY_EXT: Record<string, string> = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.webp': 'image/webp',
+  '.svg': 'image/svg+xml',
+  '.ico': 'image/x-icon',
+  '.bmp': 'image/bmp'
+};
+
+export const readImageAsDataUrl = async (
+  args: FsReadImageDataUrlArgs
+): Promise<string> => {
+  const resolved = path.resolve(args.path);
+  const stat = await fs.stat(resolved);
+  if (!stat.isFile()) {
+    throw new Error(`Not a file: ${resolved}`);
+  }
+  const ext = path.extname(resolved).toLowerCase();
+  const mime = IMAGE_MIME_BY_EXT[ext] ?? 'application/octet-stream';
+  const buf = await fs.readFile(resolved);
+  return `data:${mime};base64,${buf.toString('base64')}`;
 };
 
 const readWorkspaces = (): Workspace[] => {

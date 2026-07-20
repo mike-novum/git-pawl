@@ -5,6 +5,7 @@ export type WorkspacePageProps = Record<string, never>;
 
 export type WorkspaceHeroProps = {
   workspace: Workspace;
+  iconPath: string | null;
   onSettings: () => void;
 };
 

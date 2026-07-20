@@ -209,6 +209,10 @@ export const fsScanReposSchema = z.object({
   maxDepth: z.number().int().positive().optional()
 });
 
+export const fsReadImageDataUrlSchema = z.object({
+  path: z.string().min(1)
+});
+
 export const authGithubCompleteSchema = z.object({
   code: z.string()
 });
@@ -268,6 +272,7 @@ export type FsWorkspaceRemoveArgs = z.infer<typeof fsWorkspaceRemoveSchema>;
 export type FsDetectReposArgs = z.infer<typeof fsDetectReposSchema>;
 export type FsBuildRepoIdArgs = z.infer<typeof fsBuildRepoIdSchema>;
 export type FsScanReposArgs = z.infer<typeof fsScanReposSchema>;
+export type FsReadImageDataUrlArgs = z.infer<typeof fsReadImageDataUrlSchema>;
 export type GitTagArgs = z.infer<typeof gitTagSchema>;
 export type GitPatchArgs = z.infer<typeof gitPatchSchema>;
 export type GitConfigArgs = z.infer<typeof gitConfigSchema>;

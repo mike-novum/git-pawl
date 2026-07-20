@@ -1,9 +1,9 @@
-import { Folder, FolderOpen } from 'lucide-react';
+import { FolderOpen } from 'lucide-react';
 import type { FC } from 'react';
 
-import { formatBytes } from '@/entities/workspace';
+import { formatBytes, WorkspaceIcon } from '@/entities/workspace';
+import { cn } from '@/shared/lib';
 import { StatusDot } from '@/shared/ui';
-import { cn } from '@/shared/lib/theme';
 
 import type { WorkspaceTileProps } from '../types';
 
@@ -22,6 +22,7 @@ const relativeTime = (ts: number | null): string => {
 
 export const WorkspaceTile: FC<WorkspaceTileProps> = ({
   workspace,
+  iconPath,
   repoCount,
   sizeBytes,
   status,
@@ -38,9 +39,11 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
       )}
     >
       <div className="flex items-start justify-between">
-        <div className="bg-surface-elevated text-primary flex size-10 items-center justify-center rounded-lg">
-          <Folder aria-hidden="true" className="size-5" />
-        </div>
+        <WorkspaceIcon
+          workspace={workspace}
+          iconPath={iconPath}
+          size="md"
+        />
         {status !== 'unknown' ? (
           <StatusDot variant={status} label={`workspace ${status}`} />
         ) : null}

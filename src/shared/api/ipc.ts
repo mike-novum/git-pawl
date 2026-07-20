@@ -30,6 +30,7 @@ import type {
   FsDetectReposArgs,
   FsBuildRepoIdArgs,
   FsScanReposArgs,
+  FsReadImageDataUrlArgs,
   StoreGetArgs,
   StoreSetArgs,
   StoreDeleteArgs
@@ -194,6 +195,11 @@ export const fsBuildRepoId = async (args: FsBuildRepoIdArgs): Promise<string> =>
 export const fsScanRepos = async (args: FsScanReposArgs): Promise<string[]> =>
   safeInvoke<string[]>((bridge) => bridge.fsScanRepos(args), []);
 
+export const fsReadImageDataUrl = async (
+  args: FsReadImageDataUrlArgs
+): Promise<string | null> =>
+  safeInvoke<string | null>((bridge) => bridge.fsReadImageDataUrl(args), null);
+
 export const api = {
   getAppInfo,
   storeGet,
@@ -230,7 +236,8 @@ export const api = {
   fsWorkspaceRemove,
   fsDetectRepos,
   fsBuildRepoId,
-  fsScanRepos
+  fsScanRepos,
+  fsReadImageDataUrl
 };
 
 export type IpcApi = typeof api;

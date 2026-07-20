@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
 import {
+  useWorkspaceIcon,
   useWorkspaceList,
   useWorkspaceSize,
   useWorkspaceStatus
@@ -100,12 +101,14 @@ const WorkspaceTileWrapper: FC<{
   const { data: repos = [] } = useRepositoryList(workspace.path, []);
   const { totalBytes } = useWorkspaceSize(workspace.path);
   const { status } = useWorkspaceStatus(workspace.path);
+  const { data: iconPath = null } = useWorkspaceIcon(workspace.id);
 
   const lastActivity: number | null = null;
 
   return (
     <WorkspaceTile
       workspace={workspace}
+      iconPath={iconPath}
       repoCount={repos.length}
       sizeBytes={totalBytes}
       status={status}

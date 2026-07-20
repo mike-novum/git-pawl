@@ -2,6 +2,7 @@ import type { Workspace } from '@/entities/workspace';
 
 export type WorkspaceTileProps = {
   workspace: Workspace;
+  iconPath: string | null;
   repoCount: number;
   sizeBytes: number | null;
   status: 'clean' | 'warning' | 'danger' | 'unknown';

@@ -15,6 +15,7 @@ import {
   fsBuildRepoIdSchema,
   fsDetectReposSchema,
   fsIconSchema,
+  fsReadImageDataUrlSchema,
   fsScanReposSchema,
   fsSizeSchema,
   fsWorkspaceCreateSchema,
@@ -49,6 +50,7 @@ import { safeHandle, safeHandleNoArgs } from '../shared/handler';
 import {
   getRepoSize,
   getWorkspaceSize,
+  readImageAsDataUrl,
   removeRepoIcon,
   selectDirectory,
   selectFile,
@@ -219,6 +221,11 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.FS_DETECT_REPOS, fsDetectReposSchema, detectRepos);
   safeHandle(IPC_CHANNELS.FS_BUILD_REPO_ID, fsBuildRepoIdSchema, buildRepoId);
   safeHandle(IPC_CHANNELS.FS_SCAN_REPOS, fsScanReposSchema, scanRepos);
+  safeHandle(
+    IPC_CHANNELS.FS_READ_IMAGE_DATA_URL,
+    fsReadImageDataUrlSchema,
+    readImageAsDataUrl
+  );
 
   safeHandleNoArgs(IPC_CHANNELS.AUTH_GITHUB_START, () => null);
   safeHandle(IPC_CHANNELS.AUTH_GITHUB_COMPLETE, authGithubCompleteSchema, (args) =>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { FC } from 'react';
 
-import { cn } from '@/shared/lib/theme';
+import { cn, toFileUrl } from '@/shared/lib';
 
 import type { RepositoryIconProps } from './types';
 
@@ -9,14 +9,6 @@ const SIZE_CLASSES: Record<NonNullable<RepositoryIconProps['size']>, string> = {
   sm: 'h-8 w-8 text-base',
   md: 'h-10 w-10 text-lg',
   lg: 'h-14 w-14 text-2xl'
-};
-
-const toFileUrl = (iconPath: string): string => {
-  const normalized = iconPath.replace(/\\/g, '/');
-  if (normalized.startsWith('/')) {
-    return `file://${encodeURI(normalized)}`;
-  }
-  return `file:///${encodeURI(normalized)}`;
 };
 
 export const RepositoryIcon: FC<RepositoryIconProps> = ({

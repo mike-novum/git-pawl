@@ -33,7 +33,8 @@ export {
   fsWorkspaceList,
   fsDetectRepos,
   fsBuildRepoId,
-  fsScanRepos
+  fsScanRepos,
+  fsReadImageDataUrl
 } from './ipc';
 
 export type { ApiSchema, AppInfo, IpcApi } from './ipc';

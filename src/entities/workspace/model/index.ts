@@ -10,7 +10,13 @@ export {
   invalidateWorkspaceStatus
 } from './useWorkspace';
 export type { UseCreateWorkspaceResult, UseRemoveWorkspaceResult } from './useWorkspace';
-export { useSetWorkspaceIcon, setWorkspaceIcon } from './useWorkspaceIcon';
+export {
+  fetchWorkspaceIcon,
+  useSetWorkspaceIcon,
+  useWorkspaceIcon,
+  WORKSPACE_ICON_QUERY_KEY,
+  setWorkspaceIcon
+} from './useWorkspaceIcon';
 export {
   fetchCreateWorkspace,
   fetchRemoveWorkspace,

@@ -9,7 +9,8 @@ import {
   useRemoveWorkspace,
   useSetWorkspaceIcon,
   useWorkspaceById,
-  useWorkspaceExtraRepoPaths
+  useWorkspaceExtraRepoPaths,
+  useWorkspaceIcon
 } from '@/entities/workspace';
 import type { Repository } from '@/entities/repository';
 import { useRepositoryList } from '@/entities/repository';
@@ -42,6 +43,7 @@ export const WorkspacePage: FC = () => {
   const { mutate: addExistingRepo } = useAddExistingRepo();
   const { mutate: removeWorkspace } = useRemoveWorkspace();
   const { mutate: setWorkspaceIcon } = useSetWorkspaceIcon();
+  const { data: iconPath = null } = useWorkspaceIcon(workspaceId);
 
   const handleAddRepo = useCallback((): void => {
     if (!workspaceId) return;
@@ -82,9 +84,22 @@ export const WorkspacePage: FC = () => {
     (iconPath: string): void => {
       if (!workspaceId) return;
 
-      setWorkspaceIcon({ workspaceId, iconPath });
+      setWorkspaceIcon(
+        { workspaceId, iconPath },
+        {
+          onSuccess: () => {
+            toast.success({ title: 'Icon saved' });
+          },
+          onError: (error) => {
+            toast.error({
+              title: 'Failed to save icon',
+              description: error.message
+            });
+          }
+        }
+      );
     },
-    [setWorkspaceIcon, workspaceId]
+    [setWorkspaceIcon, toast, workspaceId]
   );
 
   const groups = useMemo(() => {
@@ -116,6 +131,7 @@ export const WorkspacePage: FC = () => {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-8">
         <WorkspaceHero
           workspace={workspace}
+          iconPath={iconPath}
           onSettings={() => setSettingsOpen(true)}
         />
 

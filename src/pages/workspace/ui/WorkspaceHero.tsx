@@ -1,14 +1,18 @@
-import { Folder, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import type { FC } from 'react';
+
+import { WorkspaceIcon } from '@/entities/workspace';
 
 import type { WorkspaceHeroProps } from '../types';
 
-export const WorkspaceHero: FC<WorkspaceHeroProps> = ({ workspace, onSettings }) => (
+export const WorkspaceHero: FC<WorkspaceHeroProps> = ({
+  workspace,
+  iconPath,
+  onSettings
+}) => (
   <header className="flex items-center justify-between gap-4">
     <div className="flex items-center gap-3">
-      <div className="bg-surface-elevated text-primary flex size-10 items-center justify-center rounded-lg">
-        <Folder aria-hidden="true" className="size-5" />
-      </div>
+      <WorkspaceIcon workspace={workspace} iconPath={iconPath} size="md" />
       <h1 className="text-foreground text-2xl font-semibold tracking-tight">
         {workspace.name}
       </h1>

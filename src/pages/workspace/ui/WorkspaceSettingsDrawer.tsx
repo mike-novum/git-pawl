@@ -2,13 +2,11 @@ import { Trash2 } from 'lucide-react';
 import type { FC } from 'react';
 import { useState } from 'react';
 
+import { useWorkspaceIcon, WorkspaceIcon } from '@/entities/workspace';
 import { fsSelectFile } from '@/shared/api';
 import { Button, Drawer, Input } from '@/shared/ui';
 
 import type { WorkspaceSettingsDrawerProps } from '../types';
-
-const getIconName = (iconPath: string): string =>
-  iconPath.split(/[\\/]/).pop() ?? iconPath;
 
 export const WorkspaceSettingsDrawer: FC<WorkspaceSettingsDrawerProps> = ({
   workspace,
@@ -20,6 +18,8 @@ export const WorkspaceSettingsDrawer: FC<WorkspaceSettingsDrawerProps> = ({
 }) => {
   const [name, setName] = useState(workspace.name);
   const [selectedIconPath, setSelectedIconPath] = useState<string | null>(null);
+  const { data: storedIconPath } = useWorkspaceIcon(workspace.id);
+  const iconPath = selectedIconPath ?? storedIconPath ?? null;
 
   const handleDelete = (): void => {
     if (window.confirm('Delete this workspace? Files on disk will stay intact.')) {
@@ -28,11 +28,11 @@ export const WorkspaceSettingsDrawer: FC<WorkspaceSettingsDrawerProps> = ({
   };
 
   const handleIconChange = async (): Promise<void> => {
-    const iconPath = await fsSelectFile();
-    if (!iconPath) return;
+    const nextPath = await fsSelectFile();
+    if (!nextPath) return;
 
-    setSelectedIconPath(iconPath);
-    onIconChange?.(iconPath);
+    setSelectedIconPath(nextPath);
+    onIconChange?.(nextPath);
   };
 
   const handleDone = (): void => {
@@ -90,9 +90,18 @@ export const WorkspaceSettingsDrawer: FC<WorkspaceSettingsDrawerProps> = ({
             onClick={() => {
               void handleIconChange();
             }}
-            className="bg-surface-elevated text-muted-foreground hover:border-primary flex h-20 w-20 items-center justify-center rounded-lg border border-dashed transition-colors"
+            aria-label="Change workspace icon"
+            className="bg-surface-elevated text-muted-foreground hover:border-primary flex h-20 w-20 items-center justify-center overflow-hidden rounded-lg border border-dashed transition-colors"
           >
-            {selectedIconPath ? getIconName(selectedIconPath) : 'Change'}
+            <WorkspaceIcon
+              workspace={workspace}
+              iconPath={iconPath}
+              size="lg"
+              className="!size-20 !rounded-lg border-0"
+              alt="Workspace icon"
+            >
+              <span className="text-xs">Change</span>
+            </WorkspaceIcon>
           </button>
         </section>
       </div>

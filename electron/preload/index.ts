@@ -48,6 +48,7 @@ export type FsWorkspaceRemoveArgs = { id: string };
 export type FsDetectReposArgs = { path: string; maxDepth?: number };
 export type FsBuildRepoIdArgs = { path: string };
 export type FsScanReposArgs = { path: string; maxDepth?: number };
+export type FsReadImageDataUrlArgs = { path: string };
 
 export type ApiSchema = {
   getAppInfo: () => Promise<AppInfo>;
@@ -89,6 +90,7 @@ export type ApiSchema = {
   fsDetectRepos: (args: FsDetectReposArgs) => Promise<string[]>;
   fsBuildRepoId: (args: FsBuildRepoIdArgs) => Promise<string>;
   fsScanRepos: (args: FsScanReposArgs) => Promise<string[]>;
+  fsReadImageDataUrl: (args: FsReadImageDataUrlArgs) => Promise<string>;
 
   authGithubStart: () => Promise<unknown>;
   authGithubComplete: (args: { code: string }) => Promise<unknown>;
@@ -145,6 +147,8 @@ const api: ApiSchema = {
   fsDetectRepos: (args) => invoke('fs:detect-repos', args) as Promise<string[]>,
   fsBuildRepoId: (args) => invoke('fs:build-repo-id', args) as Promise<string>,
   fsScanRepos: (args) => invoke('fs:scan-repos', args) as Promise<string[]>,
+  fsReadImageDataUrl: (args) =>
+    invoke('fs:read-image-data-url', args) as Promise<string>,
 
   authGithubStart: () => invoke('auth:github-start'),
   authGithubComplete: (args) => invoke('auth:github-complete', args),

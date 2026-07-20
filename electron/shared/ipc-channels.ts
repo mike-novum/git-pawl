@@ -39,6 +39,7 @@ export const IPC_CHANNELS = {
   FS_DETECT_REPOS: 'fs:detect-repos',
   FS_BUILD_REPO_ID: 'fs:build-repo-id',
   FS_SCAN_REPOS: 'fs:scan-repos',
+  FS_READ_IMAGE_DATA_URL: 'fs:read-image-data-url',
 
   AUTH_GITHUB_START: 'auth:github-start',
   AUTH_GITHUB_COMPLETE: 'auth:github-complete',
