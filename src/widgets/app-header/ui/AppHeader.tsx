@@ -37,7 +37,12 @@ const IconButton: FC<{ onClick: () => void; label: string; children: ReactNode }
   </button>
 );
 
-export const AppHeader: FC<AppHeaderProps> = ({ variant, leftSlot, rightSlot }) => {
+export const AppHeader: FC<AppHeaderProps> = ({
+  variant,
+  leftSlot,
+  rightSlot,
+  hideSettings = false
+}) => {
   const isHome = variant === 'home';
 
   const handleSettings = (): void => {
@@ -58,9 +63,11 @@ export const AppHeader: FC<AppHeaderProps> = ({ variant, leftSlot, rightSlot }) 
       </div>
       <div className="flex items-center gap-1">
         {rightSlot}
-        <IconButton onClick={handleSettings} label="Settings">
-          <SettingsIcon />
-        </IconButton>
+        {!hideSettings ? (
+          <IconButton onClick={handleSettings} label="Settings">
+            <SettingsIcon />
+          </IconButton>
+        ) : null}
         <ThemeToggle />
       </div>
     </header>
