@@ -6,6 +6,7 @@ export {
   useWorkspaceExtraRepoPaths,
   useWorkspaceSize,
   useWorkspaceStatus,
+  useSetWorkspaceIcon,
   invalidateWorkspaceSize,
   invalidateWorkspaceStatus
 } from './model';
@@ -20,6 +21,7 @@ export type {
   Workspace,
   WorkspaceCreateArgs,
   WorkspaceCreateResult,
+  WorkspaceIconInput,
   WorkspaceListResult
 } from './model';
 

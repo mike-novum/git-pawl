@@ -8,3 +8,8 @@ export type Workspace = {
 export type WorkspaceListResult = Workspace[];
 
 export type WorkspaceCreateArgs = { path: string; name?: string };
+
+export type WorkspaceIconInput = {
+  workspaceId: string;
+  iconPath: string;
+};

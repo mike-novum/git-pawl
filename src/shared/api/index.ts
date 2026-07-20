@@ -25,6 +25,8 @@ export {
   gitPatch,
   gitConfig,
   gitHooks,
+  fsSelectDirectory,
+  fsSelectFile,
   fsSize,
   fsWorkspaceSize,
   fsIcon,

@@ -6,6 +6,7 @@ import { useAddExistingRepo } from '@/features/add-existing-repo';
 import { useRepoSearch } from '@/features/search-repos';
 import {
   useActiveWorkspace,
+  useSetWorkspaceIcon,
   useWorkspaceById,
   useWorkspaceExtraRepoPaths,
   useWorkspaceSize
@@ -39,6 +40,7 @@ export const WorkspacePage: FC = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [grouped, setGrouped] = useLocalStorageBool('workspace-view-mode', true);
   const { mutate: addExistingRepo } = useAddExistingRepo();
+  const { mutate: setWorkspaceIcon } = useSetWorkspaceIcon();
 
   const handleAddRepo = useCallback((): void => {
     if (!workspaceId) return;
@@ -51,7 +53,7 @@ export const WorkspacePage: FC = () => {
 
   const handleRepoClick = useCallback(
     (repo: Repository): void => {
-      navigate(`/repos/${encodeURIComponent(repo.id)}`);
+      navigate(`/repos/${encodeURIComponent(repo.path)}`);
     },
     [navigate]
   );
@@ -60,6 +62,15 @@ export const WorkspacePage: FC = () => {
     toast.success({ title: 'Workspace deleted' });
     navigate('/workspaces');
   }, [navigate, toast]);
+
+  const handleIconChange = useCallback(
+    (iconPath: string): void => {
+      if (!workspaceId) return;
+
+      setWorkspaceIcon({ workspaceId, iconPath });
+    },
+    [setWorkspaceIcon, workspaceId]
+  );
 
   const groups = useMemo(() => {
     if (!grouped) {
@@ -133,6 +144,7 @@ export const WorkspacePage: FC = () => {
         workspace={workspace}
         open={settingsOpen}
         onOpenChange={setSettingsOpen}
+        onIconChange={handleIconChange}
         onDelete={handleDelete}
       />
     </>

@@ -9,6 +9,7 @@ export {
   invalidateWorkspaceStatus
 } from './useWorkspace';
 export type { UseCreateWorkspaceResult } from './useWorkspace';
+export { useSetWorkspaceIcon, setWorkspaceIcon } from './useWorkspaceIcon';
 export {
   fetchCreateWorkspace,
   fetchWorkspaceList,
@@ -19,5 +20,10 @@ export {
   useWorkspaceExtraRepoPaths,
   WORKSPACE_EXTRA_REPOS_QUERY_KEY
 } from './useWorkspaceExtraRepoPaths';
-export type { Workspace, WorkspaceCreateArgs, WorkspaceListResult } from './types';
+export type {
+  Workspace,
+  WorkspaceCreateArgs,
+  WorkspaceIconInput,
+  WorkspaceListResult
+} from './types';
 export type { WorkspaceStatus } from '../lib/computeWorkspaceStatus';
