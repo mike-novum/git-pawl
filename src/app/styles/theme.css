@@ -37,6 +37,8 @@
   --color-input: oklch(0.28 0.012 250);
   --color-ring: oklch(0.74 0.18 50);
 
+  --color-overlay: oklch(0 0 0 / 0.6);
+
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
