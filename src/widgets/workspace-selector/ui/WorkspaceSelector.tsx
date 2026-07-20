@@ -34,6 +34,9 @@ export const WorkspaceSelector: FC<WorkspaceSelectorProps> = ({
   const toast = useToast();
   const [createOpen, setCreateOpen] = useState(false);
 
+  const currentWorkspace =
+    active ?? workspaces.find((w) => w.id === workspaceId) ?? null;
+
   const handleSwitch = (id: string, name: string): void => {
     if (id === workspaceId) return;
     setActiveWorkspaceId(id);
@@ -55,7 +58,7 @@ export const WorkspaceSelector: FC<WorkspaceSelectorProps> = ({
             className
           )}
         >
-          <span className="font-medium">{active?.name ?? 'Select workspace'}</span>
+          <span className="font-medium">{currentWorkspace?.name ?? 'Select workspace'}</span>
           <ChevronDown aria-hidden="true" className="text-muted-foreground size-4" />
         </DropdownMenuTrigger>
         <DropdownMenuPortal>

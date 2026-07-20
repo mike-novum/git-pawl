@@ -38,6 +38,7 @@ export const RepoGroup: FC<RepoGroupProps> = ({
             <RepoCard
               key={repo.id}
               repo={repo}
+              sizeBytes={repo.sizeBytes ?? null}
               onClick={() => onRepoClick(repo)}
             />
           ))}

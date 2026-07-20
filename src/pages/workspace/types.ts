@@ -29,6 +29,7 @@ export type RepoGroupProps = {
 
 export type RepoCardProps = {
   repo: Repository;
+  sizeBytes: number | null;
   onClick: () => void;
 };
 

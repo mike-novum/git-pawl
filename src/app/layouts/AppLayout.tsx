@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ErrorBoundary } from '@/app/providers';
 import { useAppStore } from '@/app/store';
@@ -10,13 +10,23 @@ import type { AppLayoutProps } from './types';
 
 const HOMEPAGE_PATH = '/workspaces';
 
+const WORKSPACE_ID_PATTERN = /^\/workspaces\/([^/]+)/;
+
+const extractWorkspaceIdFromPath = (path: string): string | null => {
+  const match = WORKSPACE_ID_PATTERN.exec(path);
+  return match ? (match[1] ?? null) : null;
+};
+
 export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams<{ id?: string }>();
   const activeWorkspaceId = useAppStore((s) => s.activeWorkspaceId);
 
   const isHome = location.pathname === HOMEPAGE_PATH;
   const variant = isHome ? 'home' : 'workspace';
+  const selectorWorkspaceId =
+    params.id ?? extractWorkspaceIdFromPath(location.pathname) ?? activeWorkspaceId;
 
   const handleBack = (): void => {
     if (window.history.length > 1) navigate(-1);
@@ -50,8 +60,8 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
                   <path d="m15 18-6-6 6-6" />
                 </svg>
               </button>
-              {activeWorkspaceId ? (
-                <WorkspaceSelector workspaceId={activeWorkspaceId} />
+              {selectorWorkspaceId ? (
+                <WorkspaceSelector workspaceId={selectorWorkspaceId} />
               ) : null}
             </div>
           ) : null

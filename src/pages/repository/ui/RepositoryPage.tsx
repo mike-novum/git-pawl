@@ -146,6 +146,12 @@ export const RepositoryPage: FC = () => {
           <button
             type="button"
             aria-label="Fetch"
+            onClick={() =>
+              toast.info({
+                title: 'Coming soon',
+                description: 'Fetch is not implemented yet'
+              })
+            }
             className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors"
           >
             <RefreshCw aria-hidden="true" className="size-4" />
@@ -153,6 +159,9 @@ export const RepositoryPage: FC = () => {
           <button
             type="button"
             aria-label="Pull"
+            onClick={() =>
+              toast.info({ title: 'Coming soon', description: 'Pull is not implemented yet' })
+            }
             className="bg-primary text-primary-foreground hover:shadow-glow flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-all"
           >
             <GitPullRequestArrow aria-hidden="true" className="size-3.5" /> Pull
@@ -160,6 +169,9 @@ export const RepositoryPage: FC = () => {
           <button
             type="button"
             aria-label="Push"
+            onClick={() =>
+              toast.info({ title: 'Coming soon', description: 'Push is not implemented yet' })
+            }
             className="bg-primary text-primary-foreground hover:shadow-glow flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-all"
           >
             <GitPullRequestArrow aria-hidden="true" className="size-3.5 -scale-y-100" /> Push
@@ -182,14 +194,40 @@ export const RepositoryPage: FC = () => {
         <RepoDetailPanel
           commit={selectedCommit}
           onCopyHash={handleCopyHash}
-          onCreatePatch={() => toast.info({ title: 'Patch' })}
-          onRevert={() => toast.info({ title: 'Revert' })}
-          onCherryPick={() => toast.info({ title: 'Cherry-pick' })}
-          onResetToHere={() => toast.info({ title: 'Reset to here' })}
+          onCreatePatch={() =>
+            toast.info({ title: 'Coming soon', description: 'Patch is not implemented yet' })
+          }
+          onRevert={() =>
+            toast.info({ title: 'Coming soon', description: 'Revert is not implemented yet' })
+          }
+          onCherryPick={() =>
+            toast.info({
+              title: 'Coming soon',
+              description: 'Cherry-pick is not implemented yet'
+            })
+          }
+          onResetToHere={() =>
+            toast.info({
+              title: 'Coming soon',
+              description: 'Reset to here is not implemented yet'
+            })
+          }
           uncommittedCount={repo?.status === 'dirty' ? 1 : 0}
-          onCommit={() => toast.info({ title: 'Open commit' })}
-          onStash={() => toast.info({ title: 'Stash' })}
-          onDiscard={() => toast.info({ title: 'Discard' })}
+          onCommit={() =>
+            toast.info({
+              title: 'Coming soon',
+              description: 'Open commit is not implemented yet'
+            })
+          }
+          onStash={() =>
+            toast.info({ title: 'Coming soon', description: 'Stash is not implemented yet' })
+          }
+          onDiscard={() =>
+            toast.info({
+              title: 'Coming soon',
+              description: 'Discard is not implemented yet'
+            })
+          }
         />
       </div>
     </div>

@@ -41,10 +41,9 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
         <div className="bg-surface-elevated text-primary flex size-10 items-center justify-center rounded-lg">
           <Folder aria-hidden="true" className="size-5" />
         </div>
-        <StatusDot
-          variant={status === 'unknown' ? 'clean' : status}
-          label={`workspace ${status}`}
-        />
+        {status !== 'unknown' ? (
+          <StatusDot variant={status} label={`workspace ${status}`} />
+        ) : null}
       </div>
       <div className="flex flex-col gap-1">
         <h3 className="text-foreground truncate text-base font-medium">

@@ -7,7 +7,8 @@ import { useRepoSearch } from '@/features/search-repos';
 import {
   useActiveWorkspace,
   useWorkspaceById,
-  useWorkspaceExtraRepoPaths
+  useWorkspaceExtraRepoPaths,
+  useWorkspaceSize
 } from '@/entities/workspace';
 import type { Repository } from '@/entities/repository';
 import { useRepositoryList } from '@/entities/repository';
@@ -33,6 +34,7 @@ export const WorkspacePage: FC = () => {
   const { data: extraRepoPaths = [] } = useWorkspaceExtraRepoPaths(workspaceId);
   const { data: repos = [], isLoading } = useRepositoryList(workspacePath, extraRepoPaths);
   const { query, setQuery, results: visibleRepos } = useRepoSearch(repos);
+  const { totalBytes: workspaceSizeBytes } = useWorkspaceSize(workspacePath);
   const [createOpen, setCreateOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [grouped, setGrouped] = useLocalStorageBool('workspace-view-mode', true);
@@ -92,7 +94,7 @@ export const WorkspacePage: FC = () => {
           workspace={workspace}
           repoCount={repos.length}
           modifiedCount={modifiedCount}
-          sizeBytes={null}
+          sizeBytes={workspaceSizeBytes}
           onSettings={() => setSettingsOpen(true)}
         />
 
