@@ -75,11 +75,13 @@ export const useAddExistingRepo = (): UseAddExistingRepoResult => {
 
       return { repoPath: picked };
     },
-    onSuccess: (_data, variables) => {
-      void queryClient.invalidateQueries({
-        queryKey: ['workspace-extra-repos', variables.workspaceId]
-      });
-      void queryClient.invalidateQueries({ queryKey: ['repository-list'] });
+    onSuccess: (data, variables) => {
+      if (data) {
+        void queryClient.invalidateQueries({
+          queryKey: ['workspace-extra-repos', variables.workspaceId]
+        });
+        void queryClient.invalidateQueries({ queryKey: ['repository-list'] });
+      }
     }
   });
 };
