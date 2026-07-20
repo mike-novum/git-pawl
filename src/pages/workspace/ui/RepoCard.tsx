@@ -39,7 +39,7 @@ export const RepoCard: FC<RepoCardProps> = ({ repo, sizeBytes, onClick }) => (
           {repo.currentBranch}
         </span>
       ) : null}
-      <div className="text-muted-foreground flex items-center justify-end text-xs">
+      <div className="text-muted-foreground flex items-center justify-start text-xs">
         <span className="font-mono">
           {sizeBytes !== null ? formatBytes(sizeBytes) : '—'}
         </span>
