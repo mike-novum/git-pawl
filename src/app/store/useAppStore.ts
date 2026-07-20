@@ -21,5 +21,12 @@ export const useAppStore = createPersistedStore<AppState>('app', (set) => ({
   selectedRepoId: null,
   setSelectedRepoId: (id) => {
     set({ selectedRepoId: id });
+  },
+
+  workspaceCounters: {},
+  setWorkspaceCounters: (id, counters) => {
+    set((state) => ({
+      workspaceCounters: { ...state.workspaceCounters, [id]: counters }
+    }));
   }
 }));
