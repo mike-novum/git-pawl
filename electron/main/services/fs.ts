@@ -9,6 +9,7 @@ import type {
   FsIconSetArgs,
   FsSizeArgs,
   FsWorkspaceCreateArgs,
+  FsWorkspaceRemoveArgs,
   FsWorkspaceSizeArgs
 } from '../../shared/schemas';
 import type { RepoSize, Workspace } from '../../shared/types/fs';
@@ -267,4 +268,15 @@ export const workspaceCreate = async (
   writeWorkspaces(list);
 
   return workspace;
+};
+
+export const workspaceRemove = async (
+  args: FsWorkspaceRemoveArgs
+): Promise<void> => {
+  const list = readWorkspaces();
+  const next = list.filter((w) => w.id !== args.id);
+  if (next.length === list.length) {
+    return;
+  }
+  writeWorkspaces(next);
 };

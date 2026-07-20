@@ -25,6 +25,7 @@ import type {
   FsSizeArgs,
   FsIconArgs,
   FsWorkspaceCreateArgs,
+  FsWorkspaceRemoveArgs,
   FsWorkspaceSizeArgs,
   FsDetectReposArgs,
   FsBuildRepoIdArgs,
@@ -173,6 +174,14 @@ export const fsWorkspaceCreate = async (
 ): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsWorkspaceCreate(args), null);
 
+export const fsWorkspaceRemove = async (
+  args: FsWorkspaceRemoveArgs
+): Promise<void> =>
+  safeInvoke<void>(
+    (bridge) => bridge.fsWorkspaceRemove(args) as Promise<void>,
+    undefined
+  );
+
 export const fsDetectRepos = async (args: FsDetectReposArgs): Promise<string[]> =>
   safeInvoke<string[]>((bridge) => bridge.fsDetectRepos(args), []);
 
@@ -214,6 +223,7 @@ export const api = {
   fsIcon,
   fsWorkspaceList,
   fsWorkspaceCreate,
+  fsWorkspaceRemove,
   fsDetectRepos,
   fsBuildRepoId,
   fsScanRepos
