@@ -43,6 +43,7 @@ export type FsIconArgs =
   | { action: 'set'; repoPath: string; sourceImagePath: string }
   | { action: 'remove'; repoPath: string };
 export type FsWorkspaceCreateArgs = { path: string; name?: string };
+export type FsWorkspaceRemoveArgs = { id: string };
 export type FsDetectReposArgs = { path: string; maxDepth?: number };
 export type FsBuildRepoIdArgs = { path: string };
 export type FsScanReposArgs = { path: string; maxDepth?: number };
@@ -82,6 +83,7 @@ export type ApiSchema = {
   fsIcon: (args: FsIconArgs) => Promise<void>;
   fsWorkspaceList: () => Promise<unknown>;
   fsWorkspaceCreate: (args: FsWorkspaceCreateArgs) => Promise<unknown>;
+  fsWorkspaceRemove: (args: FsWorkspaceRemoveArgs) => Promise<unknown>;
   fsDetectRepos: (args: FsDetectReposArgs) => Promise<string[]>;
   fsBuildRepoId: (args: FsBuildRepoIdArgs) => Promise<string>;
   fsScanRepos: (args: FsScanReposArgs) => Promise<string[]>;
@@ -136,6 +138,7 @@ const api: ApiSchema = {
   fsIcon: (args) => invoke('fs:icon', args) as Promise<void>,
   fsWorkspaceList: () => invoke('fs:workspace-list'),
   fsWorkspaceCreate: (args) => invoke('fs:workspace-create', args),
+  fsWorkspaceRemove: (args) => invoke('fs:workspace-remove', args),
   fsDetectRepos: (args) => invoke('fs:detect-repos', args) as Promise<string[]>,
   fsBuildRepoId: (args) => invoke('fs:build-repo-id', args) as Promise<string>,
   fsScanRepos: (args) => invoke('fs:scan-repos', args) as Promise<string[]>,

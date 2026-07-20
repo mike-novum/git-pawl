@@ -1,6 +1,7 @@
 export {
   useActiveWorkspace,
   useCreateWorkspace,
+  useRemoveWorkspace,
   useWorkspaceById,
   useWorkspaceList,
   useWorkspaceExtraRepoPaths,
@@ -9,21 +10,23 @@ export {
   invalidateWorkspaceSize,
   invalidateWorkspaceStatus
 } from './model';
-export type { UseCreateWorkspaceResult } from './model';
+export type { UseCreateWorkspaceResult, UseRemoveWorkspaceResult } from './model';
 export type { WorkspaceStatus } from './model';
 export {
   WORKSPACE_LIST_QUERY_KEY,
   fetchCreateWorkspace,
+  fetchRemoveWorkspace,
   fetchWorkspaceList
 } from './model';
 export type {
   Workspace,
   WorkspaceCreateArgs,
   WorkspaceCreateResult,
-  WorkspaceListResult
+  WorkspaceListResult,
+  WorkspaceRemoveArgs
 } from './model';
 
-export { createWorkspace, listWorkspaces, selectDirectory } from './api';
+export { createWorkspace, listWorkspaces, removeWorkspace, selectDirectory } from './api';
 
 export { scanRepos, formatBytes } from './lib';
 export type { ScanReposOptions } from './lib';

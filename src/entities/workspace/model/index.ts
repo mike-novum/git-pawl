@@ -1,6 +1,7 @@
 export {
   useActiveWorkspace,
   useCreateWorkspace,
+  useRemoveWorkspace,
   useWorkspaceById,
   useWorkspaceList,
   useWorkspaceSize,
@@ -8,9 +9,10 @@ export {
   invalidateWorkspaceSize,
   invalidateWorkspaceStatus
 } from './useWorkspace';
-export type { UseCreateWorkspaceResult } from './useWorkspace';
+export type { UseCreateWorkspaceResult, UseRemoveWorkspaceResult } from './useWorkspace';
 export {
   fetchCreateWorkspace,
+  fetchRemoveWorkspace,
   fetchWorkspaceList,
   WORKSPACE_LIST_QUERY_KEY
 } from './workspaceQueries';
@@ -19,5 +21,10 @@ export {
   useWorkspaceExtraRepoPaths,
   WORKSPACE_EXTRA_REPOS_QUERY_KEY
 } from './useWorkspaceExtraRepoPaths';
-export type { Workspace, WorkspaceCreateArgs, WorkspaceListResult } from './types';
+export type {
+  Workspace,
+  WorkspaceCreateArgs,
+  WorkspaceListResult,
+  WorkspaceRemoveArgs
+} from './types';
 export type { WorkspaceStatus } from '../lib/computeWorkspaceStatus';

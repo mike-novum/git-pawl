@@ -18,6 +18,7 @@ import {
   fsScanReposSchema,
   fsSizeSchema,
   fsWorkspaceCreateSchema,
+  fsWorkspaceRemoveSchema,
   fsWorkspaceSizeSchema,
   gitAmendSchema,
   gitBranchSchema,
@@ -52,7 +53,8 @@ import {
   selectDirectory,
   setRepoIcon,
   workspaceCreate,
-  workspaceList
+  workspaceList,
+  workspaceRemove
 } from './services/fs';
 import {
   buildRepoId,
@@ -210,6 +212,7 @@ const registerIpcHandlers = (): void => {
   });
   safeHandleNoArgs(IPC_CHANNELS.FS_WORKSPACE_LIST, workspaceList);
   safeHandle(IPC_CHANNELS.FS_WORKSPACE_CREATE, fsWorkspaceCreateSchema, workspaceCreate);
+  safeHandle(IPC_CHANNELS.FS_WORKSPACE_REMOVE, fsWorkspaceRemoveSchema, workspaceRemove);
   safeHandle(IPC_CHANNELS.FS_WORKSPACE_SIZE, fsWorkspaceSizeSchema, getWorkspaceSize);
   safeHandle(IPC_CHANNELS.FS_DETECT_REPOS, fsDetectReposSchema, detectRepos);
   safeHandle(IPC_CHANNELS.FS_BUILD_REPO_ID, fsBuildRepoIdSchema, buildRepoId);
