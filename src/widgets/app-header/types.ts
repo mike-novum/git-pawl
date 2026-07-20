@@ -6,4 +6,5 @@ export type AppHeaderProps = {
   variant: AppHeaderVariant;
   leftSlot?: ReactNode;
   rightSlot?: ReactNode;
+  hideSettings?: boolean;
 };

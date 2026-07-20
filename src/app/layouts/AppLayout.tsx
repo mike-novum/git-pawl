@@ -9,6 +9,7 @@ import { WorkspaceSelector } from '@/widgets/workspace-selector';
 import type { AppLayoutProps } from './types';
 
 const HOMEPAGE_PATH = '/workspaces';
+const SETTINGS_PATH = '/settings';
 
 const WORKSPACE_ID_PATTERN = /^\/workspaces\/([^/]+)/;
 
@@ -24,6 +25,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   const activeWorkspaceId = useAppStore((s) => s.activeWorkspaceId);
 
   const isHome = location.pathname === HOMEPAGE_PATH;
+  const isSettings = location.pathname === SETTINGS_PATH;
   const variant = isHome ? 'home' : 'workspace';
   const selectorWorkspaceId =
     params.id ?? extractWorkspaceIdFromPath(location.pathname) ?? activeWorkspaceId;
@@ -37,6 +39,7 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
     <div className="bg-background text-foreground flex h-screen w-screen flex-col overflow-hidden">
       <AppHeader
         variant={variant}
+        hideSettings={isSettings}
         leftSlot={
           variant === 'workspace' ? (
             <div className="flex items-center gap-2">
