@@ -13,7 +13,7 @@ export const WorkspaceToolbar: FC<WorkspaceToolbarProps> = ({
   onAddRepo,
   onClone
 }) => (
-  <div className="bg-surface border-border sticky top-0 z-10 flex items-center gap-2 border-b px-1 py-2">
+  <div className="sticky top-0 z-10 flex items-center gap-2 px-1 py-2">
     <div className="relative max-w-xs flex-1">
       <Search
         aria-hidden="true"
