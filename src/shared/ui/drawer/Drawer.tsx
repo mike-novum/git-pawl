@@ -43,7 +43,7 @@ export const Drawer: FC<DrawerProps> = ({
       />
       <div
         className={cn(
-          'bg-surface text-foreground relative flex h-full flex-col border-l shadow-sm',
+          'bg-surface text-foreground relative flex h-full flex-col shadow-sm',
           'animate-[slideInRight_180ms_var(--ease-out)]'
         )}
         style={{ width }}
