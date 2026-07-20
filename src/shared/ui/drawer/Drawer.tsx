@@ -38,7 +38,7 @@ export const Drawer: FC<DrawerProps> = ({
     >
       <div
         data-testid="drawer-backdrop"
-        className="bg-foreground/40 absolute inset-0 animate-[fadeIn_180ms_var(--ease-out)]"
+        className="bg-overlay absolute inset-0 backdrop-blur-sm animate-[fadeIn_180ms_var(--ease-out)]"
         onClick={() => onOpenChange(false)}
       />
       <div
