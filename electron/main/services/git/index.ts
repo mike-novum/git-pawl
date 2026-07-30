@@ -90,7 +90,7 @@ export const gitLog = async (
   signal?: AbortSignal
 ): Promise<Commit[]> => {
   const cwd = ensureRepoPath(args.repoPath);
-  const gitArgs = ['log', `--format=${LOG_FORMAT}`];
+  const gitArgs = ['log', '--topo-order', `--format=${LOG_FORMAT}`];
   if (typeof args.maxCount === 'number') {
     gitArgs.push(`-n`, String(args.maxCount));
   }

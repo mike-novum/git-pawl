@@ -29,6 +29,7 @@
 | TASK-310 | Граф: непрерывные линии между строками (incoming + outgoing в каждой row) | ✅ done |
 | TASK-311 | Граф: переписать на правильный DAG-алгоритм с одним SVG на колонку | ✅ done |
 | TASK-312 | Граф: hover-анимация точки-коммита (transform-box: fill-box) | ⏳ pending |
+| TASK-313 | Граф: исправить порядок коммитов через git log --topo-order | ✅ done |
 
 ## 14 — Доработки roadmap-7
 
