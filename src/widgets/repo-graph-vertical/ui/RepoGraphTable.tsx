@@ -14,6 +14,7 @@ import type {
   RepoGraphTableProps
 } from '../types';
 import { CommitRow } from './CommitRow';
+import { GraphLayer } from './GraphLayer';
 
 const COLUMN_STORAGE_KEY = 'commit-graph-columns';
 
@@ -173,6 +174,17 @@ export const RepoGraphTable: FC<RepoGraphTableProps> = ({
     });
   };
 
+  const graphWidth = Math.max(
+    MIN_COLUMN_WIDTHS.graph,
+    columnWidths.graph ?? layout.width
+  );
+  const graphOverlay = (
+    <GraphLayer
+      layout={{ ...layout, width: graphWidth }}
+      selectedHash={selectedHash}
+    />
+  );
+
   return (
     <div className={cn('min-w-0 overflow-auto', className)}>
       <table className="w-full min-w-[880px] table-fixed border-collapse text-left">
@@ -226,9 +238,10 @@ export const RepoGraphTable: FC<RepoGraphTableProps> = ({
               key={row.commit.hash}
               row={row}
               rowIndex={rowIndex}
-              graphWidth={layout.width}
+              graphWidth={graphWidth}
               selectedHash={selectedHash}
               onSelect={onSelect}
+              graphOverlay={rowIndex === 0 ? graphOverlay : undefined}
             />
           ))}
         </tbody>

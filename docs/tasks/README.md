@@ -27,6 +27,8 @@
 | TASK-308 | Граф: убрать stray edges внизу и скруглить углы lane-переходов | ✅ done |
 | TASK-309 | Граф: заменить разорванный curve на SourceTree-style S-curve | ✅ done |
 | TASK-310 | Граф: непрерывные линии между строками (incoming + outgoing в каждой row) | ✅ done |
+| TASK-311 | Граф: переписать на правильный DAG-алгоритм с одним SVG на колонку | ✅ done |
+| TASK-312 | Граф: hover-анимация точки-коммита (transform-box: fill-box) | ⏳ pending |
 
 ## 14 — Доработки roadmap-7
 

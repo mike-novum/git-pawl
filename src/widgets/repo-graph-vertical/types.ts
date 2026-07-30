@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export type CommitNode = {
   hash: string;
   shortHash: string;
@@ -25,9 +27,9 @@ export type GraphParent = {
 export type GraphLine = {
   fromLane: number;
   toLane: number;
-  rowDistance: number;
+  fromY: number;
+  toY: number;
   color: string;
-  direction: 'incoming' | 'outgoing';
 };
 
 export type GraphLane = {
@@ -41,13 +43,14 @@ export type GraphRow = {
   lane: number;
   active: boolean;
   parents: GraphParent[];
-  verticalLines: GraphLine[];
 };
 
 export type GraphLayout = {
   rows: GraphRow[];
   lanes: GraphLane[];
   maxLane: number;
+  continuousLines: GraphLine[];
+  parentEdges: GraphLine[];
   width: number;
   height: number;
 };
@@ -58,6 +61,7 @@ export type CommitRowProps = {
   graphWidth: number;
   selectedHash: string | null;
   onSelect: (hash: string) => void;
+  graphOverlay?: ReactNode;
 };
 
 export type ColumnKey = 'graph' | 'description' | 'commit' | 'author' | 'date';
@@ -79,4 +83,9 @@ export type RepoGraphProps = {
   isLoading?: boolean;
   isError?: boolean;
   className?: string;
+};
+
+export type GraphLayerProps = {
+  layout: GraphLayout;
+  selectedHash: string | null;
 };

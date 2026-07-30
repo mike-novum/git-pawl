@@ -2,6 +2,7 @@ import type {
   CommitNode,
   GraphLane,
   GraphLayout,
+  GraphLine,
   GraphParent,
   GraphRow
 } from '../types';
@@ -11,10 +12,15 @@ export const ROW_HEIGHT = 32;
 export const LANE_WIDTH = 14;
 export const GRAPH_WIDTH = 32;
 
-const getFreeLane = (lanes: (string | null)[]): number => {
-  const freeLane = lanes.findIndex((hash) => hash === null);
+const getFreeLane = (activeLanes: Map<string, number>): number => {
+  const used = new Set(activeLanes.values());
+  let lane = 0;
 
-  return freeLane === -1 ? lanes.length : freeLane;
+  while (used.has(lane)) {
+    lane += 1;
+  }
+
+  return lane;
 };
 
 const getBranchName = (commit: CommitNode, lane: number): string =>
@@ -25,6 +31,9 @@ const getBranchName = (commit: CommitNode, lane: number): string =>
 const getLaneColor = (lane: number, branchName: string): string =>
   lane === 0 ? 'var(--color-graph-lane-1)' : laneColor(branchName);
 
+const rowCenterY = (rowIndex: number): number =>
+  rowIndex * ROW_HEIGHT + ROW_HEIGHT / 2;
+
 export const computeLayout = (commits: CommitNode[]): GraphLayout => {
   const ordered = [...commits];
   const rowByHash = new Map(
@@ -33,27 +42,30 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
   const commitByHash = new Map(
     ordered.map((commit) => [commit.hash, commit])
   );
-  const activeHashes = new Set<string>();
-  let activeHash = ordered.find((commit) => commit.isCurrentBranch)?.hash;
 
-  while (activeHash && !activeHashes.has(activeHash)) {
-    activeHashes.add(activeHash);
-    activeHash = commitByHash
-      .get(activeHash)
+  const activeHashes = new Set<string>();
+  let cursorHash = ordered.find((commit) => commit.isCurrentBranch)?.hash;
+
+  while (cursorHash && !activeHashes.has(cursorHash)) {
+    activeHashes.add(cursorHash);
+    cursorHash = commitByHash
+      .get(cursorHash)
       ?.parents.find((parentHash) => commitByHash.has(parentHash));
   }
 
-  const lanes: (string | null)[] = [];
+  const activeLanes = new Map<string, number>();
   const branchNameByLane = new Map<number, string>();
   const rows: GraphRow[] = [];
-  let maxLane = 0;
+  const continuousLines: GraphLine[] = [];
+  const parentEdges: GraphLine[] = [];
+  let maxLane = -1;
 
-  ordered.forEach((commit) => {
-    let lane = lanes.indexOf(commit.hash);
+  ordered.forEach((commit, rowIndex) => {
+    let lane = activeLanes.get(commit.hash);
 
-    if (lane === -1) {
-      lane = getFreeLane(lanes);
-      lanes[lane] = commit.hash;
+    if (lane === undefined) {
+      lane = getFreeLane(activeLanes);
+      activeLanes.set(commit.hash, lane);
     }
 
     const branchName = getBranchName(commit, lane);
@@ -64,49 +76,64 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
     const parentHashes = [...new Set(commit.parents)].filter((hash) =>
       rowByHash.has(hash)
     );
+
     const parents: GraphParent[] = [];
 
     parentHashes.forEach((parentHash, parentIndex) => {
-      let parentLane = lanes.indexOf(parentHash);
+      let parentLane = activeLanes.get(parentHash);
 
-      if (parentLane === -1) {
-        parentLane = parentIndex === 0 ? lane : getFreeLane(lanes);
-        lanes[parentLane] = parentHash;
+      if (parentLane === undefined) {
+        parentLane = parentIndex === 0 ? lane : getFreeLane(activeLanes);
+        activeLanes.set(parentHash, parentLane);
       }
 
-      if (parentIndex === 0 && parentLane !== lane) {
-        lanes[lane] = null;
+      const parentRowIndex = rowByHash.get(parentHash);
+      if (parentRowIndex === undefined) {
+        return;
       }
 
-      const rowIndex = rowByHash.get(parentHash);
+      const parentBranchName =
+        branchNameByLane.get(parentLane) ?? `lane-${parentLane + 1}`;
+      const parentColor = getLaneColor(parentLane, parentBranchName);
 
-      if (rowIndex !== undefined) {
-        const parentBranchName =
-          branchNameByLane.get(parentLane) ?? `lane-${parentLane + 1}`;
-        parents.push({
-          hash: parentHash,
-          lane: parentLane,
-          rowIndex,
-          active:
-            activeHashes.has(commit.hash) && activeHashes.has(parentHash),
-          color: getLaneColor(parentLane, parentBranchName)
-        });
-      }
+      parents.push({
+        hash: parentHash,
+        lane: parentLane,
+        rowIndex: parentRowIndex,
+        active: activeHashes.has(commit.hash) && activeHashes.has(parentHash),
+        color: parentColor
+      });
 
       maxLane = Math.max(maxLane, parentLane);
+
+      parentEdges.push({
+        fromLane: lane,
+        toLane: parentLane,
+        fromY: rowCenterY(rowIndex),
+        toY: rowCenterY(parentRowIndex),
+        color: parentColor
+      });
     });
 
     if (parentHashes.length === 0) {
-      lanes[lane] = null;
+      activeLanes.delete(commit.hash);
+    } else {
+      const firstParentHash = parentHashes[0];
+      if (
+        firstParentHash !== undefined &&
+        activeLanes.get(firstParentHash) !== lane
+      ) {
+        activeLanes.delete(commit.hash);
+      }
     }
 
     maxLane = Math.max(maxLane, lane);
+
     rows.push({
       commit: { ...commit, lane },
       lane,
       active: activeHashes.has(commit.hash),
-      parents,
-      verticalLines: []
+      parents
     });
   });
 
@@ -126,63 +153,46 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
     ...row,
     commit: {
       ...row.commit,
-      color: graphLanes[row.lane]?.color ?? getLaneColor(row.lane, getBranchName(row.commit, row.lane))
+      color:
+        graphLanes[row.lane]?.color ??
+        getLaneColor(row.lane, getBranchName(row.commit, row.lane))
     }
   }));
 
-  graphLanes.forEach((lane) => {
+  for (let laneIndex = 0; laneIndex < graphLanes.length; laneIndex += 1) {
+    const lane = graphLanes[laneIndex];
+    if (!lane) {
+      continue;
+    }
+
     const laneRows = rowsWithColors
       .map((row, rowIndex) => ({ row, rowIndex }))
-      .filter(({ row }) => row.lane === lane.index);
+      .filter(({ row }) => row.lane === laneIndex);
 
-    laneRows.forEach(({ rowIndex }, index) => {
-      const next = laneRows[index + 1];
-      if (!next) {
-        return;
+    for (let i = 0; i < laneRows.length - 1; i += 1) {
+      const current = laneRows[i];
+      const next = laneRows[i + 1];
+      if (!current || !next) {
+        continue;
       }
 
-      rowsWithColors[rowIndex]?.verticalLines.push({
-        fromLane: lane.index,
-        toLane: lane.index,
-        rowDistance: next.rowIndex - rowIndex,
-        color: lane.color,
-        direction: 'outgoing'
+      continuousLines.push({
+        fromLane: laneIndex,
+        toLane: laneIndex,
+        fromY: rowCenterY(current.rowIndex),
+        toY: rowCenterY(next.rowIndex),
+        color: lane.color
       });
-      rowsWithColors[next.rowIndex]?.verticalLines.push({
-        fromLane: lane.index,
-        toLane: lane.index,
-        rowDistance: next.rowIndex - rowIndex,
-        color: lane.color,
-        direction: 'incoming'
-      });
-    });
-  });
-
-  rowsWithColors.forEach((row, rowIndex) => {
-    row.parents.forEach((parent) => {
-      row.verticalLines.push({
-        fromLane: row.lane,
-        toLane: parent.lane,
-        rowDistance: parent.rowIndex - rowIndex,
-        color: parent.color,
-        direction: 'outgoing'
-      });
-      const parentRow = rowsWithColors[parent.rowIndex];
-      parentRow?.verticalLines.push({
-        fromLane: row.lane,
-        toLane: parent.lane,
-        rowDistance: parent.rowIndex - rowIndex,
-        color: parent.color,
-        direction: 'incoming'
-      });
-    });
-  });
+    }
+  }
 
   return {
     rows: rowsWithColors,
     lanes: graphLanes,
     maxLane,
+    continuousLines,
+    parentEdges,
     width: GRAPH_WIDTH + maxLane * LANE_WIDTH,
-    height: rows.length * ROW_HEIGHT
+    height: rowsWithColors.length * ROW_HEIGHT
   };
 };

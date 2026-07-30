@@ -18,7 +18,25 @@ const createCommit = (
   lane: 0
 });
 
+const rowCenterY = (rowIndex: number): number =>
+  rowIndex * ROW_HEIGHT + ROW_HEIGHT / 2;
+
 describe('computeLayout', () => {
+  it('preserves the topological order returned by git log', () => {
+    const commits = [
+      createCommit('b-child', ['a-parent'], 1),
+      createCommit('a-parent', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.rows.map(({ commit }) => commit.hash)).toEqual([
+      'b-child',
+      'a-parent'
+    ]);
+    expect(layout.rows[0]?.parents[0]?.rowIndex).toBe(1);
+  });
+
   it('assigns separate lanes to merge parents and joins them at their shared parent', () => {
     const commits = [
       createCommit('merge', ['main', 'feature'], 4),
@@ -62,19 +80,163 @@ describe('computeLayout', () => {
     ]);
   });
 
-  it('preserves the topological order returned by git log', () => {
+  it('emits continuous vertical lines between consecutive same-lane commits', () => {
     const commits = [
-      createCommit('b-child', ['a-parent'], 1),
-      createCommit('a-parent', [], 1)
+      createCommit('first', ['second'], 3),
+      createCommit('second', ['third'], 2),
+      createCommit('third', [], 1)
     ];
 
     const layout = computeLayout(commits);
 
-    expect(layout.rows.map(({ commit }) => commit.hash)).toEqual([
-      'b-child',
-      'a-parent'
+    expect(layout.continuousLines).toEqual([
+      {
+        fromLane: 0,
+        toLane: 0,
+        fromY: rowCenterY(0),
+        toY: rowCenterY(1),
+        color: 'var(--color-graph-lane-1)'
+      },
+      {
+        fromLane: 0,
+        toLane: 0,
+        fromY: rowCenterY(1),
+        toY: rowCenterY(2),
+        color: 'var(--color-graph-lane-1)'
+      }
     ]);
-    expect(layout.rows[0]?.parents[0]?.rowIndex).toBe(1);
+  });
+
+  it('does not generate continuous lines past the last commit on a lane', () => {
+    const commits = [
+      createCommit('a', ['b'], 3),
+      createCommit('b', ['c'], 2),
+      createCommit('c', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+    const lastRowY = rowCenterY(layout.rows.length - 1);
+
+    const overflow = layout.continuousLines.filter(
+      (line) => line.toY > lastRowY
+    );
+    expect(overflow).toEqual([]);
+  });
+
+  it('emits one parent edge per parent relationship', () => {
+    const commits = [
+      createCommit('merge', ['main', 'feature'], 4),
+      createCommit('main', ['root'], 3),
+      createCommit('feature', ['root'], 2),
+      createCommit('root', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.parentEdges).toEqual([
+      {
+        fromLane: 0,
+        toLane: 0,
+        fromY: rowCenterY(0),
+        toY: rowCenterY(1),
+        color: 'var(--color-graph-lane-1)'
+      },
+      {
+        fromLane: 0,
+        toLane: 1,
+        fromY: rowCenterY(0),
+        toY: rowCenterY(2),
+        color: expect.any(String) as unknown as string
+      },
+      {
+        fromLane: 0,
+        toLane: 0,
+        fromY: rowCenterY(1),
+        toY: rowCenterY(3),
+        color: 'var(--color-graph-lane-1)'
+      },
+      {
+        fromLane: 1,
+        toLane: 0,
+        fromY: rowCenterY(2),
+        toY: rowCenterY(3),
+        color: 'var(--color-graph-lane-1)'
+      }
+    ]);
+  });
+
+  it('uses absolute y-coordinates derived from row index and ROW_HEIGHT', () => {
+    const commits = [
+      createCommit('first', ['second'], 2),
+      createCommit('second', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.parentEdges[0]).toEqual({
+      fromLane: 0,
+      toLane: 0,
+      fromY: rowCenterY(0),
+      toY: rowCenterY(1),
+      color: 'var(--color-graph-lane-1)'
+    });
+    expect(layout.continuousLines).toEqual([
+      {
+        fromLane: 0,
+        toLane: 0,
+        fromY: rowCenterY(0),
+        toY: rowCenterY(1),
+        color: 'var(--color-graph-lane-1)'
+      }
+    ]);
+  });
+
+  it('does not generate edges for parents outside the visible set', () => {
+    const commits = [
+      createCommit('first', ['second', 'outside'], 2),
+      createCommit('second', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.rows[0]?.parents).toEqual([
+      {
+        hash: 'second',
+        lane: 0,
+        rowIndex: 1,
+        active: false,
+        color: 'var(--color-graph-lane-1)'
+      }
+    ]);
+    expect(layout.parentEdges).toHaveLength(1);
+  });
+
+  it('keeps commit in its lane when first parent is on the same lane', () => {
+    const commits = [
+      createCommit('top', ['middle'], 3),
+      createCommit('middle', ['bottom'], 2),
+      createCommit('bottom', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.rows.every(({ lane }) => lane === 0)).toBe(true);
+    expect(layout.continuousLines).toHaveLength(2);
+  });
+
+  it('assigns a deterministic css-variable color to each lane', () => {
+    const commits = [
+      createCommit('a', ['b', 'c'], 3),
+      createCommit('b', [], 2),
+      createCommit('c', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.lanes.map(({ index, color }) => [index, color])).toEqual([
+      [0, 'var(--color-graph-lane-1)'],
+      [1, expect.stringMatching(/^var\(--color-graph-lane-\d+\)$/) as unknown as string]
+    ]);
   });
 
   it('marks the current branch first-parent lane as active', () => {
@@ -106,65 +268,7 @@ describe('computeLayout', () => {
     ]);
   });
 
-  it('uses ROW_HEIGHT=32 for compact single-row rendering', () => {
-    expect(ROW_HEIGHT).toBe(32);
-  });
-
-  it('assigns a deterministic css-variable color to each lane', () => {
-    const commits = [
-      createCommit('a', ['b', 'c'], 3),
-      createCommit('b', [], 2),
-      createCommit('c', [], 1)
-    ];
-
-    const layout = computeLayout(commits);
-
-    expect(layout.lanes.map(({ index, color }) => [index, color])).toEqual([
-      [0, 'var(--color-graph-lane-1)'],
-      [1, expect.stringMatching(/^var\(--color-graph-lane-\d+\)$/) as unknown as string]
-    ]);
-  });
-
-  it('draws an outgoing segment in the source row and an incoming segment in the destination row for continuous vertical lines', () => {
-    const commits = [
-      createCommit('first', ['second'], 3),
-      createCommit('second', ['third'], 2),
-      createCommit('third', [], 1)
-    ];
-
-    const layout = computeLayout(commits);
-
-    expect(layout.rows[0]?.verticalLines).toContainEqual({
-      fromLane: 0,
-      toLane: 0,
-      rowDistance: 1,
-      color: 'var(--color-graph-lane-1)',
-      direction: 'outgoing'
-    });
-    expect(layout.rows[1]?.verticalLines).toContainEqual({
-      fromLane: 0,
-      toLane: 0,
-      rowDistance: 1,
-      color: 'var(--color-graph-lane-1)',
-      direction: 'incoming'
-    });
-    expect(layout.rows[1]?.verticalLines).toContainEqual({
-      fromLane: 0,
-      toLane: 0,
-      rowDistance: 1,
-      color: 'var(--color-graph-lane-1)',
-      direction: 'outgoing'
-    });
-    expect(layout.rows[2]?.verticalLines).toContainEqual({
-      fromLane: 0,
-      toLane: 0,
-      rowDistance: 1,
-      color: 'var(--color-graph-lane-1)',
-      direction: 'incoming'
-    });
-  });
-
-  it('does not add an outgoing continuous line past the last commit on a lane', () => {
+  it('produces total height equal to rows.length * ROW_HEIGHT', () => {
     const commits = [
       createCommit('a', ['b'], 3),
       createCommit('b', ['c'], 2),
@@ -173,15 +277,10 @@ describe('computeLayout', () => {
 
     const layout = computeLayout(commits);
 
-    const lastRowContinuousOutgoing = (layout.rows[2]?.verticalLines ?? []).filter(
-      (line) =>
-        line.direction === 'outgoing' &&
-        line.fromLane === line.toLane
-    );
-    expect(lastRowContinuousOutgoing).toEqual([]);
+    expect(layout.height).toBe(layout.rows.length * ROW_HEIGHT);
   });
 
-  it('produces both outgoing and incoming segments for every parent edge', () => {
+  it('sets width to GRAPH_WIDTH + maxLane * LANE_WIDTH', () => {
     const commits = [
       createCommit('merge', ['main', 'feature'], 4),
       createCommit('main', ['root'], 3),
@@ -191,71 +290,11 @@ describe('computeLayout', () => {
 
     const layout = computeLayout(commits);
 
-    const mergeRowOutgoing = (layout.rows[0]?.verticalLines ?? []).filter(
-      (line) => line.direction === 'outgoing'
-    );
-    expect(mergeRowOutgoing.length).toBeGreaterThanOrEqual(2);
-
-    const mainRowIncoming = (layout.rows[1]?.verticalLines ?? []).filter(
-      (line) => line.direction === 'incoming'
-    );
-    expect(mainRowIncoming.some((line) => line.toLane === 0 && line.fromLane === 0)).toBe(true);
-
-    const featureRowIncoming = (layout.rows[2]?.verticalLines ?? []).filter(
-      (line) => line.direction === 'incoming'
-    );
-    expect(featureRowIncoming.some((line) => line.fromLane === 0 && line.toLane === 1)).toBe(true);
+    expect(layout.maxLane).toBe(1);
+    expect(layout.width).toBe(32 + 1 * 14);
   });
 
-  it('first row receives no incoming lines at all', () => {
-    const commits = [
-      createCommit('first', ['second'], 2),
-      createCommit('second', [], 1)
-    ];
-
-    const layout = computeLayout(commits);
-
-    const firstRowIncoming = (layout.rows[0]?.verticalLines ?? []).filter(
-      (line) => line.direction === 'incoming'
-    );
-    expect(firstRowIncoming).toEqual([]);
-  });
-
-  it('does not generate edges for parents outside the visible set', () => {
-    const commits = [
-      createCommit('first', ['second', 'outside'], 2),
-      createCommit('second', [], 1)
-    ];
-
-    const layout = computeLayout(commits);
-
-    expect(layout.rows[0]?.parents).toEqual([
-      {
-        hash: 'second',
-        lane: 0,
-        rowIndex: 1,
-        active: false,
-        color: 'var(--color-graph-lane-1)'
-      }
-    ]);
-  });
-
-  it('colors each merge parent edge with its own lane color', () => {
-    const commits = [
-      createCommit('merge', ['main', 'feature'], 4),
-      createCommit('main', ['root'], 3),
-      createCommit('feature', ['root'], 2),
-      createCommit('root', [], 1)
-    ];
-
-    const layout = computeLayout(commits);
-
-    const parents = layout.rows[0]?.parents ?? [];
-    const firstParentColor = parents[0]?.color;
-    const secondParentColor = parents[1]?.color;
-
-    expect(firstParentColor).toBe('var(--color-graph-lane-1)');
-    expect(secondParentColor).not.toBe(firstParentColor);
-    expect(secondParentColor).toBe(layout.lanes[1]?.color);
+  it('uses ROW_HEIGHT=32 for compact single-row rendering', () => {
+    expect(ROW_HEIGHT).toBe(32);
   });
 });

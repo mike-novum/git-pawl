@@ -5,146 +5,116 @@ import type { GraphLine } from '../types';
 
 import { buildPath } from './buildPath';
 
+const LANE_OFFSET = 16;
+const LANE_WIDTH = 14;
+
+const laneCenter = (lane: number): number => LANE_OFFSET + lane * LANE_WIDTH;
+
 describe('buildPath', () => {
-  it('emits outgoing same-lane segment from row center to row bottom', () => {
-    const path = buildPath({
+  it('emits straight same-lane segment using absolute coordinates', () => {
+    const line: GraphLine = {
       fromLane: 1,
       toLane: 1,
-      rowDistance: 1,
-      color: 'red',
-      direction: 'outgoing'
-    });
-
-    expect(path).not.toMatch(/[CcQqSsTtAa]/);
-    expect(path).toMatch(/^M \d+ 16 L \d+ 32$/);
-  });
-
-  it('emits outgoing diff-lane cubic Bezier with midY at 3*ROW_HEIGHT/4', () => {
-    const line: GraphLine = {
-      fromLane: 0,
-      toLane: 1,
-      rowDistance: 1,
-      color: 'red',
-      direction: 'outgoing'
+      fromY: 48,
+      toY: 80,
+      color: 'red'
     };
 
     const path = buildPath(line);
-    const midY = (ROW_HEIGHT / 2 + ROW_HEIGHT) / 2;
+
+    expect(path).toMatch(
+      new RegExp(`^M ${laneCenter(1)} 48 L ${laneCenter(1)} 80$`)
+    );
+    expect(path).not.toMatch(/[CcQqSsTtAa]/);
+  });
+
+  it('emits cubic Bezier for diff-lane with midY at (fromY+toY)/2', () => {
+    const line: GraphLine = {
+      fromLane: 0,
+      toLane: 1,
+      fromY: ROW_HEIGHT / 2,
+      toY: ROW_HEIGHT + ROW_HEIGHT / 2,
+      color: 'red'
+    };
+
+    const path = buildPath(line);
+    const midY = (line.fromY + line.toY) / 2;
+    const fromX = laneCenter(0);
+    const toX = laneCenter(1);
     const match = path.match(
-      /^M (\d+) 16 C (\d+) 24 (\d+) 24 (\d+) 32$/
+      new RegExp(`^M ${fromX} ${line.fromY} C ${fromX} ${midY} ${toX} ${midY} ${toX} ${line.toY}$`)
     );
 
     expect(match).not.toBeNull();
-    expect(Number(match?.[1])).toBe(Number(match?.[2]));
-    expect(Number(match?.[3])).toBe(Number(match?.[4]));
-    expect(midY).toBe(24);
+    expect(midY).toBe(ROW_HEIGHT);
   });
 
-  it('emits incoming same-lane segment from row top to row center', () => {
-    const path = buildPath({
+  it('emits only a single C command for diff-lane segments', () => {
+    const line: GraphLine = {
+      fromLane: 0,
+      toLane: 1,
+      fromY: 0,
+      toY: 100,
+      color: 'red'
+    };
+
+    const path = buildPath(line);
+    const cCount = (path.match(/[Cc]/g) ?? []).length;
+
+    expect(cCount).toBe(1);
+    expect(path).not.toMatch(/[QqSsTtAa]/);
+  });
+
+  it('uses absolute fromY and toY values without clamping', () => {
+    const line: GraphLine = {
       fromLane: 0,
       toLane: 0,
-      rowDistance: 1,
-      color: 'red',
-      direction: 'incoming'
-    });
-
-    expect(path).not.toMatch(/[CcQqSsTtAa]/);
-    expect(path).toMatch(/^M \d+ 0 L \d+ 16$/);
-  });
-
-  it('emits incoming diff-lane cubic Bezier with midY at ROW_HEIGHT/4', () => {
-    const line: GraphLine = {
-      fromLane: 0,
-      toLane: 1,
-      rowDistance: 1,
-      color: 'red',
-      direction: 'incoming'
+      fromY: 123.5,
+      toY: 987.25,
+      color: 'red'
     };
 
     const path = buildPath(line);
-    const match = path.match(/^M (\d+) 0 C (\d+) 8 (\d+) 8 (\d+) 16$/);
 
-    expect(match).not.toBeNull();
-    expect(Number(match?.[1])).toBe(Number(match?.[2]));
-    expect(Number(match?.[3])).toBe(Number(match?.[4]));
+    expect(path).toMatch(
+      new RegExp(`^M ${laneCenter(0)} 123\\.5 L ${laneCenter(0)} 987\\.25$`)
+    );
   });
 
-  it('clamps outgoing diff-lane toY to ROW_HEIGHT when rowDistance > 1', () => {
-    const path = buildPath({
-      fromLane: 0,
-      toLane: 1,
-      rowDistance: 5,
-      color: 'red',
-      direction: 'outgoing'
-    });
-
-    const match = path.match(/C [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ ([\d.-]+)$/);
-    expect(match?.[1]).toBe(String(ROW_HEIGHT));
-  });
-
-  it('clamps outgoing same-lane toY to ROW_HEIGHT when rowDistance > 1', () => {
-    const path = buildPath({
-      fromLane: 1,
-      toLane: 1,
-      rowDistance: 4,
-      color: 'red',
-      direction: 'outgoing'
-    });
-
-    const match = path.match(/L [\d.-]+ ([\d.-]+)$/);
-    expect(match?.[1]).toBe(String(ROW_HEIGHT));
-  });
-
-  it('clamps incoming diff-lane toY to ROW_HEIGHT/2 when rowDistance > 1', () => {
-    const path = buildPath({
-      fromLane: 0,
-      toLane: 1,
-      rowDistance: 5,
-      color: 'red',
-      direction: 'incoming'
-    });
-
-    const match = path.match(/C [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ ([\d.-]+)$/);
-    expect(match?.[1]).toBe(String(ROW_HEIGHT / 2));
-  });
-
-  it('clamps incoming same-lane toY to ROW_HEIGHT/2 when rowDistance > 1', () => {
-    const path = buildPath({
-      fromLane: 1,
-      toLane: 1,
-      rowDistance: 4,
-      color: 'red',
-      direction: 'incoming'
-    });
-
-    const match = path.match(/L [\d.-]+ ([\d.-]+)$/);
-    expect(match?.[1]).toBe(String(ROW_HEIGHT / 2));
-  });
-
-  it('emits no quadratic curves for diff-lane segments', () => {
+  it('handles descending diff-lane curves with midY at the average', () => {
     const line: GraphLine = {
-      fromLane: 0,
-      toLane: 1,
-      rowDistance: 1,
-      color: 'red',
-      direction: 'outgoing'
+      fromLane: 2,
+      toLane: 0,
+      fromY: 200,
+      toY: 50,
+      color: 'red'
     };
 
     const path = buildPath(line);
-    expect(path).not.toMatch(/[Qq]/);
+    const midY = (200 + 50) / 2;
+    const fromX = laneCenter(2);
+    const toX = laneCenter(0);
+
+    expect(path).toMatch(
+      new RegExp(`^M ${fromX} 200 C ${fromX} ${midY} ${toX} ${midY} ${toX} 50$`)
+    );
   });
 
-  it('produces a degenerate but render-safe incoming path when rowDistance is 0', () => {
-    const path = buildPath({
+  it('produces degenerate but valid diff-lane path when fromY equals toY', () => {
+    const line: GraphLine = {
       fromLane: 0,
       toLane: 1,
-      rowDistance: 0,
-      color: 'red',
-      direction: 'incoming'
-    });
+      fromY: 64,
+      toY: 64,
+      color: 'red'
+    };
 
-    expect(path).toMatch(/^M [\d.-]+ 0 C [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+$/);
-    expect(path).not.toMatch(/[Qq]/);
+    const path = buildPath(line);
+    const fromX = laneCenter(0);
+    const toX = laneCenter(1);
+
+    expect(path).toMatch(
+      new RegExp(`^M ${fromX} 64 C ${fromX} 64 ${toX} 64 ${toX} 64$`)
+    );
   });
 });
