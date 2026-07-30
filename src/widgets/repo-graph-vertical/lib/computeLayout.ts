@@ -12,27 +12,88 @@ export const ROW_HEIGHT = 32;
 export const LANE_WIDTH = 14;
 export const GRAPH_WIDTH = 32;
 
-const getFreeLane = (activeLanes: Map<string, number>): number => {
-  const used = new Set(activeLanes.values());
-  let lane = 0;
-
-  while (used.has(lane)) {
-    lane += 1;
-  }
-
-  return lane;
-};
-
-const getBranchName = (commit: CommitNode, lane: number): string =>
-  commit.currentBranchName ??
-  commit.branches?.[0] ??
-  (lane === 0 ? 'main' : `lane-${lane + 1}`);
-
-const getLaneColor = (lane: number, branchName: string): string =>
-  lane === 0 ? 'var(--color-graph-lane-1)' : laneColor(branchName);
-
 const rowCenterY = (rowIndex: number): number =>
   rowIndex * ROW_HEIGHT + ROW_HEIGHT / 2;
+
+const findHeadBranch = (commits: CommitNode[]): string | null => {
+  for (const commit of commits) {
+    if (!commit.isCurrentBranch) {
+      continue;
+    }
+    return commit.currentBranchName ?? commit.branches?.[0] ?? null;
+  }
+
+  const first = commits[0];
+  if (first?.currentBranchName) {
+    return first.currentBranchName;
+  }
+
+  if (first?.branches && first.branches.length > 0) {
+    return first.branches[0] ?? null;
+  }
+
+  return null;
+};
+
+const buildBranchLaneMap = (
+  commits: CommitNode[],
+  headBranch: string | null
+): {
+  branchNameToLane: Map<string, number>;
+  laneToBranchName: Map<number, string>;
+} => {
+  const branchNameToLane = new Map<string, number>();
+  const laneToBranchName = new Map<number, string>();
+
+  if (headBranch) {
+    branchNameToLane.set(headBranch, 0);
+    laneToBranchName.set(0, headBranch);
+  } else {
+    laneToBranchName.set(0, 'main');
+  }
+
+  let nextLane = 1;
+
+  for (const commit of commits) {
+    if (!commit.branches) {
+      continue;
+    }
+
+    for (const branch of commit.branches) {
+      if (branch === headBranch) {
+        continue;
+      }
+      if (branchNameToLane.has(branch)) {
+        continue;
+      }
+      branchNameToLane.set(branch, nextLane);
+      laneToBranchName.set(nextLane, branch);
+      nextLane += 1;
+    }
+  }
+
+  return { branchNameToLane, laneToBranchName };
+};
+
+const resolveCommitLane = (
+  commit: CommitNode,
+  headBranch: string | null,
+  branchNameToLane: Map<string, number>
+): number => {
+  const branches = commit.branches;
+
+  if (branches && branches.length > 0) {
+    if (headBranch && branches.includes(headBranch)) {
+      return 0;
+    }
+    const firstLane = branchNameToLane.get(branches[0] ?? '');
+    if (firstLane !== undefined) {
+      return firstLane;
+    }
+  }
+
+  return 0;
+};
 
 export const computeLayout = (commits: CommitNode[]): GraphLayout => {
   const ordered = [...commits];
@@ -41,6 +102,12 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
   );
   const commitByHash = new Map(
     ordered.map((commit) => [commit.hash, commit])
+  );
+
+  const headBranch = findHeadBranch(ordered);
+  const { branchNameToLane, laneToBranchName } = buildBranchLaneMap(
+    ordered,
+    headBranch
   );
 
   const activeHashes = new Set<string>();
@@ -53,25 +120,16 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
       ?.parents.find((parentHash) => commitByHash.has(parentHash));
   }
 
-  const activeLanes = new Map<string, number>();
-  const branchNameByLane = new Map<number, string>();
+  const laneByHash = new Map<string, number>();
   const rows: GraphRow[] = [];
   const continuousLines: GraphLine[] = [];
   const parentEdges: GraphLine[] = [];
-  let maxLane = -1;
+
+  let maxLane = Math.max(0, ...Array.from(laneToBranchName.keys()));
 
   ordered.forEach((commit, rowIndex) => {
-    let lane = activeLanes.get(commit.hash);
-
-    if (lane === undefined) {
-      lane = getFreeLane(activeLanes);
-      activeLanes.set(commit.hash, lane);
-    }
-
-    const branchName = getBranchName(commit, lane);
-    if (!branchNameByLane.has(lane) || commit.isCurrentBranch) {
-      branchNameByLane.set(lane, branchName);
-    }
+    const lane = resolveCommitLane(commit, headBranch, branchNameToLane);
+    laneByHash.set(commit.hash, lane);
 
     const parentHashes = [...new Set(commit.parents)].filter((hash) =>
       rowByHash.has(hash)
@@ -79,22 +137,24 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
 
     const parents: GraphParent[] = [];
 
-    parentHashes.forEach((parentHash, parentIndex) => {
-      let parentLane = activeLanes.get(parentHash);
-
-      if (parentLane === undefined) {
-        parentLane = parentIndex === 0 ? lane : getFreeLane(activeLanes);
-        activeLanes.set(parentHash, parentLane);
+    parentHashes.forEach((parentHash) => {
+      const parentCommit = commitByHash.get(parentHash);
+      if (!parentCommit) {
+        return;
       }
+
+      const parentLane = laneByHash.has(parentHash)
+        ? (laneByHash.get(parentHash) as number)
+        : resolveCommitLane(parentCommit, headBranch, branchNameToLane);
+
+      laneByHash.set(parentHash, parentLane);
 
       const parentRowIndex = rowByHash.get(parentHash);
       if (parentRowIndex === undefined) {
         return;
       }
 
-      const parentBranchName =
-        branchNameByLane.get(parentLane) ?? `lane-${parentLane + 1}`;
-      const parentColor = getLaneColor(parentLane, parentBranchName);
+      const parentColor = laneColor(parentLane);
 
       parents.push({
         hash: parentHash,
@@ -106,26 +166,16 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
 
       maxLane = Math.max(maxLane, parentLane);
 
-      parentEdges.push({
-        fromLane: lane,
-        toLane: parentLane,
-        fromY: rowCenterY(rowIndex),
-        toY: rowCenterY(parentRowIndex),
-        color: parentColor
-      });
-    });
-
-    if (parentHashes.length === 0) {
-      activeLanes.delete(commit.hash);
-    } else {
-      const firstParentHash = parentHashes[0];
-      if (
-        firstParentHash !== undefined &&
-        activeLanes.get(firstParentHash) !== lane
-      ) {
-        activeLanes.delete(commit.hash);
+      if (parentLane !== lane) {
+        parentEdges.push({
+          fromLane: lane,
+          toLane: parentLane,
+          fromY: rowCenterY(rowIndex),
+          toY: rowCenterY(parentRowIndex),
+          color: parentColor
+        });
       }
-    }
+    });
 
     maxLane = Math.max(maxLane, lane);
 
@@ -140,23 +190,18 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
   const graphLanes: GraphLane[] = Array.from(
     { length: maxLane + 1 },
     (_, index) => {
-      const branchName = branchNameByLane.get(index) ?? `lane-${index + 1}`;
+      const branchName = laneToBranchName.get(index) ?? `lane-${index + 1}`;
       return {
         index,
         branchName,
-        color: getLaneColor(index, branchName)
+        color: laneColor(index)
       };
     }
   );
 
   const rowsWithColors = rows.map((row) => ({
     ...row,
-    commit: {
-      ...row.commit,
-      color:
-        graphLanes[row.lane]?.color ??
-        getLaneColor(row.lane, getBranchName(row.commit, row.lane))
-    }
+    commit: { ...row.commit, color: graphLanes[row.lane]?.color ?? laneColor(row.lane) }
   }));
 
   for (let laneIndex = 0; laneIndex < graphLanes.length; laneIndex += 1) {

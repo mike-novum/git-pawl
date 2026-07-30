@@ -30,6 +30,7 @@
 | TASK-311 | Граф: переписать на правильный DAG-алгоритм с одним SVG на колонку | ✅ done |
 | TASK-312 | Граф: hover-анимация точки-коммита (transform-box: fill-box) | ⏳ pending |
 | TASK-313 | Граф: исправить порядок коммитов через git log --topo-order | ✅ done |
+| TASK-314 | Граф: распределить коммиты по lanes их веток (branch-aware DAG) | ✅ done |
 
 ## 14 — Доработки roadmap-7
 
