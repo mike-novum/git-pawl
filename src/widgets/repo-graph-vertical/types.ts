@@ -27,6 +27,7 @@ export type GraphLine = {
   toLane: number;
   rowDistance: number;
   color: string;
+  direction: 'incoming' | 'outgoing';
 };
 
 export type GraphLane = {

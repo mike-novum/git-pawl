@@ -125,7 +125,7 @@ describe('computeLayout', () => {
     ]);
   });
 
-  it('draws a continuous vertical line between two siblings on the same lane', () => {
+  it('draws an outgoing segment in the source row and an incoming segment in the destination row for continuous vertical lines', () => {
     const commits = [
       createCommit('first', ['second'], 3),
       createCommit('second', ['third'], 2),
@@ -138,18 +138,33 @@ describe('computeLayout', () => {
       fromLane: 0,
       toLane: 0,
       rowDistance: 1,
-      color: 'var(--color-graph-lane-1)'
+      color: 'var(--color-graph-lane-1)',
+      direction: 'outgoing'
     });
     expect(layout.rows[1]?.verticalLines).toContainEqual({
       fromLane: 0,
       toLane: 0,
       rowDistance: 1,
-      color: 'var(--color-graph-lane-1)'
+      color: 'var(--color-graph-lane-1)',
+      direction: 'incoming'
     });
-    expect(layout.rows[2]?.verticalLines).toEqual([]);
+    expect(layout.rows[1]?.verticalLines).toContainEqual({
+      fromLane: 0,
+      toLane: 0,
+      rowDistance: 1,
+      color: 'var(--color-graph-lane-1)',
+      direction: 'outgoing'
+    });
+    expect(layout.rows[2]?.verticalLines).toContainEqual({
+      fromLane: 0,
+      toLane: 0,
+      rowDistance: 1,
+      color: 'var(--color-graph-lane-1)',
+      direction: 'incoming'
+    });
   });
 
-  it('does not generate vertical lines for the last commit on a lane', () => {
+  it('does not add an outgoing continuous line past the last commit on a lane', () => {
     const commits = [
       createCommit('a', ['b'], 3),
       createCommit('b', ['c'], 2),
@@ -158,7 +173,52 @@ describe('computeLayout', () => {
 
     const layout = computeLayout(commits);
 
-    expect(layout.rows[2]?.verticalLines).toEqual([]);
+    const lastRowContinuousOutgoing = (layout.rows[2]?.verticalLines ?? []).filter(
+      (line) =>
+        line.direction === 'outgoing' &&
+        line.fromLane === line.toLane
+    );
+    expect(lastRowContinuousOutgoing).toEqual([]);
+  });
+
+  it('produces both outgoing and incoming segments for every parent edge', () => {
+    const commits = [
+      createCommit('merge', ['main', 'feature'], 4),
+      createCommit('main', ['root'], 3),
+      createCommit('feature', ['root'], 2),
+      createCommit('root', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    const mergeRowOutgoing = (layout.rows[0]?.verticalLines ?? []).filter(
+      (line) => line.direction === 'outgoing'
+    );
+    expect(mergeRowOutgoing.length).toBeGreaterThanOrEqual(2);
+
+    const mainRowIncoming = (layout.rows[1]?.verticalLines ?? []).filter(
+      (line) => line.direction === 'incoming'
+    );
+    expect(mainRowIncoming.some((line) => line.toLane === 0 && line.fromLane === 0)).toBe(true);
+
+    const featureRowIncoming = (layout.rows[2]?.verticalLines ?? []).filter(
+      (line) => line.direction === 'incoming'
+    );
+    expect(featureRowIncoming.some((line) => line.fromLane === 0 && line.toLane === 1)).toBe(true);
+  });
+
+  it('first row receives no incoming lines at all', () => {
+    const commits = [
+      createCommit('first', ['second'], 2),
+      createCommit('second', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    const firstRowIncoming = (layout.rows[0]?.verticalLines ?? []).filter(
+      (line) => line.direction === 'incoming'
+    );
+    expect(firstRowIncoming).toEqual([]);
   });
 
   it('does not generate edges for parents outside the visible set', () => {

@@ -30,7 +30,6 @@ const laneCenter = (lane: number): number =>
 
 const CommitRowComponent: FC<CommitRowProps> = ({
   row,
-  rowIndex,
   graphWidth,
   selectedHash,
   onSelect
@@ -41,23 +40,7 @@ const CommitRowComponent: FC<CommitRowProps> = ({
     ...(commit.branches ?? []).map((name) => `Branch: ${name}`),
     ...(commit.tags ?? []).map((name) => `Tag: ${name}`)
   ].join(', ');
-  const verticalLines = row.verticalLines.filter(
-    (line) =>
-      !row.parents.some(
-        (parent) =>
-          parent.lane === line.toLane &&
-          parent.rowIndex === rowIndex + line.rowDistance
-      )
-  );
-  const rowLines = [
-    ...verticalLines,
-    ...row.parents.map((parent) => ({
-      fromLane: row.lane,
-      toLane: parent.lane,
-      rowDistance: parent.rowIndex - rowIndex,
-      color: parent.color
-    }))
-  ];
+  const rowLines = row.verticalLines;
 
   return (
     <tr
@@ -77,15 +60,14 @@ const CommitRowComponent: FC<CommitRowProps> = ({
       )}
     >
       <td
-        className="relative overflow-visible p-0 align-middle"
+        className="relative p-0 align-middle"
         style={{ width: graphWidth }}
       >
         <svg
           width={graphWidth}
           height={ROW_HEIGHT}
           viewBox={`0 0 ${graphWidth} ${ROW_HEIGHT}`}
-          overflow="visible"
-          className="pointer-events-none absolute top-0 left-0 overflow-visible"
+          className="pointer-events-none absolute top-0 left-0"
           aria-hidden="true"
         >
           {rowLines.map((line, lineIndex) => (

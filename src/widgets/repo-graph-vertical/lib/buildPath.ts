@@ -7,10 +7,10 @@ const laneCenter = (lane: number): number =>
 export const buildPath = (line: GraphLine): string => {
   const fromX = laneCenter(line.fromLane);
   const toX = laneCenter(line.toLane);
-  const fromY = ROW_HEIGHT / 2;
-  const rawToY = fromY + line.rowDistance * ROW_HEIGHT;
-  const toY = Math.min(rawToY, fromY + ROW_HEIGHT);
-  const midY = fromY + ROW_HEIGHT / 2;
+  const isOutgoing = line.direction === 'outgoing';
+  const fromY = isOutgoing ? ROW_HEIGHT / 2 : 0;
+  const toY = isOutgoing ? ROW_HEIGHT : ROW_HEIGHT / 2;
+  const midY = isOutgoing ? (ROW_HEIGHT / 2 + ROW_HEIGHT) / 2 : ROW_HEIGHT / 4;
 
   if (fromX === toX) {
     return `M ${fromX} ${fromY} L ${toX} ${toY}`;

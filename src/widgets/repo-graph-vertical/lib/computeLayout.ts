@@ -145,7 +145,35 @@ export const computeLayout = (commits: CommitNode[]): GraphLayout => {
         fromLane: lane.index,
         toLane: lane.index,
         rowDistance: next.rowIndex - rowIndex,
-        color: lane.color
+        color: lane.color,
+        direction: 'outgoing'
+      });
+      rowsWithColors[next.rowIndex]?.verticalLines.push({
+        fromLane: lane.index,
+        toLane: lane.index,
+        rowDistance: next.rowIndex - rowIndex,
+        color: lane.color,
+        direction: 'incoming'
+      });
+    });
+  });
+
+  rowsWithColors.forEach((row, rowIndex) => {
+    row.parents.forEach((parent) => {
+      row.verticalLines.push({
+        fromLane: row.lane,
+        toLane: parent.lane,
+        rowDistance: parent.rowIndex - rowIndex,
+        color: parent.color,
+        direction: 'outgoing'
+      });
+      const parentRow = rowsWithColors[parent.rowIndex];
+      parentRow?.verticalLines.push({
+        fromLane: row.lane,
+        toLane: parent.lane,
+        rowDistance: parent.rowIndex - rowIndex,
+        color: parent.color,
+        direction: 'incoming'
       });
     });
   });
