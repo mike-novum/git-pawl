@@ -5,8 +5,8 @@ import type { GraphLine } from '../types';
 
 import { buildPath } from './buildPath';
 
-const OTHER_CURVE_PATTERN = /[CcSsTtAa]/;
 const NEXT_ROW_CENTER = ROW_HEIGHT / 2 + ROW_HEIGHT;
+const EXPECTED_MID_Y = ROW_HEIGHT / 2 + ROW_HEIGHT / 2;
 
 describe('buildPath', () => {
   it('emits only M and L commands for same-lane segments', () => {
@@ -17,22 +17,24 @@ describe('buildPath', () => {
 
     for (const line of lines) {
       const path = buildPath(line);
-      expect(path).not.toMatch(OTHER_CURVE_PATTERN);
-      expect(path).not.toMatch(/[Qq]/);
+      expect(path).not.toMatch(/[CcQqSsTtAa]/);
       expect(path).toMatch(/^M [\d.-]+ [\d.-]+ L [\d.-]+ [\d.-]+$/);
     }
   });
 
-  it('uses quadratic Bezier curves at corners when lanes differ by enough', () => {
-    const path = buildPath({
+  it('uses exactly one cubic Bezier and no quadratic for diff-lane segments', () => {
+    const line: GraphLine = {
       fromLane: 0,
       toLane: 1,
       rowDistance: 1,
       color: 'red'
-    });
+    };
 
-    expect(path).toMatch(/[Qq]/);
-    expect(path).not.toMatch(OTHER_CURVE_PATTERN);
+    const path = buildPath(line);
+
+    const cubicMatches = path.match(/C/g) ?? [];
+    expect(cubicMatches).toHaveLength(1);
+    expect(path).not.toMatch(/[Qq]/);
   });
 
   it('produces a straight vertical segment when source and target lanes match', () => {
@@ -47,31 +49,29 @@ describe('buildPath', () => {
     expect(path.split(' L ')).toHaveLength(2);
   });
 
-  it('produces a curved horizontal step when lanes differ', () => {
+  it('produces a valid S-curve with midY at row center for rowDistance = 1', () => {
     const path = buildPath({
       fromLane: 0,
-      toLane: 1,
+      toLane: 2,
       rowDistance: 1,
       color: 'red'
     });
 
-    const segments = path.split(' L ');
-    expect(segments).toHaveLength(4);
+    const match = path.match(
+      /^M ([\d.-]+) ([\d.-]+) C ([\d.-]+) ([\d.-]+) ([\d.-]+) ([\d.-]+) ([\d.-]+) ([\d.-]+)$/
+    );
+
+    expect(match).not.toBeNull();
+    const [, mX, , c1X, c1Y, c2X, c2Y, eX, eY] = match as RegExpMatchArray;
+
+    expect(Number(c1Y)).toBe(EXPECTED_MID_Y);
+    expect(Number(c2Y)).toBe(EXPECTED_MID_Y);
+    expect(Number(c1X)).toBe(Number(mX));
+    expect(Number(c2X)).toBe(Number(eX));
+    expect(Number(eY)).toBe(EXPECTED_MID_Y + ROW_HEIGHT / 2);
   });
 
-  it('falls back to a straight Manhattan path when lanes differ by less than 2*CORNER_RADIUS', () => {
-    const path = buildPath({
-      fromLane: 0,
-      toLane: 0.3,
-      rowDistance: 1,
-      color: 'red'
-    });
-
-    expect(path).not.toMatch(/[Qq]/);
-    expect(path.split(' L ')).toHaveLength(4);
-  });
-
-  it('clamps toY to the next row center when rowDistance > 1', () => {
+  it('clamps toY to the next row center when rowDistance > 1 for diff-lane segments', () => {
     const path = buildPath({
       fromLane: 0,
       toLane: 1,
@@ -79,7 +79,7 @@ describe('buildPath', () => {
       color: 'red'
     });
 
-    const match = path.match(/L [\d.-]+ ([\d.-]+)$/);
+    const match = path.match(/C [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ ([\d.-]+)$/);
     expect(match?.[1]).toBe(String(NEXT_ROW_CENTER));
   });
 
@@ -93,5 +93,17 @@ describe('buildPath', () => {
 
     const match = path.match(/L [\d.-]+ ([\d.-]+)$/);
     expect(match?.[1]).toBe(String(NEXT_ROW_CENTER));
+  });
+
+  it('produces a degenerate but render-safe path when rowDistance is 0', () => {
+    const path = buildPath({
+      fromLane: 0,
+      toLane: 1,
+      rowDistance: 0,
+      color: 'red'
+    });
+
+    expect(path).toMatch(/^M [\d.-]+ [\d.-]+ C [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+ [\d.-]+$/);
+    expect(path).not.toMatch(/[Qq]/);
   });
 });
