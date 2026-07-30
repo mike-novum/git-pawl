@@ -149,6 +149,37 @@ describe('computeLayout', () => {
     expect(layout.rows[2]?.verticalLines).toEqual([]);
   });
 
+  it('does not generate vertical lines for the last commit on a lane', () => {
+    const commits = [
+      createCommit('a', ['b'], 3),
+      createCommit('b', ['c'], 2),
+      createCommit('c', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.rows[2]?.verticalLines).toEqual([]);
+  });
+
+  it('does not generate edges for parents outside the visible set', () => {
+    const commits = [
+      createCommit('first', ['second', 'outside'], 2),
+      createCommit('second', [], 1)
+    ];
+
+    const layout = computeLayout(commits);
+
+    expect(layout.rows[0]?.parents).toEqual([
+      {
+        hash: 'second',
+        lane: 0,
+        rowIndex: 1,
+        active: false,
+        color: 'var(--color-graph-lane-1)'
+      }
+    ]);
+  });
+
   it('colors each merge parent edge with its own lane color', () => {
     const commits = [
       createCommit('merge', ['main', 'feature'], 4),
