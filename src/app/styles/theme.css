@@ -51,3 +51,29 @@
   --shadow-glow: 0 0 0 1px var(--color-primary), 0 0 12px -2px var(--color-primary);
   --shadow-sm: 0 2px 8px -4px rgba(0, 0, 0, 0.4);
 }
+
+:root[data-theme='light'] {
+  --color-graph-lane-1: #ff8c42;
+  --color-graph-lane-2: #4d9fff;
+  --color-graph-lane-3: #4caf50;
+  --color-graph-lane-4: #ab47bc;
+  --color-graph-lane-5: #26c6da;
+  --color-graph-lane-6: #fdd835;
+  --color-graph-lane-7: #ec407a;
+  --color-graph-lane-8: #90a4ae;
+}
+
+:root[data-theme='dark'] {
+  --color-graph-lane-1: #ff9d5c;
+  --color-graph-lane-2: #5fa5ff;
+  --color-graph-lane-3: #66bb6a;
+  --color-graph-lane-4: #ba68c8;
+  --color-graph-lane-5: #4dd0e1;
+  --color-graph-lane-6: #ffe082;
+  --color-graph-lane-7: #f06292;
+  --color-graph-lane-8: #b0bec5;
+}
+
+tr[aria-selected='true'] {
+  background-color: var(--color-surface-elevated);
+}

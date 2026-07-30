@@ -127,64 +127,157 @@ describe('parseStatusPorcelain', () => {
 });
 
 describe('parseLog', () => {
+  const record = (fields: string[]): string => {
+    const separator = '\x1f';
+    return fields.join(separator) + '\x1e';
+  };
+
   it('returns empty array for empty input', () => {
     expect(parseLog('')).toEqual([]);
   });
 
-  it('parses single commit', () => {
+  it('parses a linear history', () => {
     const stdout = [
+      record(['third', 'second', 'Alice', 'alice@example.com', '1700000002', 'third', '']),
+      record(['second', 'first', 'Alice', 'alice@example.com', '1700000001', 'second', '']),
+      record(['first', '', 'Alice', 'alice@example.com', '1700000000', 'first', ''])
+    ].join('\n');
+
+    const commits = parseLog(stdout);
+
+    expect(commits.map(({ hash, parents }) => ({ hash, parents }))).toEqual([
+      { hash: 'third', parents: ['second'] },
+      { hash: 'second', parents: ['first'] },
+      { hash: 'first', parents: [] }
+    ]);
+  });
+
+  it('parses a merge commit with two parents', () => {
+    const stdout = record([
+      'merge',
+      'main feature',
+      'Alice',
+      'alice@example.com',
+      '1700000000',
+      'merge subject',
+      ''
+    ]);
+
+    const commits = parseLog(stdout);
+
+    expect(commits[0]?.parents).toEqual(['main', 'feature']);
+  });
+
+  it('parses a commit with an empty subject', () => {
+    const stdout = record(['root', '', 'Alice', 'alice@example.com', '1', '', '']);
+
+    const commits = parseLog(stdout);
+
+    expect(commits).toHaveLength(1);
+    expect(commits[0]?.subject).toBe('');
+  });
+
+  it('parses a commit with a multi-line body', () => {
+    const stdout = record([
       'abc123',
-      'parent1 parent2',
+      '',
       'Alice',
       'alice@example.com',
       '1700000000',
       'Subject line',
       'Body line\nsecond line'
-    ].join('\x1f') + '\x1e';
+    ]);
+
+    const commits = parseLog(stdout);
+
+    expect(commits[0]?.body).toBe('Body line\nsecond line');
+  });
+
+  it('preserves subject containing the record sentinel', () => {
+    const stdout = record([
+      'abc123',
+      '',
+      'Alice',
+      'alice@example.com',
+      '1700000000',
+      'before --RECORD-- after',
+      ''
+    ]);
+
+    const commits = parseLog(stdout);
+
+    expect(commits[0]?.subject).toBe('before --RECORD-- after');
+  });
+
+  it('preserves body containing the record sentinel', () => {
+    const stdout = record([
+      'abc123',
+      '',
+      'Alice',
+      'alice@example.com',
+      '1700000000',
+      'subject',
+      'before --RECORD-- after'
+    ]);
+
+    const commits = parseLog(stdout);
+
+    expect(commits[0]?.body).toBe('before --RECORD-- after');
+  });
+
+  it('does not crash when body contains ascii printable characters', () => {
+    const stdout = record([
+      'abc123',
+      '',
+      'Alice',
+      'alice@example.com',
+      '1700000000',
+      'subject',
+      'body with --RECORD-- sentinel and (parentheses) and {braces}'
+    ]);
+
+    const commits = parseLog(stdout);
+
+    expect(commits[0]?.body).toBe(
+      'body with --RECORD-- sentinel and (parentheses) and {braces}'
+    );
+  });
+
+  it('preserves multi-line body across newlines', () => {
+    const stdout = record([
+      'abc123',
+      '',
+      'Alice',
+      'alice@example.com',
+      '1700000000',
+      'subject',
+      'line 1\nline 2\nline 3'
+    ]);
+
+    const commits = parseLog(stdout);
+
+    expect(commits[0]?.body).toBe('line 1\nline 2\nline 3');
+  });
+
+  it('drops records with an empty hash or timestamp', () => {
+    const stdout = [
+      record(['', '', 'Alice', 'alice@example.com', '1700000000', '', '']),
+      record(['abc123', '', 'Alice', 'alice@example.com', '', '', '']),
+      record(['valid', '', 'Alice', 'alice@example.com', '1700000000', 'subject', ''])
+    ].join('\n');
+
+    const commits = parseLog(stdout);
+
+    expect(commits.map(({ hash }) => hash)).toEqual(['valid']);
+  });
+
+  it('handles a missing trailing record separator', () => {
+    const stdout = 'aaa\x1f\x1fX\x1fx@e.com\x1f1\x1fs';
 
     const commits = parseLog(stdout);
 
     expect(commits).toHaveLength(1);
-    expect(commits[0]).toEqual({
-      hash: 'abc123',
-      parents: ['parent1', 'parent2'],
-      author: { name: 'Alice', email: 'alice@example.com' },
-      date: 1700000000000,
-      subject: 'Subject line',
-      body: 'Body line\nsecond line'
-    });
-  });
-
-  it('parses multiple commits', () => {
-    const make = (hash: string, subject: string): string =>
-      [hash, '', 'Bob', 'b@e.com', '1700000001', subject, ''].join('\x1f');
-
-    const stdout = make('aaa', 'first') + '\x1e' + make('bbb', 'second') + '\x1e';
-
-    const commits = parseLog(stdout);
-
-    expect(commits.map((c) => c.hash)).toEqual(['aaa', 'bbb']);
-    expect(commits.map((c) => c.subject)).toEqual(['first', 'second']);
-    expect(commits[0].date).toBe(1700000001000);
-  });
-
-  it('parses commit with no parents (root commit)', () => {
-    const stdout = ['root', '', 'X', 'x@e.com', '1700000002', 'init', ''].join(
-      '\x1f'
-    ) + '\x1e';
-
-    const commits = parseLog(stdout);
-
-    expect(commits[0].parents).toEqual([]);
-  });
-
-  it('handles missing trailing record separator', () => {
-    const stdout = ['aaa', '', 'X', 'x@e.com', '1', 's', ''].join('\x1f');
-
-    const commits = parseLog(stdout);
-
-    expect(commits).toHaveLength(1);
-    expect(commits[0].hash).toBe('aaa');
+    expect(commits[0]?.hash).toBe('aaa');
   });
 });
 

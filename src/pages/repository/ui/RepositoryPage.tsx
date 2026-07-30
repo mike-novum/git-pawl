@@ -32,7 +32,8 @@ const toShortHash = (hash: string): string => hash.slice(0, 7);
 const toCommitNodes = (
   entries: Commit[],
   branches: Branch[],
-  tags: Tag[]
+  tags: Tag[],
+  currentBranchName: string | null
 ): CommitNode[] => {
   const branchesByHash = new Map<string, string[]>();
   const tagsByHash = new Map<string, string[]>();
@@ -60,11 +61,13 @@ const toCommitNodes = (
     shortHash: toShortHash(entry.hash),
     subject: entry.subject,
     author: entry.author.name,
+    authorEmail: entry.author.email,
     timestamp: entry.date,
     parents: entry.parents,
     lane: 0,
     branches: branchesByHash.get(entry.hash),
     tags: tagsByHash.get(entry.hash),
+    currentBranchName: currentBranchName ?? undefined,
     isCurrentBranch: currentTargets.has(entry.hash)
   }));
 };
@@ -89,9 +92,14 @@ export const RepositoryPage: FC = () => {
   const commits = useMemo(
     () =>
       Array.isArray(logQuery.data)
-        ? toCommitNodes(logQuery.data as Commit[], branches, tags)
+        ? toCommitNodes(
+            logQuery.data as Commit[],
+            branches,
+            tags,
+            branchQuery.data?.name ?? null
+          )
         : [],
-    [branches, logQuery.data, tags]
+    [branches, branchQuery.data, logQuery.data, tags]
   );
   const commitLayout = useMemo(() => computeLayout(commits), [commits]);
 

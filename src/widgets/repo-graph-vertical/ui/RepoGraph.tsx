@@ -5,7 +5,7 @@ import { Spinner } from '@/shared/ui/spinner';
 
 import type { RepoGraphProps } from '../types';
 import { computeLayout } from '../lib/computeLayout';
-import { CommitRow } from './CommitRow';
+import { RepoGraphTable } from './RepoGraphTable';
 
 export const RepoGraph: FC<RepoGraphProps> = ({
   commits,
@@ -65,26 +65,12 @@ export const RepoGraph: FC<RepoGraphProps> = ({
   }
 
   return (
-    <div
-      className={cn('bg-surface h-full overflow-auto', className)}
-      aria-label="Commit graph"
-    >
-      <ul
-        className="divide-border/20 min-w-0 divide-y"
-        style={{ minHeight: graphLayout.height }}
-      >
-        {graphLayout.rows.map((row, rowIndex) => (
-          <CommitRow
-            key={row.commit.hash}
-            row={row}
-            rowIndex={rowIndex}
-            graphWidth={graphLayout.width}
-            selectedHash={selectedHash}
-            onSelect={onSelect}
-          />
-        ))}
-      </ul>
-    </div>
+    <RepoGraphTable
+      layout={graphLayout}
+      selectedHash={selectedHash}
+      onSelect={onSelect}
+      className={cn('bg-surface h-full', className)}
+    />
   );
 };
 

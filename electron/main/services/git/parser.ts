@@ -167,41 +167,46 @@ const LOG_FIELD_SEPARATOR = '\x1f';
 const LOG_RECORD_SEPARATOR = '\x1e';
 
 export const parseLog = (stdout: string): Commit[] => {
-  const trimmed = stdout.endsWith(LOG_RECORD_SEPARATOR)
-    ? stdout.slice(0, -1)
-    : stdout;
-  if (trimmed.length === 0) {
+  if (stdout.length === 0) {
     return [];
   }
-  return trimmed
+
+  return stdout
     .split(LOG_RECORD_SEPARATOR)
+    .map((record) => record.replace(/^\r?\n/, '').replace(/\r?\n$/, ''))
+    .filter((record) => record.length > 0)
     .map((record) => {
-      const [hash, parents, authorName, authorEmail, dateRaw, subject, body] =
-        record.split(LOG_FIELD_SEPARATOR);
+      const fields = record.split(LOG_FIELD_SEPARATOR);
+      const hash = fields[0]?.trim() ?? '';
+
       if (!hash) {
         return null;
       }
+
+      const parents = fields[1]?.trim() ?? '';
+      const authorName = fields[2] ?? '';
+      const authorEmail = fields[3] ?? '';
+      const dateRaw = fields[4]?.trim() ?? '';
+      const subject = fields[5] ?? '';
+      const body = fields.slice(6).join('\n');
+
+      if (!dateRaw) {
+        return null;
+      }
+
       return {
         hash,
-        parents: parents && parents.length > 0 ? parents.split(' ') : [],
-        author: { name: authorName ?? '', email: authorEmail ?? '' },
-        date: Number.parseInt(dateRaw ?? '0', 10) * 1000,
-        subject: subject ?? '',
-        body: body ?? ''
+        parents: parents.length > 0 ? parents.split(/\s+/) : [],
+        author: { name: authorName, email: authorEmail },
+        date: Number.parseInt(dateRaw, 10) * 1000,
+        subject,
+        body
       } satisfies Commit;
     })
     .filter((commit): commit is Commit => commit !== null);
 };
 
-export const LOG_FORMAT = [
-  '%H',
-  '%P',
-  '%an',
-  '%ae',
-  '%at',
-  '%s',
-  '%b'
-].join(LOG_FIELD_SEPARATOR) + LOG_RECORD_SEPARATOR;
+export const LOG_FORMAT = `%H${LOG_FIELD_SEPARATOR}%P${LOG_FIELD_SEPARATOR}%an${LOG_FIELD_SEPARATOR}%ae${LOG_FIELD_SEPARATOR}%at${LOG_FIELD_SEPARATOR}%s${LOG_FIELD_SEPARATOR}%b${LOG_RECORD_SEPARATOR}`;
 
 export const STATUS_PORCELAIN_FLAGS = ['--porcelain=v1', '-z', '--branch'];
 

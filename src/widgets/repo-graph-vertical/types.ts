@@ -3,11 +3,14 @@ export type CommitNode = {
   shortHash: string;
   subject: string;
   author: string;
+  authorEmail?: string;
   timestamp: number;
   parents: string[];
   lane: number;
+  color?: string;
   branches?: string[];
   tags?: string[];
+  currentBranchName?: string;
   isCurrentBranch?: boolean;
 };
 
@@ -16,6 +19,20 @@ export type GraphParent = {
   lane: number;
   rowIndex: number;
   active: boolean;
+  color: string;
+};
+
+export type GraphLine = {
+  fromLane: number;
+  toLane: number;
+  rowDistance: number;
+  color: string;
+};
+
+export type GraphLane = {
+  index: number;
+  branchName: string;
+  color: string;
 };
 
 export type GraphRow = {
@@ -23,10 +40,12 @@ export type GraphRow = {
   lane: number;
   active: boolean;
   parents: GraphParent[];
+  verticalLines: GraphLine[];
 };
 
 export type GraphLayout = {
   rows: GraphRow[];
+  lanes: GraphLane[];
   maxLane: number;
   width: number;
   height: number;
@@ -38,6 +57,17 @@ export type CommitRowProps = {
   graphWidth: number;
   selectedHash: string | null;
   onSelect: (hash: string) => void;
+};
+
+export type ColumnKey = 'graph' | 'description' | 'commit' | 'author' | 'date';
+
+export type ColumnWidths = Record<ColumnKey, number | null>;
+
+export type RepoGraphTableProps = {
+  layout: GraphLayout;
+  selectedHash: string | null;
+  onSelect: (hash: string) => void;
+  className?: string;
 };
 
 export type RepoGraphProps = {

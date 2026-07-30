@@ -1,3 +1,4 @@
-export { RepoGraph } from './ui';
+export { CommitRow, RepoGraph, RepoGraphTable } from './ui';
 export { computeLayout } from './lib/computeLayout';
-export type { RepoGraphProps, CommitNode } from './types';
+export { laneColor } from './lib/laneColor';
+export type { CommitNode, GraphLayout, RepoGraphProps, RepoGraphTableProps } from './types';
