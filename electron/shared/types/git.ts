@@ -18,6 +18,11 @@ export type BranchListResult = Array<{
   commits: string[];
 }>;
 
+export type BranchFirstParentResult = Array<{
+  name: string;
+  commits: string[];
+}>;
+
 export type GitTagListResult = Array<{
   name: string;
   type: 'annotated' | 'lightweight';

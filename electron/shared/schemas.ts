@@ -124,6 +124,10 @@ export const gitBranchSchema = z.object({
   force: z.boolean().optional()
 });
 
+export const gitBranchFirstParentSchema = z.object({
+  repoPath: z.string()
+});
+
 export const currentBranchSchema = z.object({
   repoPath: z.string()
 });
@@ -258,6 +262,7 @@ export type GitRevertArgs = z.infer<typeof gitRevertSchema>;
 export type GitAmendArgs = z.infer<typeof gitAmendSchema>;
 export type GitCheckoutArgs = z.infer<typeof gitCheckoutSchema>;
 export type GitBranchArgs = z.infer<typeof gitBranchSchema>;
+export type GitBranchFirstParentArgs = z.infer<typeof gitBranchFirstParentSchema>;
 export type CurrentBranchArgs = z.infer<typeof currentBranchSchema>;
 export type FsSizeArgs = z.infer<typeof fsSizeSchema>;
 export type FsWorkspaceSizeArgs = z.infer<typeof fsWorkspaceSizeSchema>;

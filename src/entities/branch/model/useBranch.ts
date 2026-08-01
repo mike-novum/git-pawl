@@ -2,16 +2,20 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 
 import type {
   Branch,
+  BranchMainline,
   CurrentBranchInfo
 } from './types';
 import {
   branchListQueryKey,
+  branchMainlineQueryKey,
   currentBranchQueryKey,
   fetchBranchCurrent,
-  fetchBranchList
+  fetchBranchList,
+  fetchBranchMainlinesList
 } from './branchQueries';
 
 const DISABLED_LIST_KEY = ['branch-list', 'disabled'] as const;
+const DISABLED_MAINLINE_KEY = ['branch-mainlines', 'disabled'] as const;
 const DISABLED_CURRENT_KEY = ['current-branch', 'disabled'] as const;
 
 export const useBranches = (
@@ -21,6 +25,20 @@ export const useBranches = (
     queryKey: repoPath ? branchListQueryKey(repoPath) : DISABLED_LIST_KEY,
     queryFn: ({ signal }) =>
       repoPath ? fetchBranchList(repoPath, signal) : Promise.resolve([]),
+    enabled: Boolean(repoPath)
+  });
+
+export const useBranchMainlines = (
+  repoPath: string | null
+): UseQueryResult<BranchMainline[]> =>
+  useQuery({
+    queryKey: repoPath
+      ? branchMainlineQueryKey(repoPath)
+      : DISABLED_MAINLINE_KEY,
+    queryFn: ({ signal }) =>
+      repoPath
+        ? fetchBranchMainlinesList(repoPath, signal)
+        : Promise.resolve([]),
     enabled: Boolean(repoPath)
   });
 

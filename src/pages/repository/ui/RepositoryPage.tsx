@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import type { Commit } from '@electron/shared/types/git';
 
-import { useCurrentBranch, useBranches } from '@/entities/branch';
+import { useCurrentBranch, useBranches, useBranchMainlines } from '@/entities/branch';
 import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
@@ -33,6 +33,7 @@ export const RepositoryPage: FC = () => {
   const { data: repo, isLoading: isRepoLoading } = useRepository(repoPath);
   const branchQuery = useCurrentBranch(repoPath);
   const { data: branches = [] } = useBranches(repoPath);
+  const { data: branchMainlines = [] } = useBranchMainlines(repoPath);
   const { data: tags = [] } = useTags(repoPath);
   const { data: stash = [] } = useStashList(repoPath);
 
@@ -54,7 +55,14 @@ export const RepositoryPage: FC = () => {
         : [],
     [branches, branchQuery.data, logQuery.data, tags]
   );
-  const commitLayout = useMemo(() => computeLayout(commits), [commits]);
+  const commitLayout = useMemo(
+    () =>
+      computeLayout(commits, {
+        branchMainlines,
+        currentBranchName: branchQuery.data?.name ?? null
+      }),
+    [branchMainlines, branchQuery.data, commits]
+  );
 
   const [selectedHash, setSelectedHash] = useState<string | null>(null);
 

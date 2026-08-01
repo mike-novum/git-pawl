@@ -21,6 +21,7 @@ export {
   gitAmend,
   gitCheckout,
   gitBranch,
+  gitBranchFirstParent,
   gitTag,
   gitPatch,
   gitConfig,

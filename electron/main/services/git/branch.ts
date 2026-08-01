@@ -1,4 +1,4 @@
-import type { BranchListResult } from '../../../shared/types/git';
+import type { BranchFirstParentResult, BranchListResult } from '../../../shared/types/git';
 import type { GitBranchArgs } from '../../../shared/schemas';
 
 import { runGit } from './runner';
@@ -30,12 +30,29 @@ export const parseRevList = (raw: string): string[] =>
     .map((line) => line.trim())
     .filter((line) => line.length > 0);
 
+export const parseHashList = (raw: string): string[] =>
+  raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
 const fetchBranchCommits = async (
   repoPath: string,
   branchName: string
 ): Promise<string[]> => {
   const { stdout } = await runGit(['rev-list', branchName], repoPath);
   return parseRevList(stdout);
+};
+
+const fetchFirstParentMainline = async (
+  repoPath: string,
+  branchName: string
+): Promise<string[]> => {
+  const { stdout } = await runGit(
+    ['log', '--first-parent', '--format=%H', branchName],
+    repoPath
+  );
+  return parseHashList(stdout);
 };
 
 export const gitBranch = async (args: GitBranchArgs): Promise<GitBranchResult> => {
@@ -64,4 +81,28 @@ export const gitBranch = async (args: GitBranchArgs): Promise<GitBranchResult> =
   const flag = args.force ? '-D' : '-d';
   await runGit(['branch', flag, name], args.repoPath);
   return;
+};
+
+export const gitBranchFirstParent = async (
+  repoPath: string
+): Promise<BranchFirstParentResult> => {
+  const { stdout } = await runGit(
+    ['branch', '--format=%(refname:short)'],
+    repoPath
+  );
+  const branchNames = parseHashList(stdout);
+  if (branchNames.length === 0) return [];
+
+  const mainlines = await Promise.all(
+    branchNames.map(async (name) => {
+      try {
+        const commits = await fetchFirstParentMainline(repoPath, name);
+        return { name, commits };
+      } catch {
+        return { name, commits: [] };
+      }
+    })
+  );
+
+  return mainlines;
 };

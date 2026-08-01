@@ -1,15 +1,19 @@
 export {
   useBranches,
+  useBranchMainlines,
   useCurrentBranch
 } from './model';
 export {
   branchListQueryKey,
+  branchMainlineQueryKey,
   currentBranchQueryKey,
   fetchBranchList,
-  fetchBranchCurrent
+  fetchBranchCurrent,
+  fetchBranchMainlinesList
 } from './model';
 export type {
   Branch,
+  BranchMainline,
   BranchUpstream,
   CurrentBranchInfo
 } from './model';
@@ -18,7 +22,8 @@ export {
   listBranches,
   buildBranches,
   fetchBranches,
-  fetchCurrentBranch
+  fetchCurrentBranch,
+  fetchBranchMainlines
 } from './api';
 
 export { BranchBadge, BranchSwitcher } from './ui';

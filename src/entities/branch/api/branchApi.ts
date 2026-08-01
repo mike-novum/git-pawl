@@ -1,10 +1,15 @@
-import type { BranchListResult } from '@electron/shared/types/git';
+import type { BranchFirstParentResult, BranchListResult } from '@electron/shared/types/git';
 
-import { gitBranch, gitStatus } from '@/shared/api';
+import { gitBranch, gitBranchFirstParent, gitStatus } from '@/shared/api';
 
-import type { Branch, BranchUpstream, CurrentBranchInfo } from '../model/types';
+import type {
+  Branch,
+  BranchMainline,
+  BranchUpstream,
+  CurrentBranchInfo
+} from '../model/types';
 
-export type { Branch, BranchUpstream, CurrentBranchInfo };
+export type { Branch, BranchMainline, BranchUpstream, CurrentBranchInfo };
 
 type BranchListData = BranchListResult | string[];
 
@@ -134,5 +139,29 @@ export const fetchCurrentBranch = async (
     return deriveCurrent(status);
   } catch {
     return { name: null, detached: false };
+  }
+};
+
+export const fetchBranchMainlines = async (
+  repoPath: string,
+  signal?: AbortSignal
+): Promise<BranchMainline[]> => {
+  if (signal?.aborted) return [];
+  try {
+    const raw = (await gitBranchFirstParent({ repoPath })) as BranchFirstParentResult;
+    if (signal?.aborted) return [];
+    if (!Array.isArray(raw)) return [];
+    return raw
+      .filter(
+        (entry): entry is { name: string; commits: string[] } =>
+          typeof entry?.name === 'string' &&
+          Array.isArray(entry?.commits)
+      )
+      .map((entry) => ({
+        name: entry.name,
+        commits: entry.commits.filter((hash) => typeof hash === 'string' && hash.length > 0)
+      }));
+  } catch {
+    return [];
   }
 };

@@ -18,6 +18,7 @@ import type {
   GitAmendArgs,
   GitCheckoutArgs,
   GitBranchArgs,
+  GitBranchFirstParentArgs,
   GitTagArgs,
   GitPatchArgs,
   GitConfigArgs,
@@ -138,6 +139,11 @@ export const gitCheckout = async (args: GitCheckoutArgs): Promise<unknown> =>
 export const gitBranch = async (args: GitBranchArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.gitBranch(args), null);
 
+export const gitBranchFirstParent = async (
+  args: GitBranchFirstParentArgs
+): Promise<unknown> =>
+  safeInvoke<unknown>((bridge) => bridge.gitBranchFirstParent(args), []);
+
 export const gitTag = async (args: GitTagArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.gitTag(args), null);
 
@@ -222,6 +228,7 @@ export const api = {
   gitAmend,
   gitCheckout,
   gitBranch,
+  gitBranchFirstParent,
   gitTag,
   gitPatch,
   gitConfig,

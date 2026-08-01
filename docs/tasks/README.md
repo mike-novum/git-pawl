@@ -33,7 +33,8 @@
 | TASK-313 | Граф: исправить порядок коммитов через git log --topo-order | ✅ done |
 | TASK-314 | Граф: распределить коммиты по lanes их веток (branch-aware DAG) | ✅ done |
 | TASK-315 | Граф: расширить commit.branches[] до всей истории ветки (не только tips) | ⏳ pending (TASK-316 перепишет) |
-| TASK-316 | Граф: правильно определить коммиты на каждой ветке через git rev-list | ✅ done |
+| TASK-316 | Граф: правильно определить коммиты на каждой ветке через git rev-list | ⏳ pending (TASK-317 перепишет) |
+| TASK-317 | Граф: переписать на first-parent mainline алгоритм (SourceTree-style) | ✅ done |
 
 ## 14 — Доработки roadmap-7
 

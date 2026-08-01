@@ -12,6 +12,11 @@ export type Branch = {
   upstream?: BranchUpstream;
 };
 
+export type BranchMainline = {
+  name: string;
+  commits: string[];
+};
+
 export type CurrentBranchInfo = {
   name: string | null;
   detached: boolean;

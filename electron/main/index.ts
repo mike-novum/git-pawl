@@ -23,6 +23,7 @@ import {
   fsWorkspaceSizeSchema,
   gitAmendSchema,
   gitBranchSchema,
+  gitBranchFirstParentSchema,
   gitCheckoutSchema,
   gitCloneSchema,
   gitCommitSchema,
@@ -66,7 +67,7 @@ import {
 } from './services/fs-scanner';
 import { storeDelete, storeGet, storeSet } from './services/store';
 import { gitAmend } from './services/git/amend';
-import { gitBranch } from './services/git/branch';
+import { gitBranch, gitBranchFirstParent } from './services/git/branch';
 import { gitCheckout } from './services/git/checkout';
 import { gitClone } from './services/git/clone';
 import { gitCommit } from './services/git/commit';
@@ -192,6 +193,11 @@ const registerIpcHandlers = (): void => {
     await gitCheckout(args);
   });
   safeHandle(IPC_CHANNELS.GIT_BRANCH, gitBranchSchema, async (args) => gitBranch(args));
+  safeHandle(
+    IPC_CHANNELS.GIT_BRANCH_FIRST_PARENT,
+    gitBranchFirstParentSchema,
+    async (args) => gitBranchFirstParent(args.repoPath)
+  );
   safeHandle(IPC_CHANNELS.GIT_CURRENT_BRANCH, currentBranchSchema, async (args) =>
     currentBranch(args.repoPath)
   );
