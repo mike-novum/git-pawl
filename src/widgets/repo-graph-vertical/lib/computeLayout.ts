@@ -434,6 +434,7 @@ export const computeLayout = (
     maxLane,
     continuousLines,
     parentEdges,
+    branchTips,
     width: GRAPH_WIDTH + maxLane * LANE_WIDTH,
     height: rowsWithColors.length * ROW_HEIGHT
   };

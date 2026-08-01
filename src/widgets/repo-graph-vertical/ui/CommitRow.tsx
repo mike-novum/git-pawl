@@ -25,12 +25,16 @@ const CommitRowComponent: FC<CommitRowProps> = ({
   graphWidth,
   selectedHash,
   onSelect,
+  branchTips,
   graphOverlay
 }) => {
   const { commit } = row;
   const isSelected = commit.hash === selectedHash;
+  const tipBranches = (commit.branches ?? []).filter(
+    (branch) => branchTips?.get(branch) === commit.hash
+  );
   const references = [
-    ...(commit.branches ?? []).map((name) => `Branch: ${name}`),
+    ...tipBranches.map((name) => `Branch: ${name}`),
     ...(commit.tags ?? []).map((name) => `Tag: ${name}`)
   ].join(', ');
 
@@ -59,7 +63,7 @@ const CommitRowComponent: FC<CommitRowProps> = ({
       </td>
       <td className="max-w-0 min-w-0 p-0 px-2 align-middle">
         <span className="flex min-w-0 items-center gap-2 truncate">
-          {commit.branches?.map((branch) => (
+          {tipBranches.map((branch) => (
             <Badge
               key={`branch-${branch}`}
               variant="outline"

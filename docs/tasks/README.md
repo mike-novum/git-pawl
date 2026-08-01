@@ -35,6 +35,7 @@
 | TASK-315 | Граф: расширить commit.branches[] до всей истории ветки (не только tips) | ⏳ pending (TASK-316 перепишет) |
 | TASK-316 | Граф: правильно определить коммиты на каждой ветке через git rev-list | ⏳ pending (TASK-317 перепишет) |
 | TASK-317 | Граф: переписать на first-parent mainline алгоритм (SourceTree-style) | ✅ done |
+| TASK-318 | Граф: показывать чипы веток только у TIP-коммитов | ✅ done |
 
 ## 14 — Доработки roadmap-7
 

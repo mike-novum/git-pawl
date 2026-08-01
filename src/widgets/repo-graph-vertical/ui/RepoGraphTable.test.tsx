@@ -77,7 +77,10 @@ describe('RepoGraphTable', () => {
     const commits = [
       createCommit('aaaaaaaa', [], 'first commit', ['main'])
     ];
-    const layout = computeLayout(commits);
+    const layout = computeLayout(commits, {
+      currentBranchName: 'main',
+      branchMainlines: [{ name: 'main', commits: ['aaaaaaaa'] }]
+    });
 
     render(
       <RepoGraphTable
@@ -194,5 +197,83 @@ describe('RepoGraphTable', () => {
     const caption = container.querySelector('caption');
     expect(caption).not.toBeNull();
     expect(caption?.textContent).toBe('Commit graph');
+  });
+
+  it('shows a branch chip only for the tip commit of the branch', () => {
+    const commits = [
+      createCommit('ccccccc', ['bbbbbbb'], 'tip commit', ['feature-x']),
+      createCommit('bbbbbbb', ['aaaaaaa'], 'middle commit', ['feature-x']),
+      createCommit('aaaaaaa', [], 'root commit', ['feature-x'])
+    ];
+    const layout = computeLayout(commits, {
+      currentBranchName: 'feature-x',
+      branchMainlines: [
+        { name: 'feature-x', commits: ['ccccccc', 'bbbbbbb', 'aaaaaaa'] }
+      ]
+    });
+
+    render(
+      <RepoGraphTable
+        layout={layout}
+        selectedHash={null}
+        onSelect={vi.fn()}
+      />
+    );
+
+    expect(screen.getByTitle('Branch: feature-x')).toBeInTheDocument();
+    expect(screen.getAllByTitle('Branch: feature-x')).toHaveLength(1);
+  });
+
+  it('does not render any branch chip for a commit not on any mainline branch', () => {
+    const commits = [
+      createCommit('tip', ['root'], 'tip commit', ['main']),
+      createCommit('root', [], 'root commit', ['main']),
+      createCommit('side', ['root'], 'side commit')
+    ];
+    const layout = computeLayout(commits, {
+      currentBranchName: 'main',
+      branchMainlines: [
+        { name: 'main', commits: ['tip', 'root'] }
+      ]
+    });
+
+    render(
+      <RepoGraphTable
+        layout={layout}
+        selectedHash={null}
+        onSelect={vi.fn()}
+      />
+    );
+
+    expect(screen.getAllByTitle('Branch: main')).toHaveLength(1);
+    expect(screen.getByText('side commit')).toBeInTheDocument();
+  });
+
+  it('renders a chip for every branch whose tip lands on the same commit', () => {
+    const commits = [
+      createCommit('merged', ['main-root'], 'merged commit', [
+        'main',
+        'feature-x'
+      ]),
+      createCommit('main-root', [], 'root commit', ['main'])
+    ];
+    const layout = computeLayout(commits, {
+      currentBranchName: 'main',
+      branchMainlines: [
+        { name: 'main', commits: ['merged', 'main-root'] },
+        { name: 'feature-x', commits: ['merged'] }
+      ]
+    });
+
+    render(
+      <RepoGraphTable
+        layout={layout}
+        selectedHash={null}
+        onSelect={vi.fn()}
+      />
+    );
+
+    expect(screen.getByTitle('Branch: feature-x')).toBeInTheDocument();
+    expect(screen.getAllByTitle('Branch: main')).toHaveLength(1);
   });
 });

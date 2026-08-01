@@ -51,6 +51,7 @@ export type GraphLayout = {
   maxLane: number;
   continuousLines: GraphLine[];
   parentEdges: GraphLine[];
+  branchTips: Map<string, string>;
   width: number;
   height: number;
 };
@@ -61,6 +62,7 @@ export type CommitRowProps = {
   graphWidth: number;
   selectedHash: string | null;
   onSelect: (hash: string) => void;
+  branchTips?: Map<string, string>;
   graphOverlay?: ReactNode;
 };
 

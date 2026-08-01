@@ -241,6 +241,7 @@ export const RepoGraphTable: FC<RepoGraphTableProps> = ({
               graphWidth={graphWidth}
               selectedHash={selectedHash}
               onSelect={onSelect}
+              branchTips={layout.branchTips}
               graphOverlay={rowIndex === 0 ? graphOverlay : undefined}
             />
           ))}
