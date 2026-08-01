@@ -73,6 +73,7 @@ const GraphLayerComponent: FC<GraphLayerProps> = ({
               cx={cx}
               cy={cy}
               r={NODE_RADIUS}
+              className="[transform-box:fill-box] origin-center transition-transform duration-fast ease-out group-hover:scale-[1.2]"
               fill={row.commit.color ?? 'var(--color-graph-lane-1)'}
               stroke="var(--color-surface)"
               strokeWidth={2}

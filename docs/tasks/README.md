@@ -28,7 +28,7 @@
 | TASK-309 | Граф: заменить разорванный curve на SourceTree-style S-curve | ✅ done |
 | TASK-310 | Граф: непрерывные линии между строками (incoming + outgoing в каждой row) | ✅ done |
 | TASK-311 | Граф: переписать на правильный DAG-алгоритм с одним SVG на колонку | ✅ done |
-| TASK-312 | Граф: hover-анимация точки-коммита (transform-box: fill-box) | ⏳ pending |
+| TASK-312 | Граф: hover-анимация точки-коммита (transform-box: fill-box) | ✅ done |
 | TASK-313 | Граф: исправить порядок коммитов через git log --topo-order | ✅ done |
 | TASK-314 | Граф: распределить коммиты по lanes их веток (branch-aware DAG) | ✅ done |
 

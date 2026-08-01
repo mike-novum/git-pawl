@@ -84,6 +84,23 @@ describe('GraphLayer', () => {
     expect(allNodeCircles.length).toBe(layout.rows.length * 2 + 1);
   });
 
+  it('scales commit circles in place on hover', () => {
+    const commits = [createCommit('aaaaaaaa', [], 'root')];
+    const layout = computeLayout(commits);
+
+    const { container } = render(<GraphLayer layout={layout} selectedHash={null} />);
+
+    const commitCircle = container.querySelector('circle[r="5"]');
+
+    expect(commitCircle).not.toBeNull();
+    expect(commitCircle?.getAttribute('class') ?? '').toContain(
+      '[transform-box:fill-box]'
+    );
+    expect(commitCircle?.getAttribute('class') ?? '').toContain(
+      'group-hover:scale-[1.2]'
+    );
+  });
+
   it('uses absolute coordinates in the rendered SVG paths', () => {
     const commits = [
       createCommit('aaaaaaaa', ['bbbbbbbb'], 'second'),
