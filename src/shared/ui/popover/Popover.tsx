@@ -1,7 +1,7 @@
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import type { FC } from 'react';
 
-import { cn } from '@/shared/lib/theme';
+import { cn, Z_POPUP } from '@/shared/lib/theme';
 
 import type {
   PopoverArrowProps,
@@ -32,7 +32,7 @@ const Portal: FC<PopoverPortalProps> = (props) => <BasePopover.Portal {...props}
 const Positioner: FC<PopoverPositionerProps> = ({ className, sideOffset = 6, ...rest }) => (
   <BasePopover.Positioner
     sideOffset={sideOffset}
-    className={cn('z-50 outline-none', className)}
+    className={cn(Z_POPUP, 'outline-none', className)}
     {...rest}
   />
 );
@@ -40,7 +40,7 @@ const Positioner: FC<PopoverPositionerProps> = ({ className, sideOffset = 6, ...
 const Content: FC<PopoverContentProps> = ({ className, children, ...rest }) => (
   <BasePopover.Popup
     className={cn(
-      'bg-background text-foreground z-50 w-72 rounded-md border border-border p-4 shadow-md outline-none',
+      'bg-background text-foreground w-72 rounded-md border border-border p-4 shadow-md outline-none',
       className
     )}
     {...rest}

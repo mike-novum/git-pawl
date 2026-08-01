@@ -1,7 +1,7 @@
 import { Command as Cmdk } from 'cmdk';
 import type { FC } from 'react';
 
-import { cn } from '@/shared/lib/theme';
+import { cn, Z_POPUP } from '@/shared/lib/theme';
 
 import type {
   CommandDialogProps,
@@ -30,10 +30,11 @@ const Dialog: FC<CommandDialogProps> = ({ className, ...rest }) => (
   <Cmdk.Dialog
     label="Command palette"
     className={cn(
-      'bg-background text-foreground fixed top-1/2 left-1/2 z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-md border border-border shadow-lg',
+      'bg-background text-foreground fixed top-1/2 left-1/2 w-full max-w-lg -translate-x-1/2 -translate-y-1/2 rounded-md border border-border shadow-lg',
+      Z_POPUP,
       className
     )}
-    overlayClassName="fixed inset-0 bg-foreground/40 z-50"
+    overlayClassName={cn('fixed inset-0 bg-foreground/40', Z_POPUP)}
     contentClassName={cn(
       'bg-background text-foreground flex flex-col overflow-hidden rounded-md border border-border shadow-lg'
     )}

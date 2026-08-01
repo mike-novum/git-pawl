@@ -4,6 +4,7 @@ import type { FC, ReactNode } from 'react';
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 
 import { cn } from '@/shared/lib/theme/cn';
+import { Z_POPUP } from '@/shared/lib/theme';
 
 import type { DialogContentProps } from './types';
 
@@ -17,7 +18,8 @@ export const Close = BaseDialog.Close;
 export const Backdrop: FC<{ className?: string }> = ({ className }) => (
   <BaseDialog.Backdrop
     className={cn(
-      'fixed inset-0 z-50 bg-black/60 backdrop-blur-sm',
+      'fixed inset-0 bg-black/60 backdrop-blur-sm',
+      Z_POPUP,
       'transition-opacity duration-[var(--duration-fast)] ease-[var(--ease-fast)]',
       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
       className
@@ -33,7 +35,8 @@ export const Popup: FC<{ className?: string; children?: ReactNode }> = ({
 }) => (
   <BaseDialog.Popup
     className={cn(
-      'fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border border-border bg-background p-6 shadow-lg',
+      'fixed top-1/2 left-1/2 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border border-border bg-background p-6 shadow-lg',
+      Z_POPUP,
       'transition-all duration-[var(--duration-base)] ease-[var(--ease-fast)]',
       'data-[starting-style]:scale-95 data-[starting-style]:opacity-0',
       'data-[ending-style]:scale-95 data-[ending-style]:opacity-0',
@@ -71,7 +74,8 @@ export const Content: FC<DialogContentProps> = ({
 }) => (
   <BaseDialog.Popup
     className={cn(
-      'fixed top-1/2 left-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border border-border bg-background p-6 shadow-lg',
+      'fixed top-1/2 left-1/2 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 rounded-lg border border-border bg-background p-6 shadow-lg',
+      Z_POPUP,
       'transition-all duration-[var(--duration-base)] ease-[var(--ease-fast)]',
       'data-[starting-style]:scale-95 data-[starting-style]:opacity-0',
       'data-[ending-style]:scale-95 data-[ending-style]:opacity-0',

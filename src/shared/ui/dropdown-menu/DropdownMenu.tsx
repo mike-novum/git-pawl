@@ -2,7 +2,7 @@ import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Separator as BaseSeparator } from '@base-ui/react/separator';
 import type { FC } from 'react';
 
-import { cn } from '@/shared/lib/theme';
+import { cn, Z_POPUP } from '@/shared/lib/theme';
 
 import type {
   DropdownMenuCheckboxItemIndicatorProps,
@@ -46,7 +46,7 @@ const DropdownMenuPositioner: FC<DropdownMenuPositionerProps> = ({
   ...props
 }) => (
   <BaseMenu.Positioner
-    className={cn('outline-none', className)}
+    className={cn(Z_POPUP, 'outline-none', className)}
     {...props}
   />
 );
@@ -57,7 +57,7 @@ const DropdownMenuContent: FC<DropdownMenuContentProps> = ({
 }) => (
   <BaseMenu.Popup
     className={cn(
-      'bg-card text-card-foreground z-50 min-w-32 overflow-hidden rounded-md border border-border p-1 shadow-md',
+      'bg-card text-card-foreground min-w-32 overflow-hidden rounded-md border border-border p-1 shadow-md',
       'origin-[var(--transform-origin)] transition-[transform,opacity]',
       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
       'data-[starting-style]:scale-95 data-[ending-style]:scale-95',

@@ -1,7 +1,7 @@
 import { X } from 'lucide-react';
 import { useEffect, type FC } from 'react';
 
-import { cn } from '@/shared/lib/theme';
+import { cn, Z_POPUP } from '@/shared/lib/theme';
 
 import type { DrawerProps } from './types';
 
@@ -31,7 +31,7 @@ export const Drawer: FC<DrawerProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex justify-end"
+      className={cn('fixed inset-0 flex justify-end', Z_POPUP)}
       role="dialog"
       aria-modal="true"
       aria-label={title}

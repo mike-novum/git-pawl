@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { Toast as BaseToast } from '@base-ui/react/toast';
 
 import { cn } from '@/shared/lib/theme/cn';
+import { Z_POPUP } from '@/shared/lib/theme';
 
 import {
   ToastProvider,
@@ -54,7 +55,8 @@ export const Portal = BaseToast.Portal;
 export const Viewport: FC<ToastViewportProps> = ({ className, ...props }) => (
   <BaseToast.Viewport
     className={cn(
-      'fixed top-4 right-4 z-50 flex w-[360px] max-w-[100vw] flex-col gap-2 outline-none',
+      'fixed top-4 right-4 flex w-[360px] max-w-[100vw] flex-col gap-2 outline-none',
+      Z_POPUP,
       className
     )}
     {...props}

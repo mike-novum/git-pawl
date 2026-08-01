@@ -3,6 +3,7 @@ import type { FC, ReactNode } from 'react';
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 
 import { cn } from '@/shared/lib/theme/cn';
+import { Z_POPUP } from '@/shared/lib/theme';
 
 import type {
   TooltipProps,
@@ -18,8 +19,12 @@ export const Portal: FC<TooltipPortalProps> = (props) => <BaseTooltip.Portal {..
 
 Portal.displayName = 'Tooltip.Portal';
 
-export const Positioner: FC<TooltipPositionerProps> = (props) => (
-  <BaseTooltip.Positioner sideOffset={6} {...props} />
+export const Positioner: FC<TooltipPositionerProps> = ({ className, ...props }) => (
+  <BaseTooltip.Positioner
+    sideOffset={6}
+    className={cn(Z_POPUP, className)}
+    {...props}
+  />
 );
 
 Positioner.displayName = 'Tooltip.Positioner';
@@ -27,7 +32,8 @@ Positioner.displayName = 'Tooltip.Positioner';
 export const Popup: FC<TooltipPopupProps> = ({ className, ...props }) => (
   <BaseTooltip.Popup
     className={cn(
-      'z-50 max-w-xs rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground shadow-md',
+      'max-w-xs rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground shadow-md',
+      Z_POPUP,
       'transition-opacity duration-[var(--duration-fast)] ease-[var(--ease-fast)]',
       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
       className

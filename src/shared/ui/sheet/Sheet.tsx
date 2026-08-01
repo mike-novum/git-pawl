@@ -1,7 +1,7 @@
 import { Dialog as BaseDialog } from '@base-ui/react/dialog';
 import type { FC } from 'react';
 
-import { cn } from '@/shared/lib/theme';
+import { cn, Z_POPUP } from '@/shared/lib/theme';
 
 import type {
   SheetCloseProps,
@@ -57,7 +57,8 @@ const SheetClose: FC<SheetCloseProps> = ({ className, ...props }) => (
 const SheetBackdrop: FC<{ className?: string }> = ({ className }) => (
   <BaseDialog.Backdrop
     className={cn(
-      'fixed inset-0 z-50 bg-black/60 backdrop-blur-sm',
+      'fixed inset-0 bg-black/60 backdrop-blur-sm',
+      Z_POPUP,
       'data-[starting-style]:opacity-0 data-[ending-style]:opacity-0',
       'transition-opacity duration-base',
       className
@@ -74,7 +75,8 @@ const SheetContent: FC<SheetContentProps> = ({
 }) => (
   <BaseDialog.Popup
     className={cn(
-      'bg-background text-foreground fixed z-50 shadow-lg gap-4 p-6 flex flex-col',
+      'bg-background text-foreground fixed shadow-lg gap-4 p-6 flex flex-col',
+      Z_POPUP,
       'transition-transform duration-base ease-fast',
       SIDE_STYLES[side],
       SIDE_TRANSITIONS[side],

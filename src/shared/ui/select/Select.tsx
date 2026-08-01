@@ -4,6 +4,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import { Select as BaseSelect } from '@base-ui/react/select';
 
 import { cn } from '@/shared/lib/theme/cn';
+import { Z_POPUP } from '@/shared/lib/theme';
 
 import type { SelectProps } from './types';
 
@@ -40,7 +41,7 @@ export const Positioner: FC<{ children: ReactNode; className?: string }> = ({
   children,
   className
 }) => (
-  <BaseSelect.Positioner sideOffset={6} className={cn('z-50 outline-none', className)}>
+  <BaseSelect.Positioner sideOffset={6} className={cn(Z_POPUP, 'outline-none', className)}>
     {children}
   </BaseSelect.Positioner>
 );
