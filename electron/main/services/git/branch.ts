@@ -20,9 +20,23 @@ export const parseBranchRefs = (raw: string): BranchListResult =>
     .map((line) => {
       const [name = '', target = ''] = line.split('\0');
 
-      return { name, target };
+      return { name, target, commits: [] };
     })
     .filter((branch) => branch.name.length > 0 && branch.target.length > 0);
+
+export const parseRevList = (raw: string): string[] =>
+  raw
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+const fetchBranchCommits = async (
+  repoPath: string,
+  branchName: string
+): Promise<string[]> => {
+  const { stdout } = await runGit(['rev-list', branchName], repoPath);
+  return parseRevList(stdout);
+};
 
 export const gitBranch = async (args: GitBranchArgs): Promise<GitBranchResult> => {
   if (args.action === 'list') {
@@ -30,7 +44,14 @@ export const gitBranch = async (args: GitBranchArgs): Promise<GitBranchResult> =
       ['branch', '--format=%(refname:short)%00%(objectname)'],
       args.repoPath
     );
-    return parseBranchRefs(stdout);
+    const branches = parseBranchRefs(stdout);
+    const commitsLists = await Promise.all(
+      branches.map((branch) => fetchBranchCommits(args.repoPath, branch.name))
+    );
+    return branches.map((branch, index) => ({
+      ...branch,
+      commits: commitsLists[index] ?? []
+    }));
   }
 
   if (args.action === 'create') {

@@ -6,16 +6,14 @@ import { useParams } from 'react-router-dom';
 import type { Commit } from '@electron/shared/types/git';
 
 import { useCurrentBranch, useBranches } from '@/entities/branch';
-import type { Branch } from '@/entities/branch';
 import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
-import type { Tag } from '@/entities/tag';
+import { toCommitNodes } from '@/pages/repository';
 import { gitLog } from '@/shared/api';
 import { Empty, Spinner, useToast } from '@/shared/ui';
 import { RepoDetailPanel } from '@/widgets/repo-detail-panel';
 import { computeLayout, RepoGraph } from '@/widgets/repo-graph-vertical';
-import type { CommitNode } from '@/widgets/repo-graph-vertical';
 import { RepoTree } from '@/widgets/repo-tree';
 
 const decodeRepoId = (id: string | undefined): string | null => {
@@ -25,51 +23,6 @@ const decodeRepoId = (id: string | undefined): string | null => {
   } catch {
     return id;
   }
-};
-
-const toShortHash = (hash: string): string => hash.slice(0, 7);
-
-const toCommitNodes = (
-  entries: Commit[],
-  branches: Branch[],
-  tags: Tag[],
-  currentBranchName: string | null
-): CommitNode[] => {
-  const branchesByHash = new Map<string, string[]>();
-  const tagsByHash = new Map<string, string[]>();
-  const currentTargets = new Set(
-    branches
-      .filter((branch) => branch.current)
-      .map((branch) => branch.target)
-      .filter(Boolean)
-  );
-
-  branches.forEach((branch) => {
-    const names = branchesByHash.get(branch.target) ?? [];
-    names.push(branch.name);
-    branchesByHash.set(branch.target, names);
-  });
-
-  tags.forEach((tag) => {
-    const names = tagsByHash.get(tag.target) ?? [];
-    names.push(tag.name);
-    tagsByHash.set(tag.target, names);
-  });
-
-  return entries.map((entry) => ({
-    hash: entry.hash,
-    shortHash: toShortHash(entry.hash),
-    subject: entry.subject,
-    author: entry.author.name,
-    authorEmail: entry.author.email,
-    timestamp: entry.date,
-    parents: entry.parents,
-    lane: 0,
-    branches: branchesByHash.get(entry.hash),
-    tags: tagsByHash.get(entry.hash),
-    currentBranchName: currentBranchName ?? undefined,
-    isCurrentBranch: currentTargets.has(entry.hash)
-  }));
 };
 
 export const RepositoryPage: FC = () => {

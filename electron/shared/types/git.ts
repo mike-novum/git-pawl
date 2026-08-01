@@ -15,6 +15,7 @@ export type CommitResult = {
 export type BranchListResult = Array<{
   name: string;
   target: string;
+  commits: string[];
 }>;
 
 export type GitTagListResult = Array<{

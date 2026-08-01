@@ -8,6 +8,7 @@ export type Branch = {
   name: string;
   target: string;
   current: boolean;
+  commits: string[];
   upstream?: BranchUpstream;
 };
 

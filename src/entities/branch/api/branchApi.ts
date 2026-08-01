@@ -73,12 +73,15 @@ export const buildBranches = (
   const result = rawBranches.map((rawBranch) => {
     const name = typeof rawBranch === 'string' ? rawBranch : rawBranch.name;
     const target = typeof rawBranch === 'string' ? '' : rawBranch.target;
+    const commits =
+      typeof rawBranch === 'string' ? [] : rawBranch.commits ?? [];
     const parsed = splitMarker(name);
     const isCurrent = !detached && parsed.name === currentBranchName;
     return {
       name: parsed.name,
       target,
       current: parsed.current || isCurrent,
+      commits,
       upstream: parsed.upstream
     } satisfies Branch;
   });
@@ -88,6 +91,7 @@ export const buildBranches = (
       name: currentBranchName,
       target: '',
       current: true,
+      commits: [],
       upstream: undefined
     });
   }
