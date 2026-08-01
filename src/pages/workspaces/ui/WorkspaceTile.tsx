@@ -3,7 +3,7 @@ import type { FC } from 'react';
 
 import { formatBytes, WorkspaceIcon } from '@/entities/workspace';
 import { cn } from '@/shared/lib';
-import { StatusDot } from '@/shared/ui';
+import { Skeleton, StatusDot } from '@/shared/ui';
 
 import type { WorkspaceTileProps } from '../types';
 
@@ -27,6 +27,7 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
   sizeBytes,
   status,
   lastActivity,
+  isLoading = false,
   onOpen
 }) => {
   return (
@@ -44,7 +45,9 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
           iconPath={iconPath}
           size="md"
         />
-        {status !== 'unknown' ? (
+        {isLoading ? (
+          <Skeleton className="size-2.5 rounded-full" aria-hidden="true" />
+        ) : status !== 'unknown' ? (
           <StatusDot variant={status} label={`workspace ${status}`} />
         ) : null}
       </div>
@@ -53,9 +56,13 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
           {workspace.name}
         </h3>
         <div className="text-muted-foreground flex items-center gap-2 text-xs">
-          <span>
-            {repoCount} {repoCount === 1 ? 'repo' : 'repos'}
-          </span>
+          {repoCount === null ? (
+            <Skeleton className="h-3 w-12" aria-hidden="true" />
+          ) : (
+            <span>
+              {repoCount} {repoCount === 1 ? 'repo' : 'repos'}
+            </span>
+          )}
           {lastActivity !== null ? (
             <>
               <span aria-hidden="true">·</span>
@@ -66,7 +73,11 @@ export const WorkspaceTile: FC<WorkspaceTileProps> = ({
       </div>
       <div className="flex items-center justify-between gap-2">
         <span className="text-muted-foreground font-mono text-xs">
-          {sizeBytes !== null ? formatBytes(sizeBytes) : '—'}
+          {isLoading ? (
+            <Skeleton className="h-3 w-14" aria-hidden="true" />
+          ) : (
+            formatBytes(sizeBytes ?? 0)
+          )}
         </span>
         <FolderOpen
           aria-hidden="true"

@@ -3,10 +3,11 @@ import type { Workspace } from '@/entities/workspace';
 export type WorkspaceTileProps = {
   workspace: Workspace;
   iconPath: string | null;
-  repoCount: number;
+  repoCount: number | null;
   sizeBytes: number | null;
   status: 'clean' | 'warning' | 'danger' | 'unknown';
   lastActivity: number | null;
+  isLoading?: boolean;
   onOpen: () => void;
 };
 

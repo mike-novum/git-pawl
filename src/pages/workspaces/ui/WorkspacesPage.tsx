@@ -7,7 +7,8 @@ import {
   useWorkspaceIcon,
   useWorkspaceList,
   useWorkspaceSize,
-  useWorkspaceStatus
+  useWorkspaceStatus,
+  type Workspace
 } from '@/entities/workspace';
 import { useRepositoryList } from '@/entities/repository';
 import { Button, Spinner } from '@/shared/ui';
@@ -95,24 +96,26 @@ export const WorkspacesPage: FC = () => {
 };
 
 const WorkspaceTileWrapper: FC<{
-  workspace: import('@/entities/workspace').Workspace;
+  workspace: Workspace;
   onOpen: () => void;
 }> = ({ workspace, onOpen }) => {
-  const { data: repos = [] } = useRepositoryList(workspace.path, []);
-  const { totalBytes } = useWorkspaceSize(workspace.path);
-  const { status } = useWorkspaceStatus(workspace.path);
+  const { data: repos = [], isPending: isReposPending } = useRepositoryList(workspace.path, []);
+  const { totalBytes, isLoading: isSizeLoading } = useWorkspaceSize(workspace.path);
+  const { status, isLoading: isStatusLoading } = useWorkspaceStatus(workspace.path);
   const { data: iconPath = null } = useWorkspaceIcon(workspace.id);
 
   const lastActivity: number | null = null;
+  const isLoading = isReposPending || isSizeLoading || isStatusLoading;
 
   return (
     <WorkspaceTile
       workspace={workspace}
       iconPath={iconPath}
-      repoCount={repos.length}
+      repoCount={isReposPending ? null : repos.length}
       sizeBytes={totalBytes}
-      status={status}
+      status={isStatusLoading ? 'unknown' : status}
       lastActivity={lastActivity}
+      isLoading={isLoading}
       onOpen={onOpen}
     />
   );

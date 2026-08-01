@@ -114,7 +114,11 @@ export { createWorkspace };
 
 export const useWorkspaceSize = (
   workspacePath: string | null
-): { totalBytes: number | null; scannedAt: number | null } => {
+): {
+  totalBytes: number | null;
+  scannedAt: number | null;
+  isLoading: boolean;
+} => {
   const query = useQuery({
     queryKey: ['workspace-size', workspacePath],
     queryFn: () => getCachedSize(workspacePath as string),
@@ -124,13 +128,18 @@ export const useWorkspaceSize = (
 
   return {
     totalBytes: query.data?.totalBytes ?? null,
-    scannedAt: query.data?.scannedAt ?? null
+    scannedAt: query.data?.scannedAt ?? null,
+    isLoading: query.isPending
   };
 };
 
 export const useWorkspaceStatus = (
   workspacePath: string | null
-): { status: WorkspaceStatus; scannedAt: number | null } => {
+): {
+  status: WorkspaceStatus;
+  scannedAt: number | null;
+  isLoading: boolean;
+} => {
   const query = useQuery({
     queryKey: ['workspace-status', workspacePath],
     queryFn: () => getCachedWorkspaceStatus(workspacePath as string),
@@ -140,7 +149,8 @@ export const useWorkspaceStatus = (
 
   return {
     status: query.data?.status ?? 'unknown',
-    scannedAt: query.data?.scannedAt ?? null
+    scannedAt: query.data?.scannedAt ?? null,
+    isLoading: query.isPending
   };
 };
 
