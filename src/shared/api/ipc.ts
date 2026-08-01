@@ -32,6 +32,7 @@ import type {
   FsBuildRepoIdArgs,
   FsScanReposArgs,
   FsReadImageDataUrlArgs,
+  ShellOpenTerminalArgs,
   StoreGetArgs,
   StoreSetArgs,
   StoreDeleteArgs
@@ -209,6 +210,9 @@ export const fsReadImageDataUrl = async (
 ): Promise<string | null> =>
   safeInvoke<string | null>((bridge) => bridge.fsReadImageDataUrl(args), null);
 
+export const shellOpenTerminal = async (args: ShellOpenTerminalArgs): Promise<void> =>
+  safeInvoke<void>((bridge) => bridge.shellOpenTerminal(args), undefined);
+
 export const api = {
   getAppInfo,
   storeGet,
@@ -247,7 +251,8 @@ export const api = {
   fsDetectRepos,
   fsBuildRepoId,
   fsScanRepos,
-  fsReadImageDataUrl
+  fsReadImageDataUrl,
+  shellOpenTerminal
 };
 
 export type IpcApi = typeof api;

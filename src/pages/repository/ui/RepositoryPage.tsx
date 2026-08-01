@@ -9,6 +9,7 @@ import { useCurrentBranch, useBranches, useBranchMainlines } from '@/entities/br
 import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
+import { OpenInTerminal } from '@/features/open-in-terminal';
 import { toCommitNodes } from '@/pages/repository';
 import { gitLog } from '@/shared/api';
 import { Empty, Spinner, useToast } from '@/shared/ui';
@@ -129,6 +130,7 @@ export const RepositoryPage: FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <OpenInTerminal path={repoPath} />
           <button
             type="button"
             aria-label="Fetch"

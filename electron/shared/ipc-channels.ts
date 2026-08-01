@@ -51,7 +51,9 @@ export const IPC_CHANNELS = {
   ACCOUNT_REMOVE: 'account:remove',
 
   GITHUB_LIST_REPOS: 'github:list-repos',
-  GITLAB_LIST_REPOS: 'gitlab:list-repos'
+  GITLAB_LIST_REPOS: 'gitlab:list-repos',
+
+  SHELL_OPEN_TERMINAL: 'shell:open-terminal'
 } as const;
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

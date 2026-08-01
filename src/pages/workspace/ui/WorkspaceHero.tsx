@@ -1,6 +1,7 @@
 import { Settings } from 'lucide-react';
 import type { FC } from 'react';
 
+import { OpenInTerminal } from '@/features/open-in-terminal';
 import { WorkspaceIcon } from '@/entities/workspace';
 
 import type { WorkspaceHeroProps } from '../types';
@@ -17,14 +18,17 @@ export const WorkspaceHero: FC<WorkspaceHeroProps> = ({
         {workspace.name}
       </h1>
     </div>
-    <button
-      type="button"
-      onClick={onSettings}
-      aria-label="Workspace settings"
-      className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors duration-(--duration-fast)"
-    >
-      <Settings aria-hidden="true" className="size-4" />
-    </button>
+    <div className="flex items-center gap-1">
+      <OpenInTerminal path={workspace.path} />
+      <button
+        type="button"
+        onClick={onSettings}
+        aria-label="Workspace settings"
+        className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors duration-(--duration-fast)"
+      >
+        <Settings aria-hidden="true" className="size-4" />
+      </button>
+    </div>
   </header>
 );
 
