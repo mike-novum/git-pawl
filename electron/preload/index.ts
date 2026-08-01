@@ -43,6 +43,7 @@ export type FsSizeArgs = { repoPath: string };
 export type FsWorkspaceSizeArgs = { workspacePath: string };
 export type FsIconArgs =
   | { action: 'set'; repoPath: string; sourceImagePath: string }
+  | { action: 'set-workspace'; workspaceId: string; sourceImagePath: string }
   | { action: 'remove'; repoPath: string };
 export type FsWorkspaceCreateArgs = { path: string; name?: string };
 export type FsWorkspaceRemoveArgs = { id: string };
@@ -85,7 +86,7 @@ export type ApiSchema = {
   fsSelectFile: () => Promise<FsSelectFileResult>;
   fsSize: (args: FsSizeArgs) => Promise<unknown>;
   fsWorkspaceSize: (args: FsWorkspaceSizeArgs) => Promise<{ totalBytes: number }>;
-  fsIcon: (args: FsIconArgs) => Promise<void>;
+  fsIcon: (args: FsIconArgs) => Promise<string | void>;
   fsWorkspaceList: () => Promise<unknown>;
   fsWorkspaceCreate: (args: FsWorkspaceCreateArgs) => Promise<unknown>;
   fsWorkspaceRemove: (args: FsWorkspaceRemoveArgs) => Promise<unknown>;
@@ -143,7 +144,7 @@ const api: ApiSchema = {
   fsSelectFile: () => invoke('fs:select-file') as Promise<FsSelectFileResult>,
   fsSize: (args) => invoke('fs:size', args),
   fsWorkspaceSize: (args) => invoke('fs:workspace-size', args) as Promise<{ totalBytes: number }>,
-  fsIcon: (args) => invoke('fs:icon', args) as Promise<void>,
+  fsIcon: (args) => invoke('fs:icon', args) as Promise<string | void>,
   fsWorkspaceList: () => invoke('fs:workspace-list'),
   fsWorkspaceCreate: (args) => invoke('fs:workspace-create', args),
   fsWorkspaceRemove: (args) => invoke('fs:workspace-remove', args),

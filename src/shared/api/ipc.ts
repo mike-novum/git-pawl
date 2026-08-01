@@ -173,8 +173,11 @@ export const fsWorkspaceSize = async (
     { totalBytes: 0 }
   );
 
-export const fsIcon = async (args: FsIconArgs): Promise<void> =>
-  safeInvoke<void>((bridge) => bridge.fsIcon(args), undefined);
+export const fsIcon = async (args: FsIconArgs): Promise<string | undefined> =>
+  safeInvoke<string | undefined>(
+    (bridge) => bridge.fsIcon(args) as Promise<string | undefined>,
+    undefined
+  );
 
 export const fsWorkspaceList = async (): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.fsWorkspaceList(), []);

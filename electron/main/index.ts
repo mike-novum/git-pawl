@@ -56,6 +56,7 @@ import {
   selectDirectory,
   selectFile,
   setRepoIcon,
+  setWorkspaceIcon,
   workspaceCreate,
   workspaceList,
   workspaceRemove
@@ -217,6 +218,9 @@ const registerIpcHandlers = (): void => {
     if (args.action === 'set') {
       await setRepoIcon(args);
       return;
+    }
+    if (args.action === 'set-workspace') {
+      return setWorkspaceIcon(args);
     }
     await removeRepoIcon(args);
   });

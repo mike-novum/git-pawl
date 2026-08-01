@@ -183,6 +183,11 @@ export const fsIconSchema = z.discriminatedUnion('action', [
     sourceImagePath: z.string()
   }),
   z.object({
+    action: z.literal('set-workspace'),
+    workspaceId: z.string(),
+    sourceImagePath: z.string()
+  }),
+  z.object({
     action: z.literal('remove'),
     repoPath: z.string()
   })
@@ -268,6 +273,7 @@ export type FsSizeArgs = z.infer<typeof fsSizeSchema>;
 export type FsWorkspaceSizeArgs = z.infer<typeof fsWorkspaceSizeSchema>;
 export type FsIconArgs = z.infer<typeof fsIconSchema>;
 export type FsIconSetArgs = Extract<FsIconArgs, { action: 'set' }>;
+export type FsIconSetWorkspaceArgs = Extract<FsIconArgs, { action: 'set-workspace' }>;
 export type FsIconRemoveArgs = Extract<FsIconArgs, { action: 'remove' }>;
 export type FsSelectDirectoryArgs = z.infer<typeof fsSelectDirectorySchema>;
 export type FsSelectFileArgs = z.infer<typeof fsSelectFileSchema>;

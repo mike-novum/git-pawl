@@ -13,5 +13,5 @@ export type WorkspaceRemoveArgs = { id: string };
 
 export type WorkspaceIconInput = {
   workspaceId: string;
-  iconPath: string;
+  sourceImagePath: string;
 };

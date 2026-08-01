@@ -7,6 +7,7 @@ import sharp from 'sharp';
 import type {
   FsIconRemoveArgs,
   FsIconSetArgs,
+  FsIconSetWorkspaceArgs,
   FsReadImageDataUrlArgs,
   FsSizeArgs,
   FsWorkspaceCreateArgs,
@@ -243,6 +244,48 @@ export const removeRepoIcon = async (args: FsIconRemoveArgs): Promise<void> => {
       }
     }
   }
+};
+
+export const setWorkspaceIcon = async (
+  args: FsIconSetWorkspaceArgs
+): Promise<string> => {
+  const workspaces = await workspaceList();
+  const workspace = workspaces.find((w) => w.id === args.workspaceId);
+  if (!workspace) {
+    throw new Error(`Workspace not found: ${args.workspaceId}`);
+  }
+
+  const workspacePath = await ensureDirectoryExists(workspace.path);
+
+  let sourceStat;
+  try {
+    sourceStat = await fs.stat(args.sourceImagePath);
+  } catch {
+    throw new Error(`Source image not found: ${args.sourceImagePath}`);
+  }
+  if (!sourceStat.isFile()) {
+    throw new Error(`Source image is not a file: ${args.sourceImagePath}`);
+  }
+
+  const ext = resolveIconExtension(args.sourceImagePath);
+  const targetPath = iconPathFor(workspacePath, ext);
+
+  for (const otherExt of ICON_EXTENSIONS) {
+    if (otherExt === ext) continue;
+    try {
+      await fs.unlink(path.join(workspacePath, `icon${otherExt}`));
+    } catch (err) {
+      if ((err as { code?: string }).code !== 'ENOENT') {
+        throw err;
+      }
+    }
+  }
+
+  await sharp(args.sourceImagePath)
+    .resize(ICON_SIZE, ICON_SIZE, { fit: 'cover' })
+    .toFile(targetPath);
+
+  return targetPath;
 };
 
 const IMAGE_MIME_BY_EXT: Record<string, string> = {

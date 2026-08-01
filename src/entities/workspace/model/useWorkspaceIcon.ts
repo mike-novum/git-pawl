@@ -6,7 +6,7 @@ import {
   type UseQueryResult
 } from '@tanstack/react-query';
 
-import { storeGet, storeSet } from '@/shared/api';
+import { fsIcon, storeGet, storeSet } from '@/shared/api';
 
 import type { WorkspaceIconInput } from './types';
 
@@ -48,26 +48,35 @@ export const useWorkspaceIcon = (
 
 export const setWorkspaceIcon = async ({
   workspaceId,
-  iconPath
-}: WorkspaceIconInput): Promise<void> => {
+  sourceImagePath
+}: WorkspaceIconInput): Promise<string> => {
+  const iconPath = await fsIcon({
+    action: 'set-workspace',
+    workspaceId,
+    sourceImagePath
+  });
+  if (!iconPath) {
+    throw new Error('Failed to copy workspace icon');
+  }
   await storeSet({
     key: `workspace-icon:${workspaceId}`,
     value: iconPath
   });
+  return iconPath;
 };
 
 export const useSetWorkspaceIcon = (): UseMutationResult<
-  void,
+  string,
   Error,
   WorkspaceIconInput
 > => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: setWorkspaceIcon,
-    onSuccess: (_data, variables) => {
+    onSuccess: (iconPath, variables) => {
       queryClient.setQueryData<string | null>(
         WORKSPACE_ICON_QUERY_KEY(variables.workspaceId),
-        variables.iconPath
+        iconPath
       );
       void queryClient.invalidateQueries({
         queryKey: WORKSPACE_ICON_QUERY_KEY(variables.workspaceId)

@@ -81,11 +81,11 @@ export const WorkspacePage: FC = () => {
   }, [navigate, removeWorkspace, toast, workspaceId]);
 
   const handleIconChange = useCallback(
-    (iconPath: string): void => {
+    (sourceImagePath: string): void => {
       if (!workspaceId) return;
 
       setWorkspaceIcon(
-        { workspaceId, iconPath },
+        { workspaceId, sourceImagePath },
         {
           onSuccess: () => {
             toast.success({ title: 'Icon saved' });
