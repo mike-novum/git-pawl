@@ -1,6 +1,7 @@
 import type { FC, ReactElement, ReactNode } from 'react';
 import { Cat } from 'lucide-react';
 
+import { cn } from '@/shared/lib/theme';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
 import type { AppHeaderProps } from '../types';
@@ -51,7 +52,12 @@ export const AppHeader: FC<AppHeaderProps> = ({
   };
 
   return (
-    <header className="bg-surface border-border flex h-12 shrink-0 items-center justify-between border-b px-4">
+    <header
+      className={cn(
+        'flex h-12 shrink-0 items-center justify-between px-4',
+        !isHome && 'bg-surface border-border border-b'
+      )}
+    >
       <div className="flex min-w-0 items-center gap-2">
         {isHome ? (
           <div className="flex items-center gap-2">
