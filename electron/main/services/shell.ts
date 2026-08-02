@@ -1,4 +1,5 @@
 import { execFile } from 'node:child_process';
+import { stat } from 'node:fs/promises';
 import { promisify } from 'node:util';
 
 import type { ShellOpenTerminalArgs } from '../../shared/schemas';
@@ -10,8 +11,20 @@ export const openTerminal = async ({ path: dirPath }: ShellOpenTerminalArgs): Pr
     throw new Error('openTerminal is only supported on macOS');
   }
 
-  const escapedPath = dirPath.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-  const script = `tell application "Terminal" to do script "cd \\"${escapedPath}\\""`;
+  try {
+    const info = await stat(dirPath);
+    if (!info.isDirectory()) {
+      throw new Error(`Path is not a directory: ${dirPath}`);
+    }
+  } catch (error) {
+    const code = (error as { code?: string }).code;
+    if (code === 'ENOENT') {
+      throw new Error(`Directory does not exist: ${dirPath}`);
+    }
+    throw error;
+  }
+
+  const script = `tell application "Terminal" to do script "cd " & quoted form of "${dirPath}"`;
 
   try {
     await execFileAsync('osascript', ['-e', script]);
