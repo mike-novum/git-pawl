@@ -53,6 +53,7 @@ export type FsScanReposArgs = { path: string; maxDepth?: number };
 export type FsReadImageDataUrlArgs = { path: string };
 
 export type ShellOpenTerminalArgs = { path: string };
+export type ShellOpenFinderArgs = { path: string };
 
 export type ApiSchema = {
   getAppInfo: () => Promise<AppInfo>;
@@ -109,6 +110,7 @@ export type ApiSchema = {
   gitlabListRepos: (args: { accountId: string }) => Promise<unknown>;
 
   shellOpenTerminal: (args: ShellOpenTerminalArgs) => Promise<void>;
+  shellOpenFinder: (args: ShellOpenFinderArgs) => Promise<void>;
 };
 const invoke = (channel: string, args?: unknown): Promise<unknown> =>
   ipcRenderer.invoke(channel, args);
@@ -169,7 +171,9 @@ const api: ApiSchema = {
   gitlabListRepos: (args) => invoke('gitlab:list-repos', args),
 
   shellOpenTerminal: (args) =>
-    invoke('shell:open-terminal', args) as Promise<void>
+    invoke('shell:open-terminal', args) as Promise<void>,
+  shellOpenFinder: (args) =>
+    invoke('shell:open-finder', args) as Promise<void>
 };
 
 contextBridge.exposeInMainWorld('api', api);

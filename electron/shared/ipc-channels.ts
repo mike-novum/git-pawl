@@ -53,7 +53,8 @@ export const IPC_CHANNELS = {
   GITHUB_LIST_REPOS: 'github:list-repos',
   GITLAB_LIST_REPOS: 'gitlab:list-repos',
 
-  SHELL_OPEN_TERMINAL: 'shell:open-terminal'
+  SHELL_OPEN_TERMINAL: 'shell:open-terminal',
+  SHELL_OPEN_FINDER: 'shell:open-finder'
 } as const;
 
 export type IpcChannel = (typeof IPC_CHANNELS)[keyof typeof IPC_CHANNELS];

@@ -1,6 +1,7 @@
 import { Settings } from 'lucide-react';
 import type { FC } from 'react';
 
+import { OpenInFinder } from '@/features/open-in-finder';
 import { OpenInTerminal } from '@/features/open-in-terminal';
 import { WorkspaceIcon } from '@/entities/workspace';
 
@@ -19,6 +20,7 @@ export const WorkspaceHero: FC<WorkspaceHeroProps> = ({
       </h1>
     </div>
     <div className="flex items-center gap-1">
+      <OpenInFinder path={workspace.path} />
       <OpenInTerminal path={workspace.path} />
       <button
         type="button"

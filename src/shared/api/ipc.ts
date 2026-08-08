@@ -33,6 +33,7 @@ import type {
   FsScanReposArgs,
   FsReadImageDataUrlArgs,
   ShellOpenTerminalArgs,
+  ShellOpenFinderArgs,
   StoreGetArgs,
   StoreSetArgs,
   StoreDeleteArgs
@@ -213,6 +214,9 @@ export const fsReadImageDataUrl = async (
 export const shellOpenTerminal = async (args: ShellOpenTerminalArgs): Promise<void> =>
   safeInvoke<void>((bridge) => bridge.shellOpenTerminal(args), undefined);
 
+export const shellOpenFinder = async (args: ShellOpenFinderArgs): Promise<void> =>
+  safeInvoke<void>((bridge) => bridge.shellOpenFinder(args), undefined);
+
 export const api = {
   getAppInfo,
   storeGet,
@@ -252,7 +256,8 @@ export const api = {
   fsBuildRepoId,
   fsScanRepos,
   fsReadImageDataUrl,
-  shellOpenTerminal
+  shellOpenTerminal,
+  shellOpenFinder
 };
 
 export type IpcApi = typeof api;

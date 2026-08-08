@@ -9,6 +9,7 @@ import { useCurrentBranch, useBranches, useBranchMainlines } from '@/entities/br
 import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
+import { OpenInFinder } from '@/features/open-in-finder';
 import { OpenInTerminal } from '@/features/open-in-terminal';
 import { toCommitNodes } from '@/pages/repository';
 import { gitLog } from '@/shared/api';
@@ -130,6 +131,7 @@ export const RepositoryPage: FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <OpenInFinder path={repoPath} />
           <OpenInTerminal path={repoPath} />
           <button
             type="button"

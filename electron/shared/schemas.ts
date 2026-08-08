@@ -250,6 +250,10 @@ export const shellOpenTerminalSchema = z.object({
   path: z.string().min(1)
 });
 
+export const shellOpenFinderSchema = z.object({
+  path: z.string().min(1)
+});
+
 export type NoArgs = z.infer<typeof noArgsSchema>;
 export type StoreGetArgs = z.infer<typeof storeGetSchema>;
 export type StoreSetArgs = z.infer<typeof storeSetSchema>;
@@ -299,3 +303,4 @@ export type AccountRemoveArgs = z.infer<typeof accountRemoveSchema>;
 export type GithubListReposArgs = z.infer<typeof githubListReposSchema>;
 export type GitlabListReposArgs = z.infer<typeof gitlabListReposSchema>;
 export type ShellOpenTerminalArgs = z.infer<typeof shellOpenTerminalSchema>;
+export type ShellOpenFinderArgs = z.infer<typeof shellOpenFinderSchema>;
