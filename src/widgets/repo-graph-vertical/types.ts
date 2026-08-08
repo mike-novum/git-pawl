@@ -14,6 +14,7 @@ export type CommitNode = {
   tags?: string[];
   currentBranchName?: string;
   isCurrentBranch?: boolean;
+  isUncommitted?: boolean;
 };
 
 export type GraphParent = {

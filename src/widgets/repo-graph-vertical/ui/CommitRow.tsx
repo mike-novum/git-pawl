@@ -1,4 +1,4 @@
-import { GitBranch, Tag } from 'lucide-react';
+import { AlertCircle, GitBranch, Tag } from 'lucide-react';
 import { memo, type FC } from 'react';
 
 import { CommitHash } from '@/entities/commit';
@@ -39,6 +39,55 @@ const CommitRowComponent: FC<CommitRowProps> = ({
     ...tipBranches.map((name) => `Branch: ${name}`),
     ...(commit.tags ?? []).map((name) => `Tag: ${name}`)
   ].join(', ');
+
+  if (commit.isUncommitted) {
+    return (
+      <tr
+        aria-selected={isSelected}
+        aria-label="Uncommitted changes"
+        tabIndex={0}
+        onClick={() => onSelect(commit.hash)}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onSelect(commit.hash);
+          }
+        }}
+        className={cn(
+          'group text-muted-foreground h-8 cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-inset focus-visible:outline-none',
+          isSelected ? 'bg-surface-elevated' : 'hover:bg-surface-elevated/60'
+        )}
+      >
+        <td
+          className="relative p-0 align-middle"
+          style={{ width: graphWidth }}
+        >
+          {graphOverlay}
+        </td>
+        <td className="max-w-0 min-w-0 p-0 px-2 align-middle">
+          <span className="flex min-w-0 items-center gap-2 truncate">
+            <AlertCircle
+              aria-hidden="true"
+              className="text-muted-foreground size-3 shrink-0"
+            />
+            <span
+              className="min-w-0 flex-1 truncate text-sm font-medium"
+              title="Uncommited changes"
+            >
+              Uncommited changes
+            </span>
+          </span>
+        </td>
+        <td className="whitespace-nowrap p-0 px-2 font-mono text-xs align-middle">
+          <span className="text-muted-foreground">------</span>
+        </td>
+        <td className="hidden max-w-0 min-w-0 truncate p-0 px-2 text-xs align-middle sm:table-cell" />
+        <td className="hidden whitespace-nowrap p-0 px-2 text-xs align-middle sm:table-cell" />
+      </tr>
+    );
+  }
 
   return (
     <tr

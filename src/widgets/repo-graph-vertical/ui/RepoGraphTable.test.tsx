@@ -290,4 +290,36 @@ describe('RepoGraphTable', () => {
     expect(container.querySelectorAll('circle[r="6"]').length).toBe(0);
     expect(container.querySelectorAll('circle[r="5"]').length).toBe(3);
   });
+
+  it('does not render branch or tag chips for the uncommitted row', () => {
+    const commits: CommitNode[] = [
+      {
+        hash: 'UNCOMMITTED',
+        shortHash: '------',
+        subject: 'Uncommited changes',
+        author: '',
+        authorEmail: '',
+        timestamp: 1700000000000,
+        parents: ['aaaaaaaa'],
+        lane: 0,
+        color: 'var(--color-muted-foreground)',
+        isUncommitted: true
+      },
+      createCommit('aaaaaaaa', [], 'first commit')
+    ];
+    const layout = computeLayout(commits);
+
+    render(
+      <RepoGraphTable
+        layout={layout}
+        selectedHash={null}
+        onSelect={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText('Uncommited changes')).toBeInTheDocument();
+    expect(screen.queryByTitle('Branch: main')).not.toBeInTheDocument();
+    expect(screen.queryByTitle('Tag: v1')).not.toBeInTheDocument();
+    expect(screen.queryByText('author@example.com')).not.toBeInTheDocument();
+  });
 });

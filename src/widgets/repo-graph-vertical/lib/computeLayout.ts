@@ -152,12 +152,15 @@ export const computeLayout = (
         if (parentRow === undefined) {
           return;
         }
+        const edgeColor = commit.isUncommitted
+          ? (commit.color ?? 'var(--color-muted-foreground)')
+          : laneColor(pLane);
         parentEdges.push({
           fromLane: cLane,
           toLane: pLane,
           fromY: rowCenterY(rowIndex),
           toY: rowCenterY(parentRow),
-          color: laneColor(pLane)
+          color: edgeColor
         });
       }
     });
@@ -203,12 +206,18 @@ export const computeLayout = (
           active:
             activeHashes.has(commit.hash) &&
             activeHashes.has(parentHash),
-          color: laneColor(parentLane)
+          color: commit.isUncommitted
+            ? (commit.color ?? 'var(--color-muted-foreground)')
+            : laneColor(parentLane)
         };
       });
 
+    const nodeColor = commit.isUncommitted
+      ? (commit.color ?? 'var(--color-muted-foreground)')
+      : laneColor(lane);
+
     return {
-      commit: { ...commit, lane, color: laneColor(lane) },
+      commit: { ...commit, lane, color: nodeColor },
       lane,
       active: activeHashes.has(commit.hash),
       parents
@@ -230,12 +239,20 @@ export const computeLayout = (
       if (from === undefined || to === undefined) {
         continue;
       }
+      const fromCommit = rows[from]?.commit;
+      const toCommit = rows[to]?.commit;
+      const lineColor =
+        fromCommit?.isUncommitted || toCommit?.isUncommitted
+          ? (fromCommit?.color ??
+            toCommit?.color ??
+            'var(--color-muted-foreground)')
+          : laneColor(laneIndex);
       continuousLines.push({
         fromLane: laneIndex,
         toLane: laneIndex,
         fromY: rowCenterY(from),
         toY: rowCenterY(to),
-        color: laneColor(laneIndex)
+        color: lineColor
       });
     }
   }

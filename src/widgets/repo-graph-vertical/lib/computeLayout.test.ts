@@ -28,6 +28,21 @@ const createCommit = (
   currentBranchName: options.currentBranchName
 });
 
+const UNCOMMITTED_COLOR = 'var(--color-muted-foreground)';
+
+const createUncommitted = (headHash: string): CommitNode => ({
+  hash: 'UNCOMMITTED',
+  shortHash: '------',
+  subject: 'Uncommited changes',
+  author: '',
+  authorEmail: '',
+  timestamp: 1700000000000,
+  parents: [headHash],
+  lane: 0,
+  color: UNCOMMITTED_COLOR,
+  isUncommitted: true
+});
+
 const rowCenterY = (rowIndex: number): number =>
   rowIndex * ROW_HEIGHT + ROW_HEIGHT / 2;
 
@@ -352,5 +367,57 @@ describe('computeLayout', () => {
     expect(mainContinuous.every((line) => line.color === laneColorVar(0))).toBe(
       true
     );
+  });
+
+  it('renders the uncommitted row with the muted-foreground color', () => {
+    const commits = [
+      createUncommitted('head'),
+      createCommit('head', ['middle'], 3, {
+        branches: ['main'],
+        isCurrentBranch: true,
+        currentBranchName: 'main'
+      }),
+      createCommit('middle', ['root'], 2, { branches: ['main'] }),
+      createCommit('root', [], 1, { branches: ['main'] })
+    ];
+
+    const layout = computeLayout(commits);
+
+    const uncommittedRow = layout.rows.find(
+      ({ commit }) => commit.isUncommitted
+    );
+
+    expect(uncommittedRow?.commit.color).toBe(UNCOMMITTED_COLOR);
+    expect(uncommittedRow?.commit.hash).toBe('UNCOMMITTED');
+    expect(uncommittedRow?.commit.subject).toBe('Uncommited changes');
+  });
+
+  it('paints the line connecting uncommitted to HEAD with muted-foreground color', () => {
+    const commits = [
+      createUncommitted('head'),
+      createCommit('head', ['root'], 2, {
+        branches: ['main'],
+        isCurrentBranch: true,
+        currentBranchName: 'main'
+      }),
+      createCommit('root', [], 1, { branches: ['main'] })
+    ];
+
+    const layout = computeLayout(commits);
+
+    const uncommittedRow = layout.rows.find(
+      ({ commit }) => commit.isUncommitted
+    );
+    const headParent = uncommittedRow?.parents.find(
+      ({ hash }) => hash === 'head'
+    );
+
+    expect(headParent?.color).toBe(UNCOMMITTED_COLOR);
+
+    const lineBetween = [...layout.parentEdges, ...layout.continuousLines].find(
+      ({ fromY, toY }) =>
+        fromY === rowCenterY(0) && toY === rowCenterY(1)
+    );
+    expect(lineBetween?.color).toBe(UNCOMMITTED_COLOR);
   });
 });

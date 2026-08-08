@@ -55,10 +55,11 @@ export const RepositoryPage: FC = () => {
             logQuery.data as Commit[],
             branches,
             tags,
-            branchQuery.data?.name ?? null
+            branchQuery.data?.name ?? null,
+            { isDirty: repo?.status === 'dirty' }
           )
         : [],
-    [branches, branchQuery.data, logQuery.data, tags]
+    [branches, branchQuery.data, logQuery.data, repo?.status, tags]
   );
   const commitLayout = useMemo(
     () => computeLayout(commits),

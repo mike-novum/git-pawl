@@ -6,11 +6,18 @@ import type { CommitNode } from '@/widgets/repo-graph-vertical';
 
 const toShortHash = (hash: string): string => hash.slice(0, 7);
 
+export const UNCOMMITTED_HASH = 'UNCOMMITTED';
+
+export type ToCommitNodesOptions = {
+  isDirty?: boolean;
+};
+
 export const toCommitNodes = (
   entries: Commit[],
   branches: Branch[],
   tags: Tag[],
-  currentBranchName: string | null
+  currentBranchName: string | null,
+  options: ToCommitNodesOptions = {}
 ): CommitNode[] => {
   const branchesByHash = new Map<string, string[]>();
   const tagsByHash = new Map<string, string[]>();
@@ -41,7 +48,7 @@ export const toCommitNodes = (
     tagsByHash.set(tag.target, names);
   });
 
-  return entries.map((entry) => ({
+  const nodes = entries.map((entry) => ({
     hash: entry.hash,
     shortHash: toShortHash(entry.hash),
     subject: entry.subject,
@@ -55,4 +62,29 @@ export const toCommitNodes = (
     currentBranchName: currentBranchName ?? undefined,
     isCurrentBranch: currentTargets.has(entry.hash)
   }));
+
+  if (!options.isDirty || nodes.length === 0) {
+    return nodes;
+  }
+
+  const headHash = nodes[0]?.hash;
+
+  if (!headHash) {
+    return nodes;
+  }
+
+  const uncommittedNode: CommitNode = {
+    hash: UNCOMMITTED_HASH,
+    shortHash: '------',
+    subject: 'Uncommited changes',
+    author: '',
+    authorEmail: '',
+    timestamp: Date.now(),
+    parents: [headHash],
+    lane: 0,
+    color: 'var(--color-muted-foreground)',
+    isUncommitted: true
+  };
+
+  return [uncommittedNode, ...nodes];
 };
