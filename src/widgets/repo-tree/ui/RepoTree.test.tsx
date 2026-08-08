@@ -23,6 +23,10 @@ vi.mock('@/entities/stash', () => ({
   useStashList: vi.fn()
 }));
 
+vi.mock('@/features/create-branch', () => ({
+  CreateBranchDialog: () => null
+}));
+
 import { useBranches } from '@/entities/branch';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';

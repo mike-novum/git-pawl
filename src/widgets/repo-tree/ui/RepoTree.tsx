@@ -4,6 +4,7 @@ import { useState, type FC, type ReactNode } from 'react';
 import { useBranches } from '@/entities/branch';
 import { useTags } from '@/entities/tag';
 import { useStashList } from '@/entities/stash';
+import { CreateBranchDialog } from '@/features/create-branch';
 
 import type { RepoTreeProps } from '../types';
 
@@ -41,6 +42,8 @@ export const RepoTree: FC<RepoTreeProps> = ({
   const { data: tags = [] } = useTags(repoPath);
   const { data: stash = [] } = useStashList(repoPath);
 
+  const [createOpen, setCreateOpen] = useState(false);
+
   const handleSwitchBranch = (branchName: string): void => {
     if (onSwitchBranch) {
       onSwitchBranch(branchName);
@@ -77,6 +80,7 @@ export const RepoTree: FC<RepoTreeProps> = ({
         ))}
         <button
           type="button"
+          onClick={() => setCreateOpen(true)}
           className="text-muted-foreground hover:text-primary flex items-center gap-1 px-2 py-1 text-xs transition-colors"
         >
           <Plus aria-hidden="true" className="size-3" /> New branch
@@ -106,6 +110,12 @@ export const RepoTree: FC<RepoTreeProps> = ({
           </div>
         ))}
       </Section>
+
+      <CreateBranchDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        repoPath={repoPath}
+      />
     </aside>
   );
 };
