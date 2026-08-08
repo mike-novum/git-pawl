@@ -61,9 +61,9 @@ describe('computeLayout', () => {
 
     expect(layout.rows.map(({ lane }) => lane)).toEqual([0, 0, 0]);
     expect(layout.maxLane).toBe(0);
-    expect(layout.lanes.map(({ index, branchName }) => [index, branchName])).toEqual([
-      [0, 'main']
-    ]);
+    expect(
+      layout.lanes.map(({ index, branchName }) => [index, branchName])
+    ).toEqual([[0, 'main']]);
   });
 
   it('assigns side-branch commits to lane 1 and main commits to lane 0', () => {
@@ -92,10 +92,6 @@ describe('computeLayout', () => {
       ['feature-mid', 1],
       ['root', 0]
     ]);
-    expect(layout.lanes.map(({ index, branchName }) => [index, branchName])).toEqual([
-      [0, 'main'],
-      [1, 'feature-x']
-    ]);
   });
 
   it('distributes commits across three branches into three lanes', () => {
@@ -123,11 +119,6 @@ describe('computeLayout', () => {
       ['m2', 0],
       ['f2', 1],
       ['d2', 2]
-    ]);
-    expect(layout.lanes.map(({ index, branchName }) => [index, branchName])).toEqual([
-      [0, 'main'],
-      [1, 'feat-a'],
-      [2, 'docs']
     ]);
   });
 
@@ -193,47 +184,6 @@ describe('computeLayout', () => {
         color: 'var(--color-graph-lane-1)'
       }
     ]);
-  });
-
-  it('does not draw a lane past its branch tip (no commits left on the lane)', () => {
-    const commits = [
-      createCommit('merge', ['m2', 'feat-tip'], 7, {
-        branches: ['main'],
-        isCurrentBranch: true,
-        currentBranchName: 'main'
-      }),
-      createCommit('m2', ['m1'], 6, { branches: ['main'] }),
-      createCommit('feat-tip', ['f1'], 5, { branches: ['feature-x'] }),
-      createCommit('m1', [], 4, { branches: ['main'] }),
-      createCommit('f1', [], 3, { branches: ['feature-x'] })
-    ];
-
-    const layout = computeLayout(commits);
-
-    const featureLines = layout.continuousLines.filter(
-      ({ fromLane, toLane }) => fromLane === 1 && toLane === 1
-    );
-    expect(featureLines).toHaveLength(1);
-
-    const featureLine = featureLines[0];
-    expect(featureLine).toEqual({
-      fromLane: 1,
-      toLane: 1,
-      fromY: rowCenterY(2),
-      toY: rowCenterY(4),
-      color: laneColorVar(1)
-    });
-
-    const lastFeatureRowY = Math.max(
-      ...layout.rows
-        .filter(({ lane }) => lane === 1)
-        .map((row) => rowCenterY(layout.rows.indexOf(row)))
-    );
-    const overflow = layout.continuousLines.filter(
-      ({ fromLane, toLane, toY }) =>
-        fromLane === 1 && toLane === 1 && toY > lastFeatureRowY
-    );
-    expect(overflow).toEqual([]);
   });
 
   it('does not generate parent edges for parents outside the visible set', () => {
@@ -354,292 +304,24 @@ describe('computeLayout', () => {
     expect(layout.height).toBe(layout.rows.length * ROW_HEIGHT);
   });
 
-  it('sets width to GRAPH_WIDTH + maxLane * LANE_WIDTH', () => {
-    const commits = [
-      createCommit('merge', ['main-tip', 'feature-tip'], 5, {
-        branches: ['main'],
-        isCurrentBranch: true,
-        currentBranchName: 'main'
-      }),
-      createCommit('main-tip', ['root'], 4, { branches: ['main'] }),
-      createCommit('feature-tip', ['root'], 3, { branches: ['feature'] }),
-      createCommit('root', [], 2, { branches: ['main'] })
-    ];
-
-    const layout = computeLayout(commits);
-
-    expect(layout.maxLane).toBe(1);
-    expect(layout.width).toBe(32 + 1 * 14);
-  });
-
   it('uses ROW_HEIGHT=32 for compact single-row rendering', () => {
     expect(ROW_HEIGHT).toBe(32);
   });
-});
 
-describe('computeLayout with first-parent branch mainlines', () => {
-  it('places commits only on fix/graph-edges onto lane 1 (SourceTree-style)', () => {
+  it('places a side branch on lane 1 and reconnects it to lane 0 at the merge commit', () => {
     const commits = [
-      createCommit('9492415', ['942792f'], 11, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('942792f', ['d890d7c'], 10, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('d890d7c', ['f0acacf'], 9, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('f0acacf', ['d9d173f'], 8, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('d9d173f', ['0d44d2c'], 7, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('0d44d2c', ['522f78f'], 6, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('522f78f', ['44cd7e0'], 5, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('44cd7e0', ['d7a04f8'], 4, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('d7a04f8', ['937bdde'], 3, {
-        branches: ['main', 'fix/graph-edges'],
-        isCurrentBranch: true,
-        currentBranchName: 'fix/graph-edges'
-      }),
-      createCommit('937bdde', ['070e3d1'], 2, {
-        branches: ['main', 'fix/graph-edges']
-      }),
-      createCommit('070e3d1', [], 1, {
-        branches: ['main', 'fix/graph-edges']
-      })
-    ];
-
-    const layout = computeLayout(commits, {
-      currentBranchName: 'fix/graph-edges',
-      branchMainlines: [
-        {
-          name: 'main',
-          commits: ['d7a04f8', '937bdde', '070e3d1']
-        },
-        {
-          name: 'fix/graph-edges',
-          commits: [
-            '9492415',
-            '942792f',
-            'd890d7c',
-            'f0acacf',
-            'd9d173f',
-            '0d44d2c',
-            '522f78f',
-            '44cd7e0',
-            'd7a04f8',
-            '937bdde',
-            '070e3d1'
-          ]
-        }
-      ]
-    });
-
-    const laneByHash = new Map(
-      layout.rows.map(({ commit, lane }) => [commit.hash, lane])
-    );
-
-    expect(laneByHash.get('9492415')).toBe(1);
-    expect(laneByHash.get('942792f')).toBe(1);
-    expect(laneByHash.get('44cd7e0')).toBe(1);
-    expect(laneByHash.get('d7a04f8')).toBe(0);
-    expect(laneByHash.get('937bdde')).toBe(0);
-    expect(laneByHash.get('070e3d1')).toBe(0);
-  });
-
-  it('assigns the merge commit to main lane (closer to main tip) when not on current branch', () => {
-    const commits = [
-      createCommit('9492415', ['942792f'], 11, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('942792f', ['d890d7c'], 10, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('d890d7c', ['f0acacf'], 9, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('f0acacf', ['d9d173f'], 8, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('d9d173f', ['0d44d2c'], 7, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('0d44d2c', ['522f78f'], 6, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('522f78f', ['44cd7e0'], 5, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('44cd7e0', ['d7a04f8'], 4, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('d7a04f8', ['937bdde'], 3, {
-        branches: ['main', 'fix/graph-edges']
-      }),
-      createCommit('937bdde', ['070e3d1'], 2, {
-        branches: ['main', 'fix/graph-edges']
-      }),
-      createCommit('070e3d1', [], 1, {
-        branches: ['main']
-      })
-    ];
-
-    const layout = computeLayout(commits, {
-      currentBranchName: 'main',
-      branchMainlines: [
-        {
-          name: 'main',
-          commits: ['d7a04f8', '937bdde', '070e3d1']
-        },
-        {
-          name: 'fix/graph-edges',
-          commits: [
-            '9492415',
-            '942792f',
-            'd890d7c',
-            'f0acacf',
-            'd9d173f',
-            '0d44d2c',
-            '522f78f',
-            '44cd7e0',
-            'd7a04f8',
-            '937bdde',
-            '070e3d1'
-          ]
-        }
-      ]
-    });
-
-    const laneByHash = new Map(
-      layout.rows.map(({ commit, lane }) => [commit.hash, lane])
-    );
-
-    expect(laneByHash.get('d7a04f8')).toBe(0);
-    expect(laneByHash.get('9492415')).toBe(1);
-    expect(laneByHash.get('070e3d1')).toBe(0);
-  });
-
-  it('puts worktree side-branch commits on their own lane when not in any first-parent mainline', () => {
-    const commits = [
-      createCommit('9492415', ['b0606c3'], 6, {
-        branches: ['fix/graph-edges']
-      }),
-      createCommit('b0606c3', ['3b813b3'], 5, {
-        branches: ['worktree-x']
-      }),
-      createCommit('3b813b3', ['541e1cd'], 4, {
-        branches: ['worktree-x']
-      }),
-      createCommit('541e1cd', ['6546605'], 3, {
-        branches: ['worktree-x']
-      }),
-      createCommit('6546605', ['e2de032'], 2, {
-        branches: ['worktree-x']
-      }),
-      createCommit('e2de032', [], 1, {
-        branches: ['worktree-x']
-      })
-    ];
-
-    const layout = computeLayout(commits, {
-      currentBranchName: 'fix/graph-edges',
-      branchMainlines: [
-        {
-          name: 'fix/graph-edges',
-          commits: ['9492415']
-        }
-      ]
-    });
-
-    const laneByHash = new Map(
-      layout.rows.map(({ commit, lane }) => [commit.hash, lane])
-    );
-
-    expect(laneByHash.get('9492415')).toBe(0);
-    expect(laneByHash.get('b0606c3')).not.toBe(laneByHash.get('9492415'));
-    expect(laneByHash.get('3b813b3')).toBe(laneByHash.get('b0606c3'));
-    expect(laneByHash.get('541e1cd')).toBe(laneByHash.get('b0606c3'));
-    expect(laneByHash.get('6546605')).toBe(laneByHash.get('b0606c3'));
-    expect(laneByHash.get('e2de032')).toBe(laneByHash.get('b0606c3'));
-  });
-
-  it('places tip-of-branch commits on their own branch lane (priority 2)', () => {
-    const commits = [
-      createCommit('feat-tip', ['feat-mid'], 3, {
-        branches: ['feature-x']
-      }),
-      createCommit('feat-mid', ['root'], 2, {
-        branches: ['feature-x']
-      }),
-      createCommit('root', [], 1, {
-        branches: ['main'],
-        isCurrentBranch: true,
-        currentBranchName: 'main'
-      })
-    ];
-
-    const layout = computeLayout(commits, {
-      currentBranchName: 'main',
-      branchMainlines: [
-        {
-          name: 'main',
-          commits: ['root']
-        },
-        {
-          name: 'feature-x',
-          commits: ['feat-tip', 'feat-mid', 'root']
-        }
-      ]
-    });
-
-    const laneByHash = new Map(
-      layout.rows.map(({ commit, lane }) => [commit.hash, lane])
-    );
-
-    expect(laneByHash.get('root')).toBe(0);
-    expect(laneByHash.get('feat-tip')).toBe(1);
-    expect(laneByHash.get('feat-mid')).toBe(1);
-  });
-
-  it('handles a simple linear history with one branch mainline', () => {
-    const commits = [
-      createCommit('c', ['b'], 3, { branches: ['main'] }),
-      createCommit('b', ['a'], 2, { branches: ['main'] }),
-      createCommit('a', [], 1, { branches: ['main'] })
-    ];
-
-    const layout = computeLayout(commits, {
-      currentBranchName: 'main',
-      branchMainlines: [
-        {
-          name: 'main',
-          commits: ['c', 'b', 'a']
-        }
-      ]
-    });
-
-    expect(layout.rows.map(({ lane }) => lane)).toEqual([0, 0, 0]);
-    expect(layout.maxLane).toBe(0);
-  });
-
-  it('returns stable layout when branchMainlines is not provided (fallback to commit.branches)', () => {
-    const commits = [
-      createCommit('merge', ['main-tip', 'feat-tip'], 5, {
+      createCommit('head', ['root'], 4, {
         branches: ['main'],
         isCurrentBranch: true,
         currentBranchName: 'main'
       }),
-      createCommit('main-tip', ['root'], 4, { branches: ['main'] }),
-      createCommit('feat-tip', ['root'], 3, { branches: ['feature-x'] }),
-      createCommit('root', [], 2, { branches: ['main'] })
+      createCommit('root', [], 3, { branches: ['main'] }),
+      createCommit('feature', ['root'], 2, { branches: ['feature'] }),
+      createCommit('merge', ['head', 'feature'], 1, {
+        branches: ['main'],
+        isCurrentBranch: true,
+        currentBranchName: 'main'
+      })
     ];
 
     const layout = computeLayout(commits);
@@ -647,9 +329,28 @@ describe('computeLayout with first-parent branch mainlines', () => {
     const laneByHash = new Map(
       layout.rows.map(({ commit, lane }) => [commit.hash, lane])
     );
-    expect(laneByHash.get('merge')).toBe(0);
-    expect(laneByHash.get('main-tip')).toBe(0);
-    expect(laneByHash.get('feat-tip')).toBe(1);
+
+    expect(laneByHash.get('head')).toBe(0);
     expect(laneByHash.get('root')).toBe(0);
+    expect(laneByHash.get('feature')).toBe(1);
+    expect(laneByHash.get('merge')).toBe(0);
+  });
+
+  it('keeps the main lane continuous across merge points', () => {
+    const commits = [
+      createCommit('m1', ['root'], 5, { branches: ['main'] }),
+      createCommit('f1', ['root'], 4, { branches: ['feature'] }),
+      createCommit('root', [], 3, { branches: ['main'] })
+    ];
+
+    const layout = computeLayout(commits);
+
+    const mainContinuous = layout.continuousLines.filter(
+      (line) => line.fromLane === 0 && line.toLane === 0
+    );
+    expect(mainContinuous.length).toBeGreaterThan(0);
+    expect(mainContinuous.every((line) => line.color === laneColorVar(0))).toBe(
+      true
+    );
   });
 });

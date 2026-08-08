@@ -77,10 +77,7 @@ describe('RepoGraphTable', () => {
     const commits = [
       createCommit('aaaaaaaa', [], 'first commit', ['main'])
     ];
-    const layout = computeLayout(commits, {
-      currentBranchName: 'main',
-      branchMainlines: [{ name: 'main', commits: ['aaaaaaaa'] }]
-    });
+    const layout = computeLayout(commits);
 
     render(
       <RepoGraphTable
@@ -205,12 +202,7 @@ describe('RepoGraphTable', () => {
       createCommit('bbbbbbb', ['aaaaaaa'], 'middle commit', ['feature-x']),
       createCommit('aaaaaaa', [], 'root commit', ['feature-x'])
     ];
-    const layout = computeLayout(commits, {
-      currentBranchName: 'feature-x',
-      branchMainlines: [
-        { name: 'feature-x', commits: ['ccccccc', 'bbbbbbb', 'aaaaaaa'] }
-      ]
-    });
+    const layout = computeLayout(commits);
 
     render(
       <RepoGraphTable
@@ -230,12 +222,7 @@ describe('RepoGraphTable', () => {
       createCommit('root', [], 'root commit', ['main']),
       createCommit('side', ['root'], 'side commit')
     ];
-    const layout = computeLayout(commits, {
-      currentBranchName: 'main',
-      branchMainlines: [
-        { name: 'main', commits: ['tip', 'root'] }
-      ]
-    });
+    const layout = computeLayout(commits);
 
     render(
       <RepoGraphTable
@@ -257,13 +244,7 @@ describe('RepoGraphTable', () => {
       ]),
       createCommit('main-root', [], 'root commit', ['main'])
     ];
-    const layout = computeLayout(commits, {
-      currentBranchName: 'main',
-      branchMainlines: [
-        { name: 'main', commits: ['merged', 'main-root'] },
-        { name: 'feature-x', commits: ['merged'] }
-      ]
-    });
+    const layout = computeLayout(commits);
 
     render(
       <RepoGraphTable

@@ -50,6 +50,8 @@ const MIN_COLUMN_WIDTHS: Record<ColumnKey, number> = {
   date: 100
 };
 
+const GRAPH_COLUMN_PADDING = 16;
+
 type ResizeState = {
   key: ColumnKey;
   startX: number;
@@ -174,9 +176,10 @@ export const RepoGraphTable: FC<RepoGraphTableProps> = ({
     });
   };
 
+  const requiredGraphWidth = layout.width + GRAPH_COLUMN_PADDING;
   const graphWidth = Math.max(
     MIN_COLUMN_WIDTHS.graph,
-    columnWidths.graph ?? layout.width
+    columnWidths.graph ?? requiredGraphWidth
   );
   const graphOverlay = (
     <GraphLayer
