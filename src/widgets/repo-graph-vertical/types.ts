@@ -64,6 +64,8 @@ export type CommitRowProps = {
   onSelect: (hash: string) => void;
   branchTips?: Map<string, string>;
   graphOverlay?: ReactNode;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 };
 
 export type ColumnKey = 'graph' | 'description' | 'commit' | 'author' | 'date';
@@ -90,4 +92,5 @@ export type RepoGraphProps = {
 export type GraphLayerProps = {
   layout: GraphLayout;
   selectedHash: string | null;
+  hoveredRowIndex?: number | null;
 };

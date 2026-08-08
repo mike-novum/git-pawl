@@ -26,7 +26,9 @@ const CommitRowComponent: FC<CommitRowProps> = ({
   selectedHash,
   onSelect,
   branchTips,
-  graphOverlay
+  graphOverlay,
+  onMouseEnter,
+  onMouseLeave
 }) => {
   const { commit } = row;
   const isSelected = commit.hash === selectedHash;
@@ -44,6 +46,8 @@ const CommitRowComponent: FC<CommitRowProps> = ({
       aria-label={`Select commit ${commit.shortHash}: ${commit.subject || 'no subject'}`}
       tabIndex={0}
       onClick={() => onSelect(commit.hash)}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       onKeyDown={(event) => {
         if (event.key === 'Enter' || event.key === ' ') {
           event.preventDefault();

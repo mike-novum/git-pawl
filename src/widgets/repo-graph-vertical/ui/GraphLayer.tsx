@@ -7,6 +7,7 @@ import type { GraphLayerProps } from '../types';
 
 const NODE_RADIUS = 5;
 const NODE_HALO_RADIUS = 9;
+const HOVERED_NODE_RADIUS = 6;
 
 const laneCenter = (lane: number): number =>
   GRAPH_WIDTH / 2 + lane * LANE_WIDTH;
@@ -16,7 +17,8 @@ const rowCenterY = (rowIndex: number): number =>
 
 const GraphLayerComponent: FC<GraphLayerProps> = ({
   layout,
-  selectedHash
+  selectedHash,
+  hoveredRowIndex
 }) => {
   const { width, height, rows, continuousLines, parentEdges } = layout;
 
@@ -53,8 +55,10 @@ const GraphLayerComponent: FC<GraphLayerProps> = ({
       ))}
       {rows.map((row, rowIndex) => {
         const isSelected = row.commit.hash === selectedHash;
+        const isHovered = rowIndex === hoveredRowIndex;
         const cx = laneCenter(row.lane);
         const cy = rowCenterY(rowIndex);
+        const radius = isHovered ? HOVERED_NODE_RADIUS : NODE_RADIUS;
 
         return (
           <g key={`node-${row.commit.hash}`}>
@@ -72,8 +76,8 @@ const GraphLayerComponent: FC<GraphLayerProps> = ({
             <circle
               cx={cx}
               cy={cy}
-              r={NODE_RADIUS}
-              className="[transform-box:fill-box] origin-center transition-transform duration-fast ease-out group-hover:scale-[1.2]"
+              r={radius}
+              className="[transform-box:fill-box] origin-center transition-[r] duration-fast ease-out"
               fill={row.commit.color ?? 'var(--color-graph-lane-1)'}
               stroke="var(--color-surface)"
               strokeWidth={2}

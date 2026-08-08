@@ -102,6 +102,15 @@ export const RepoGraphTable: FC<RepoGraphTableProps> = ({
 }) => {
   const [columnWidths, setColumnWidths] = useState<ColumnWidths>(readColumnWidths);
   const [resizeState, setResizeState] = useState<ResizeState | null>(null);
+  const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
+
+  const handleRowMouseEnter = (rowIndex: number): void => {
+    setHoveredRowIndex(rowIndex);
+  };
+
+  const handleRowMouseLeave = (): void => {
+    setHoveredRowIndex(null);
+  };
 
   useEffect(() => {
     window.localStorage.setItem(COLUMN_STORAGE_KEY, JSON.stringify(columnWidths));
@@ -185,6 +194,7 @@ export const RepoGraphTable: FC<RepoGraphTableProps> = ({
     <GraphLayer
       layout={{ ...layout, width: graphWidth }}
       selectedHash={selectedHash}
+      hoveredRowIndex={hoveredRowIndex}
     />
   );
 
@@ -246,6 +256,8 @@ export const RepoGraphTable: FC<RepoGraphTableProps> = ({
               onSelect={onSelect}
               branchTips={layout.branchTips}
               graphOverlay={rowIndex === 0 ? graphOverlay : undefined}
+              onMouseEnter={() => handleRowMouseEnter(rowIndex)}
+              onMouseLeave={handleRowMouseLeave}
             />
           ))}
         </tbody>

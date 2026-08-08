@@ -84,21 +84,53 @@ describe('GraphLayer', () => {
     expect(allNodeCircles.length).toBe(layout.rows.length * 2 + 1);
   });
 
-  it('scales commit circles in place on hover', () => {
-    const commits = [createCommit('aaaaaaaa', [], 'root')];
+  it('keeps commit circles at base radius when nothing is hovered', () => {
+    const commits = [
+      createCommit('aaaaaaaa', [], 'root')
+    ];
     const layout = computeLayout(commits);
 
     const { container } = render(<GraphLayer layout={layout} selectedHash={null} />);
 
     const commitCircle = container.querySelector('circle[r="5"]');
-
     expect(commitCircle).not.toBeNull();
-    expect(commitCircle?.getAttribute('class') ?? '').toContain(
-      '[transform-box:fill-box]'
+  });
+
+  it('enlarges only the hovered row circle and keeps the rest at base radius', () => {
+    const commits = [
+      createCommit('aaaaaaaa', [], 'root'),
+      createCommit('bbbbbbbb', ['aaaaaaaa'], 'second'),
+      createCommit('cccccccc', ['bbbbbbbb'], 'third')
+    ];
+    const layout = computeLayout(commits);
+
+    const { container } = render(
+      <GraphLayer layout={layout} selectedHash={null} hoveredRowIndex={1} />
     );
-    expect(commitCircle?.getAttribute('class') ?? '').toContain(
-      'group-hover:scale-[1.2]'
+
+    const baseCircles = container.querySelectorAll('circle[r="5"]');
+    const hoveredCircles = container.querySelectorAll('circle[r="6"]');
+
+    expect(baseCircles.length).toBe(2);
+    expect(hoveredCircles.length).toBe(1);
+  });
+
+  it('resets all circles to base radius when hoveredRowIndex is null', () => {
+    const commits = [
+      createCommit('aaaaaaaa', [], 'root'),
+      createCommit('bbbbbbbb', ['aaaaaaaa'], 'second')
+    ];
+    const layout = computeLayout(commits);
+
+    const { container } = render(
+      <GraphLayer layout={layout} selectedHash={null} hoveredRowIndex={null} />
     );
+
+    const baseCircles = container.querySelectorAll('circle[r="5"]');
+    const hoveredCircles = container.querySelectorAll('circle[r="6"]');
+
+    expect(baseCircles.length).toBe(2);
+    expect(hoveredCircles.length).toBe(0);
   });
 
   it('uses absolute coordinates in the rendered SVG paths', () => {

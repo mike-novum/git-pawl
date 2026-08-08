@@ -257,4 +257,37 @@ describe('RepoGraphTable', () => {
     expect(screen.getByTitle('Branch: feature-x')).toBeInTheDocument();
     expect(screen.getAllByTitle('Branch: main')).toHaveLength(1);
   });
+
+  it('enlarges only the hovered row circle and resets others on mouse leave', () => {
+    const commits = [
+      createCommit('aaaaaaaa', [], 'first commit'),
+      createCommit('bbbbbbbb', ['aaaaaaaa'], 'second commit'),
+      createCommit('cccccccc', ['bbbbbbbb'], 'third commit')
+    ];
+    const layout = computeLayout(commits);
+
+    const { container } = render(
+      <RepoGraphTable
+        layout={layout}
+        selectedHash={null}
+        onSelect={vi.fn()}
+      />
+    );
+
+    const rows = screen.getAllByRole('row').slice(1);
+    const secondRow = rows[1];
+    if (!secondRow) {
+      throw new Error('Expected at least two data rows');
+    }
+
+    expect(container.querySelectorAll('circle[r="6"]').length).toBe(0);
+
+    fireEvent.mouseEnter(secondRow);
+    expect(container.querySelectorAll('circle[r="6"]').length).toBe(1);
+    expect(container.querySelectorAll('circle[r="5"]').length).toBe(2);
+
+    fireEvent.mouseLeave(secondRow);
+    expect(container.querySelectorAll('circle[r="6"]').length).toBe(0);
+    expect(container.querySelectorAll('circle[r="5"]').length).toBe(3);
+  });
 });
