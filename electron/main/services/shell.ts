@@ -25,7 +25,10 @@ export const openTerminal = async ({ path: dirPath }: ShellOpenTerminalArgs): Pr
     throw error;
   }
 
-  const script = `tell application "Terminal" to do script "cd " & quoted form of "${dirPath}"`;
+  const script = `tell application "Terminal"
+  do script "cd " & quoted form of "${dirPath}"
+  activate
+end tell`;
 
   try {
     await execFileAsync('osascript', ['-e', script]);
