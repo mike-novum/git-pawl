@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState, type FC } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useState, type FC } from 'react';
+import { Settings } from 'lucide-react';
+import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
 import { useAddExistingRepo } from '@/features/add-existing-repo';
@@ -14,6 +15,7 @@ import {
 } from '@/entities/workspace';
 import type { Repository } from '@/entities/repository';
 import { useRepositoryList } from '@/entities/repository';
+import type { AppLayoutOutletContext } from '@/shared/lib';
 import { useToast } from '@/shared/ui';
 import { useLocalStorageBool } from '@/shared/lib/framework';
 
@@ -27,6 +29,7 @@ export const WorkspacePage: FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const { id } = useParams<{ id: string }>();
+  const { setHeaderAction } = useOutletContext<AppLayoutOutletContext>();
   const active = useActiveWorkspace();
   const explicit = useWorkspaceById(id ?? null);
   const workspace = explicit ?? active;
@@ -44,6 +47,27 @@ export const WorkspacePage: FC = () => {
   const { mutate: removeWorkspace } = useRemoveWorkspace();
   const { mutate: setWorkspaceIcon } = useSetWorkspaceIcon();
   const { data: iconPath = null } = useWorkspaceIcon(workspaceId);
+
+  useEffect(() => {
+    const handleClick = (): void => {
+      setSettingsOpen(true);
+    };
+
+    setHeaderAction(
+      <button
+        type="button"
+        onClick={handleClick}
+        aria-label="Workspace settings"
+        className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors duration-(--duration-fast)"
+      >
+        <Settings aria-hidden="true" className="size-4" />
+      </button>
+    );
+
+    return () => {
+      setHeaderAction(null);
+    };
+  }, [setHeaderAction]);
 
   const handleAddRepo = useCallback((): void => {
     if (!workspaceId) return;
@@ -129,11 +153,7 @@ export const WorkspacePage: FC = () => {
   return (
     <>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-8">
-        <WorkspaceHero
-          workspace={workspace}
-          iconPath={iconPath}
-          onSettings={() => setSettingsOpen(true)}
-        />
+        <WorkspaceHero workspace={workspace} iconPath={iconPath} />
 
         <WorkspaceToolbar
           query={query}

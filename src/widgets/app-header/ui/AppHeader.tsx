@@ -1,10 +1,13 @@
 import type { FC, ReactElement, ReactNode } from 'react';
 import { Cat } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 
 import { cn } from '@/shared/lib/theme';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
 import type { AppHeaderProps } from '../types';
+
+const HOMEPAGE_PATHS = new Set<string>(['/', '/workspaces']);
 
 const SettingsIcon = (): ReactElement => (
   <svg
@@ -45,7 +48,9 @@ export const AppHeader: FC<AppHeaderProps> = ({
   rightSlot,
   hideSettings = false
 }) => {
-  const isHome = variant === 'home';
+  const location = useLocation();
+  const isHome = HOMEPAGE_PATHS.has(location.pathname) || variant === 'home';
+  const showGlobalSettings = isHome && !hideSettings;
 
   const handleSettings = (): void => {
     window.location.hash = '#/settings';
@@ -71,7 +76,7 @@ export const AppHeader: FC<AppHeaderProps> = ({
       </div>
       <div className="flex items-center gap-1">
         {rightSlot}
-        {!hideSettings ? (
+        {showGlobalSettings ? (
           <IconButton onClick={handleSettings} label="Settings">
             <SettingsIcon />
           </IconButton>

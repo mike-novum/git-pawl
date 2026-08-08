@@ -1,4 +1,3 @@
-import { Settings } from 'lucide-react';
 import type { FC } from 'react';
 
 import { OpenInFinder } from '@/features/open-in-finder';
@@ -7,11 +6,7 @@ import { WorkspaceIcon } from '@/entities/workspace';
 
 import type { WorkspaceHeroProps } from '../types';
 
-export const WorkspaceHero: FC<WorkspaceHeroProps> = ({
-  workspace,
-  iconPath,
-  onSettings
-}) => (
+export const WorkspaceHero: FC<WorkspaceHeroProps> = ({ workspace, iconPath }) => (
   <header className="flex items-center justify-between gap-4">
     <div className="flex items-center gap-3">
       <WorkspaceIcon workspace={workspace} iconPath={iconPath} size="md" />
@@ -22,14 +17,6 @@ export const WorkspaceHero: FC<WorkspaceHeroProps> = ({
     <div className="flex items-center gap-1">
       <OpenInFinder path={workspace.path} />
       <OpenInTerminal path={workspace.path} />
-      <button
-        type="button"
-        onClick={onSettings}
-        aria-label="Workspace settings"
-        className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors duration-(--duration-fast)"
-      >
-        <Settings aria-hidden="true" className="size-4" />
-      </button>
     </div>
   </header>
 );

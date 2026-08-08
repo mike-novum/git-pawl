@@ -1,9 +1,11 @@
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
+import { useState } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { ErrorBoundary } from '@/app/providers';
 import { useAppStore } from '@/app/store';
 import { Badge } from '@/shared/ui';
+import type { AppLayoutOutletContext } from '@/shared/lib';
 import { AppHeader } from '@/widgets/app-header';
 import { WorkspaceSelector } from '@/widgets/workspace-selector';
 
@@ -11,7 +13,6 @@ import { WorkspaceHeaderMeta } from './WorkspaceHeaderMeta';
 import type { AppLayoutProps } from './types';
 
 const HOMEPAGE_PATH = '/workspaces';
-const SETTINGS_PATH = '/settings';
 const REPOSITORY_PATH_PREFIX = '/repos/';
 
 const WORKSPACE_ID_PATTERN = /^\/workspaces\/([^/]+)/;
@@ -43,10 +44,10 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
   const params = useParams<{ id?: string }>();
   const activeWorkspaceId = useAppStore((s) => s.activeWorkspaceId);
+  const [headerAction, setHeaderAction] = useState<ReactNode>(null);
 
   const isHome = location.pathname === HOMEPAGE_PATH;
   const isRepository = location.pathname.startsWith(REPOSITORY_PATH_PREFIX);
-  const isSettings = location.pathname === SETTINGS_PATH;
   const variant = isHome ? 'home' : isRepository ? 'repository' : 'workspace';
   const repoPath = isRepository ? decodeRepoId(params.id) : null;
   const repoName = lastPathSegment(repoPath);
@@ -57,6 +58,8 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
         activeWorkspaceId)
       : null;
 
+  const outletContext: AppLayoutOutletContext = { setHeaderAction };
+
   const handleBack = (): void => {
     if (window.history.length > 1) navigate(-1);
     else navigate(HOMEPAGE_PATH);
@@ -66,7 +69,6 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
     <div className="bg-background text-foreground flex h-screen w-screen flex-col overflow-hidden">
       <AppHeader
         variant={variant}
-        hideSettings={isSettings}
         leftSlot={
           variant !== 'home' ? (
             <div className="flex items-center gap-2">
@@ -111,10 +113,13 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
             <WorkspaceHeaderMeta workspaceId={selectorWorkspaceId} />
           ) : null
         }
+        rightSlot={variant === 'workspace' ? headerAction : null}
       />
 
       <main className="flex-1 overflow-auto">
-        <ErrorBoundary>{children ?? <Outlet />}</ErrorBoundary>
+        <ErrorBoundary>
+          {children ?? <Outlet context={outletContext} />}
+        </ErrorBoundary>
       </main>
     </div>
   );
