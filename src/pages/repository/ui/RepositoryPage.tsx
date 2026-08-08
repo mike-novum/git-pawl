@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import type { Commit } from '@electron/shared/types/git';
 
-import { useCurrentBranch, useBranches } from '@/entities/branch';
+import { useCurrentBranch, useBranches, useCheckoutBranch } from '@/entities/branch';
 import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
@@ -37,6 +37,7 @@ export const RepositoryPage: FC = () => {
   const { data: branches = [] } = useBranches(repoPath);
   const { data: tags = [] } = useTags(repoPath);
   const { data: stash = [] } = useStashList(repoPath);
+  const checkoutMutation = useCheckoutBranch();
 
   const logQuery = useQuery({
     queryKey: ['git-log', repoPath],
@@ -99,6 +100,10 @@ export const RepositoryPage: FC = () => {
       .catch(() => {
         toast.error({ title: 'Failed to copy hash' });
       });
+  };
+
+  const handleSwitchBranch = (branchName: string): void => {
+    checkoutMutation.mutate({ repoPath, ref: branchName });
   };
 
   return (
@@ -169,6 +174,7 @@ export const RepositoryPage: FC = () => {
           repoPath={repoPath}
           selectedCommit={selectedHash}
           onSelectCommit={setSelectedHash}
+          onSwitchBranch={handleSwitchBranch}
         />
         <RepoGraph
           commits={commits}

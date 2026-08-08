@@ -33,10 +33,24 @@ const Section: FC<{
   );
 };
 
-export const RepoTree: FC<RepoTreeProps> = ({ repoPath }) => {
+export const RepoTree: FC<RepoTreeProps> = ({
+  repoPath,
+  onSwitchBranch
+}) => {
   const { data: branches = [] } = useBranches(repoPath);
   const { data: tags = [] } = useTags(repoPath);
   const { data: stash = [] } = useStashList(repoPath);
+
+  const handleSwitchBranch = (branchName: string): void => {
+    if (onSwitchBranch) {
+      onSwitchBranch(branchName);
+    } else {
+      console.warn(
+        'RepoTree: onSwitchBranch callback is not provided, cannot switch to',
+        branchName
+      );
+    }
+  };
 
   return (
     <aside className="bg-surface border-border flex h-full w-60 shrink-0 flex-col gap-3 overflow-auto border-r p-3">
@@ -45,7 +59,9 @@ export const RepoTree: FC<RepoTreeProps> = ({ repoPath }) => {
           <button
             type="button"
             key={b.name}
-            className={`hover:bg-surface-elevated flex items-center gap-2 rounded px-2 py-1 text-left text-xs ${
+            disabled={b.current}
+            onClick={() => handleSwitchBranch(b.name)}
+            className={`hover:bg-surface-elevated flex items-center gap-2 rounded px-2 py-1 text-left text-xs disabled:cursor-not-allowed disabled:opacity-60 ${
               b.current ? 'text-primary font-medium' : 'text-foreground'
             }`}
           >

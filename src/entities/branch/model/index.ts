@@ -4,6 +4,14 @@ export {
   useCurrentBranch
 } from './useBranch';
 export {
+  useCheckoutBranch
+} from './useCheckoutBranch';
+export type {
+  CheckoutBranchInput,
+  CheckoutBranchResult,
+  UseCheckoutBranchResult
+} from './useCheckoutBranch';
+export {
   branchListQueryKey,
   branchMainlineQueryKey,
   currentBranchQueryKey,

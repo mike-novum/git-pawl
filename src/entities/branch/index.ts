@@ -1,7 +1,13 @@
 export {
   useBranches,
   useBranchMainlines,
-  useCurrentBranch
+  useCurrentBranch,
+  useCheckoutBranch
+} from './model';
+export type {
+  CheckoutBranchInput,
+  CheckoutBranchResult,
+  UseCheckoutBranchResult
 } from './model';
 export {
   branchListQueryKey,
