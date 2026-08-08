@@ -10,7 +10,12 @@ export type GitPushInput = {
 
 export type GitPushResult = void;
 
-const PUSH_QUERY_KEYS = ['git-status', 'branches', 'commits'] as const;
+const PUSH_QUERY_KEYS = [
+  'current-branch',
+  'branch-list',
+  'git-log',
+  'branch-mainlines'
+] as const;
 
 const invokePush = async (input: GitPushInput): Promise<GitPushResult> => {
   if (typeof window === 'undefined' || !('api' in window)) {

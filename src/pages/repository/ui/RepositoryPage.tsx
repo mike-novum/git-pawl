@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { GitBranch, GitPullRequestArrow, RefreshCw } from 'lucide-react';
+import { GitBranch, RefreshCw } from 'lucide-react';
 import { useMemo, useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -11,6 +11,8 @@ import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
 import { OpenInFinder } from '@/features/open-in-finder';
 import { OpenInTerminal } from '@/features/open-in-terminal';
+import { PullButton } from '@/features/git-pull';
+import { PushButton } from '@/features/git-push';
 import { toCommitNodes } from '@/pages/repository';
 import { gitLog } from '@/shared/api';
 import { Empty, Spinner, useToast } from '@/shared/ui';
@@ -146,26 +148,16 @@ export const RepositoryPage: FC = () => {
           >
             <RefreshCw aria-hidden="true" className="size-4" />
           </button>
-          <button
-            type="button"
-            aria-label="Pull"
-            onClick={() =>
-              toast.info({ title: 'Coming soon', description: 'Pull is not implemented yet' })
-            }
-            className="bg-primary text-primary-foreground hover:shadow-glow flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-all"
-          >
-            <GitPullRequestArrow aria-hidden="true" className="size-3.5" /> Pull
-          </button>
-          <button
-            type="button"
-            aria-label="Push"
-            onClick={() =>
-              toast.info({ title: 'Coming soon', description: 'Push is not implemented yet' })
-            }
-            className="bg-primary text-primary-foreground hover:shadow-glow flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-all"
-          >
-            <GitPullRequestArrow aria-hidden="true" className="size-3.5 -scale-y-100" /> Push
-          </button>
+          <PullButton
+            repoPath={repoPath}
+            branchName={branchQuery.data?.name ?? undefined}
+            variant="primary"
+          />
+          <PushButton
+            repoPath={repoPath}
+            branchName={branchQuery.data?.name ?? undefined}
+            variant="primary"
+          />
         </div>
       </header>
 

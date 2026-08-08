@@ -11,9 +11,10 @@ export type GitPullInput = {
 export type GitPullResult = void;
 
 const PULL_QUERY_KEYS = [
-  'git-status',
-  'branches',
-  'commits'
+  'current-branch',
+  'branch-list',
+  'git-log',
+  'branch-mainlines'
 ] as const;
 
 const invokePull = async (input: GitPullInput): Promise<GitPullResult> => {

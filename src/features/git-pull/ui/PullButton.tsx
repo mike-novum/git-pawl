@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { Download, GitBranch } from 'lucide-react';
+import { GitPullRequestArrow } from 'lucide-react';
 
 import { Button, useToast } from '@/shared/ui';
 
@@ -10,11 +10,13 @@ import type { PullButtonProps } from './types';
 export const PullButton: FC<PullButtonProps> = ({
   repoPath,
   branchName,
+  variant = 'secondary',
   disabled = false,
   className
 }) => {
   const toast = useToast();
   const { mutate, isPending } = useGitPull();
+  const label = branchName ?? 'current';
 
   const handleClick = (): void => {
     if (!repoPath || isPending) return;
@@ -23,13 +25,12 @@ export const PullButton: FC<PullButtonProps> = ({
       {
         onSuccess: () => {
           toast.success({
-            title: 'Pull complete',
-            description: 'Repository is up to date'
+            title: `Пулл ветки ${label} выполнен`
           });
         },
         onError: (err) => {
           toast.error({
-            title: 'Pull failed',
+            title: `Не удалось выполнить pull ветки ${label}`,
             description: err.message
           });
         }
@@ -38,20 +39,19 @@ export const PullButton: FC<PullButtonProps> = ({
   };
 
   const isDisabled = disabled || isPending || !repoPath;
-  const label = branchName ?? 'current';
 
   return (
     <Button
       type="button"
-      variant="secondary"
+      variant={variant}
+      size="sm"
       onClick={handleClick}
       disabled={isDisabled}
       loading={isPending}
-      leftIcon={<GitBranch aria-hidden="true" className="size-4" />}
+      leftIcon={<GitPullRequestArrow aria-hidden="true" className="size-3.5" />}
       className={className}
     >
-      {label}
-      <Download aria-hidden="true" className="size-4" />
+      Pull
     </Button>
   );
 };
