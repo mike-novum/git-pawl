@@ -40,6 +40,7 @@ import {
   gitResetSchema,
   gitRevertSchema,
   gitRevParseSchema,
+  gitShowSchema,
   gitStashSchema,
   gitStatusSchema,
   gitTagSchema,
@@ -75,7 +76,7 @@ import { gitCheckout } from './services/git/checkout';
 import { gitClone } from './services/git/clone';
 import { gitCommit } from './services/git/commit';
 import { currentBranch } from './services/git/currentBranch';
-import { gitDiff, gitLog, gitRevParse, gitStatus } from './services/git';
+import { gitDiff, gitLog, gitRevParse, gitShow, gitStatus } from './services/git';
 import { gitFetch, gitPull, gitPush } from './services/git/network';
 import { gitMerge } from './services/git/merge';
 import { emitCloneProgress } from './services/git/progress';
@@ -173,6 +174,7 @@ const registerIpcHandlers = (): void => {
   safeHandle(IPC_CHANNELS.GIT_STATUS, gitStatusSchema, (args) => gitStatus(args));
   safeHandle(IPC_CHANNELS.GIT_LOG, gitLogSchema, (args) => gitLog(args));
   safeHandle(IPC_CHANNELS.GIT_DIFF, gitDiffSchema, (args) => gitDiff(args));
+  safeHandle(IPC_CHANNELS.GIT_SHOW, gitShowSchema, (args) => gitShow(args));
   safeHandle(IPC_CHANNELS.GIT_REV_PARSE, gitRevParseSchema, (args) => gitRevParse(args));
   safeHandle(IPC_CHANNELS.GIT_CLONE, gitCloneSchema, (args, event) => {
     if (!event) throw new Error('Missing IPC event for clone progress');

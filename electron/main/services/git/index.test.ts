@@ -8,7 +8,7 @@ vi.mock('./exec', () => ({
 }));
 
 import { execGit } from './exec';
-import { gitLog } from './index';
+import { gitLog, gitShow } from './index';
 
 const mockExecGit = vi.mocked(execGit);
 
@@ -72,5 +72,51 @@ describe('gitLog', () => {
     expect(args).toContain('--topo-order');
     expect(args).toContain('-n');
     expect(args).toContain('25');
+  });
+});
+
+describe('gitShow', () => {
+  it('invokes git show with --name-status and the provided commit', async () => {
+    mockExecGit.mockResolvedValue({
+      stdout: '',
+      stderr: '',
+      exitCode: 0
+    });
+
+    await gitShow({ repoPath: tmpRoot, commit: 'abc123' });
+
+    expect(mockExecGit).toHaveBeenCalledTimes(1);
+    const args = mockExecGit.mock.calls[0]?.[0] ?? [];
+    expect(args[0]).toBe('show');
+    expect(args).toContain('--name-status');
+    expect(args).toContain('--pretty=format:');
+    expect(args).toContain('abc123');
+  });
+
+  it('returns parsed file status list on success', async () => {
+    mockExecGit.mockResolvedValue({
+      stdout: 'M\tsrc/a.ts\nA\tsrc/b.ts\n',
+      stderr: '',
+      exitCode: 0
+    });
+
+    const result = await gitShow({ repoPath: tmpRoot, commit: 'abc123' });
+
+    expect(result).toEqual([
+      { path: 'src/a.ts', index: 'M', workTree: 'M' },
+      { path: 'src/b.ts', index: 'A', workTree: 'A' }
+    ]);
+  });
+
+  it('wraps non-zero exit into a GitError', async () => {
+    mockExecGit.mockResolvedValue({
+      stdout: '',
+      stderr: 'fatal: bad commit\n',
+      exitCode: 128
+    });
+
+    await expect(
+      gitShow({ repoPath: tmpRoot, commit: 'bad' })
+    ).rejects.toThrow(/bad commit/);
   });
 });

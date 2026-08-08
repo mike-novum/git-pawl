@@ -4,13 +4,15 @@ import { join, resolve } from 'node:path';
 import type {
   GitLogArgs,
   GitDiffArgs,
+  GitShowArgs,
   GitStatusArgs,
   GitRevParseArgs
 } from '../../../shared/schemas';
 import type {
   GitStatus,
   Commit,
-  DiffHunk
+  DiffHunk,
+  FileStatus
 } from '../../../shared/types/git';
 import { GitError } from '../../../shared/types/git';
 
@@ -20,6 +22,7 @@ import {
   STATUS_PORCELAIN_FLAGS,
   parseDiff,
   parseLog,
+  parseShowNameStatus,
   parseStatusPorcelain
 } from './parser';
 
@@ -115,6 +118,20 @@ export const gitDiff = async (
     throw wrapGitError({ args: gitArgs, cwd, ...result });
   }
   return parseDiff(result.stdout);
+};
+
+export const gitShow = async (
+  args: GitShowArgs,
+  signal?: AbortSignal
+): Promise<FileStatus[]> => {
+  const cwd = ensureRepoPath(args.repoPath);
+  const gitArgs = ['show', '--name-status', '--pretty=format:'];
+  gitArgs.push(args.commit);
+  const result = await execGit(gitArgs, { cwd, signal });
+  if (result.exitCode !== 0) {
+    throw wrapGitError({ args: gitArgs, cwd, ...result });
+  }
+  return parseShowNameStatus(result.stdout);
 };
 
 export const gitRevParse = async (

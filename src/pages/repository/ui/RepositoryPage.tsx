@@ -9,6 +9,7 @@ import { useCurrentBranch, useBranches, useCheckoutBranch } from '@/entities/bra
 import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
+import { useCommit } from '@/features/commit-changes';
 import { OpenInFinder } from '@/features/open-in-finder';
 import { OpenInTerminal } from '@/features/open-in-terminal';
 import { FetchButton } from '@/features/git-fetch';
@@ -41,6 +42,7 @@ export const RepositoryPage: FC = () => {
   const { data: tags = [] } = useTags(repoPath);
   const { data: stash = [] } = useStashList(repoPath);
   const checkoutMutation = useCheckoutBranch();
+  const commitMutation = useCommit(repoPath ?? '');
 
   const logQuery = useQuery({
     queryKey: ['git-log', repoPath],
@@ -110,6 +112,10 @@ export const RepositoryPage: FC = () => {
     checkoutMutation.mutate({ repoPath, ref: branchName });
   };
 
+  const handleCommit = (message: string): void => {
+    commitMutation.mutate({ message: { header: message } });
+  };
+
   return (
     <div className="flex h-full w-full flex-col">
       <header className="border-border bg-surface flex h-14 shrink-0 items-center justify-between border-b px-4">
@@ -173,6 +179,7 @@ export const RepositoryPage: FC = () => {
         />
         <RepoDetailPanel
           commit={selectedCommit}
+          repoPath={repoPath}
           onCopyHash={handleCopyHash}
           onCreatePatch={() =>
             toast.info({ title: 'Coming soon', description: 'Patch is not implemented yet' })
@@ -192,22 +199,7 @@ export const RepositoryPage: FC = () => {
               description: 'Reset to here is not implemented yet'
             })
           }
-          uncommittedCount={repo?.status === 'dirty' ? 1 : 0}
-          onCommit={() =>
-            toast.info({
-              title: 'Coming soon',
-              description: 'Open commit is not implemented yet'
-            })
-          }
-          onStash={() =>
-            toast.info({ title: 'Coming soon', description: 'Stash is not implemented yet' })
-          }
-          onDiscard={() =>
-            toast.info({
-              title: 'Coming soon',
-              description: 'Discard is not implemented yet'
-            })
-          }
+          onCommit={handleCommit}
         />
       </div>
     </div>

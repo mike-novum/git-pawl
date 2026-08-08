@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseDiff, parseLog, parseStatusPorcelain } from './parser';
+import { parseDiff, parseLog, parseShowNameStatus, parseStatusPorcelain } from './parser';
 
 describe('parseStatusPorcelain', () => {
   it('parses empty output as clean status', () => {
@@ -361,5 +361,48 @@ describe('parseDiff', () => {
     expect(hunks[0].oldPath).toBeUndefined();
     expect(hunks[0].filePath).toBe('new.txt');
     expect(hunks[0].lines.every((l) => l.type === 'add')).toBe(true);
+  });
+});
+
+describe('parseShowNameStatus', () => {
+  it('returns empty array for empty input', () => {
+    expect(parseShowNameStatus('')).toEqual([]);
+  });
+
+  it('parses modified, added, and deleted files', () => {
+    const stdout = ['M\tsrc/changed.ts', 'A\tsrc/added.ts', 'D\tsrc/gone.ts'].join('\n');
+
+    const files = parseShowNameStatus(stdout);
+
+    expect(files).toEqual([
+      { path: 'src/changed.ts', index: 'M', workTree: 'M' },
+      { path: 'src/added.ts', index: 'A', workTree: 'A' },
+      { path: 'src/gone.ts', index: 'D', workTree: 'D' }
+    ]);
+  });
+
+  it('parses renamed files with old path', () => {
+    const stdout = 'R100\told/name.ts\tnew/name.ts';
+
+    const files = parseShowNameStatus(stdout);
+
+    expect(files).toEqual([
+      {
+        path: 'new/name.ts',
+        oldPath: 'old/name.ts',
+        index: 'R',
+        workTree: 'R'
+      }
+    ]);
+  });
+
+  it('skips blank lines and unknown status codes', () => {
+    const stdout = ['M\tsrc/a.ts', '', 'X\tsrc/b.ts', 'A\tsrc/c.ts'].join('\n');
+
+    const files = parseShowNameStatus(stdout);
+
+    expect(files).toHaveLength(2);
+    expect(files[0]?.path).toBe('src/a.ts');
+    expect(files[1]?.path).toBe('src/c.ts');
   });
 });

@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-import type { Commit as GitCommit, DiffHunk, GitStatus } from '../shared/types/git';
+import type { Commit as GitCommit, DiffHunk, FileStatus, GitStatus } from '../shared/types/git';
 import type { FsSelectFileResult } from '../shared/types/fs';
 
 export type AppInfo = {
@@ -19,6 +19,7 @@ export type StoreDeleteArgs = { key: string };
 export type GitStatusArgs = { repoPath: string };
 export type GitLogArgs = { repoPath: string; maxCount?: number };
 export type GitDiffArgs = { repoPath: string; range?: string };
+export type GitShowArgs = { repoPath: string; commit: string };
 export type GitRevParseArgs = { repoPath: string };
 export type GitCloneArgs = { url: string; destPath: string };
 export type GitFetchArgs = { repoPath: string; remote?: string };
@@ -65,6 +66,7 @@ export type ApiSchema = {
   gitStatus: (args: GitStatusArgs) => Promise<GitStatus>;
   gitLog: (args: GitLogArgs) => Promise<GitCommit[]>;
   gitDiff: (args: GitDiffArgs) => Promise<DiffHunk[]>;
+  gitShow: (args: GitShowArgs) => Promise<FileStatus[]>;
   gitRevParse: (args: GitRevParseArgs) => Promise<string>;
   gitClone: (args: GitCloneArgs) => Promise<unknown>;
   gitFetch: (args: GitFetchArgs) => Promise<unknown>;
@@ -125,6 +127,7 @@ const api: ApiSchema = {
   gitStatus: (args) => invoke('git:status', args) as Promise<GitStatus>,
   gitLog: (args) => invoke('git:log', args) as Promise<GitCommit[]>,
   gitDiff: (args) => invoke('git:diff', args) as Promise<DiffHunk[]>,
+  gitShow: (args) => invoke('git:show', args) as Promise<FileStatus[]>,
   gitRevParse: (args) => invoke('git:rev-parse', args) as Promise<string>,
   gitClone: (args) => invoke('git:clone', args),
   gitFetch: (args) => invoke('git:fetch', args),

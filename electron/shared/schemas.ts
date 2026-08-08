@@ -34,6 +34,11 @@ export const gitDiffSchema = z.object({
   range: z.string().optional()
 });
 
+export const gitShowSchema = z.object({
+  repoPath: z.string(),
+  commit: z.string().min(1)
+});
+
 export const gitRevParseSchema = z.object({
   repoPath: z.string()
 });
@@ -261,6 +266,7 @@ export type StoreDeleteArgs = z.infer<typeof storeDeleteSchema>;
 export type GitStatusArgs = z.infer<typeof gitStatusSchema>;
 export type GitLogArgs = z.infer<typeof gitLogSchema>;
 export type GitDiffArgs = z.infer<typeof gitDiffSchema>;
+export type GitShowArgs = z.infer<typeof gitShowSchema>;
 export type GitRevParseArgs = z.infer<typeof gitRevParseSchema>;
 export type GitCloneArgs = z.infer<typeof gitCloneSchema>;
 export type GitFetchArgs = z.infer<typeof gitFetchSchema>;

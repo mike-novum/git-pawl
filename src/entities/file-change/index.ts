@@ -1,5 +1,7 @@
-export { useFileChanges } from './model';
+export { useFileChanges, useCommitFiles } from './model';
 export {
+  commitFilesQueryKey,
+  fetchCommitFiles,
   fileChangesQueryKey,
   fetchFileChanges
 } from './model';
@@ -11,7 +13,7 @@ export {
 } from './model';
 export type { SelectedFilesApi, SelectedFilesState } from './model';
 
-export { listFileChanges, toFileChange } from './api';
+export { listCommitFiles, listFileChanges, toFileChange } from './api';
 
 export { FileChangeRow } from './ui';
 export type { FileChangeRowProps } from './ui';

@@ -97,6 +97,40 @@ const parseFileStatusFromEntry = (
   return { path: body, index: xy[0], workTree: xy[1] };
 };
 
+const SHOW_NAME_STATUS_LINE = /^([A-Z])(\d*)\t([^\t]+)(?:\t([^\t]+))?$/;
+
+export const parseShowNameStatus = (stdout: string): FileStatus[] => {
+  if (stdout.length === 0) return [];
+
+  const files: FileStatus[] = [];
+
+  for (const rawLine of stdout.split('\n')) {
+    const line = rawLine.replace(/\r$/, '');
+    if (line.length === 0) continue;
+
+    const match = SHOW_NAME_STATUS_LINE.exec(line);
+    if (!match) continue;
+
+    const code = match[1] ?? '';
+    const oldPath = match[3] ?? '';
+    const newPath = match[4];
+
+    if (!isFileStatusCode(code)) continue;
+
+    const entry: FileStatus = {
+      path: newPath ?? oldPath,
+      index: code,
+      workTree: code
+    };
+    if (newPath !== undefined) {
+      entry.oldPath = oldPath;
+    }
+    files.push(entry);
+  }
+
+  return files;
+};
+
 export const parseStatusPorcelain = (stdout: string): GitStatus => {
   let branch: BranchInfo = { detached: false };
   const files: FileStatus[] = [];
@@ -318,5 +352,6 @@ export const __testing = {
   parseUpstream,
   parseBranchLine,
   readUntilNull,
-  isFileStatusCode
+  isFileStatusCode,
+  parseShowNameStatus
 };

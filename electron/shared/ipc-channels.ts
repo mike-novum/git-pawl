@@ -8,6 +8,7 @@ export const IPC_CHANNELS = {
   GIT_STATUS: 'git:status',
   GIT_LOG: 'git:log',
   GIT_DIFF: 'git:diff',
+  GIT_SHOW: 'git:show',
   GIT_REV_PARSE: 'git:rev-parse',
   GIT_CLONE: 'git:clone',
   GIT_FETCH: 'git:fetch',

@@ -7,6 +7,7 @@ export {
   gitStatus,
   gitLog,
   gitDiff,
+  gitShow,
   gitRevParse,
   gitClone,
   gitFetch,

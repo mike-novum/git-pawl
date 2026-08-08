@@ -4,6 +4,7 @@ import type {
   GitStatusArgs,
   GitLogArgs,
   GitDiffArgs,
+  GitShowArgs,
   GitRevParseArgs,
   GitCloneArgs,
   GitFetchArgs,
@@ -98,6 +99,9 @@ export const gitLog = async (args: GitLogArgs): Promise<unknown> =>
 
 export const gitDiff = async (args: GitDiffArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.gitDiff(args), '');
+
+export const gitShow = async (args: GitShowArgs): Promise<unknown> =>
+  safeInvoke<unknown>((bridge) => bridge.gitShow(args), []);
 
 export const gitRevParse = async (args: GitRevParseArgs): Promise<unknown> =>
   safeInvoke<unknown>((bridge) => bridge.gitRevParse(args), null);
@@ -225,6 +229,7 @@ export const api = {
   gitStatus,
   gitLog,
   gitDiff,
+  gitShow,
   gitRevParse,
   gitClone,
   gitFetch,
