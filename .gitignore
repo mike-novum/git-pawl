@@ -17,3 +17,6 @@ storybook-static
 .claude/worktrees/
 docs/screenshots
 .eslintcache
+
+workflow
+screenshots
