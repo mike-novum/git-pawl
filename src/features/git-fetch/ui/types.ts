@@ -3,4 +3,5 @@ export type FetchButtonProps = {
   branchName?: string;
   disabled?: boolean;
   className?: string;
+  iconOnly?: boolean;
 };

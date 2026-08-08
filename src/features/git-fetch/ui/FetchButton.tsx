@@ -11,7 +11,8 @@ export const FetchButton: FC<FetchButtonProps> = ({
   repoPath,
   branchName,
   disabled = false,
-  className
+  className,
+  iconOnly = false
 }) => {
   const toast = useToast();
   const { mutate, isPending } = useGitFetch();
@@ -23,13 +24,12 @@ export const FetchButton: FC<FetchButtonProps> = ({
       {
         onSuccess: () => {
           toast.success({
-            title: 'Fetch complete',
-            description: 'Remote refs updated'
+            title: 'Фетч выполнен'
           });
         },
         onError: (err) => {
           toast.error({
-            title: 'Fetch failed',
+            title: 'Не удалось выполнить fetch',
             description: err.message
           });
         }
@@ -38,6 +38,24 @@ export const FetchButton: FC<FetchButtonProps> = ({
   };
 
   const isDisabled = disabled || isPending || !repoPath;
+  const iconClass = isPending ? 'size-4 animate-spin' : 'size-4';
+  const refreshIcon = <RefreshCw aria-hidden="true" className={iconClass} />;
+
+  if (iconOnly) {
+    return (
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={handleClick}
+        disabled={isDisabled}
+        aria-label="Fetch"
+        className={className}
+      >
+        {refreshIcon}
+      </Button>
+    );
+  }
+
   const label = branchName ?? 'current';
 
   return (
@@ -46,12 +64,11 @@ export const FetchButton: FC<FetchButtonProps> = ({
       variant="secondary"
       onClick={handleClick}
       disabled={isDisabled}
-      loading={isPending}
       leftIcon={<GitBranch aria-hidden="true" className="size-4" />}
+      rightIcon={refreshIcon}
       className={className}
     >
       {label}
-      <RefreshCw aria-hidden="true" className="size-4" />
     </Button>
   );
 };

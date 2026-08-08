@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { GitBranch, RefreshCw } from 'lucide-react';
+import { GitBranch } from 'lucide-react';
 import { useMemo, useState, type FC } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
 import { OpenInFinder } from '@/features/open-in-finder';
 import { OpenInTerminal } from '@/features/open-in-terminal';
+import { FetchButton } from '@/features/git-fetch';
 import { PullButton } from '@/features/git-pull';
 import { PushButton } from '@/features/git-push';
 import { toCommitNodes } from '@/pages/repository';
@@ -135,19 +136,11 @@ export const RepositoryPage: FC = () => {
         <div className="flex items-center gap-1">
           <OpenInFinder path={repoPath} />
           <OpenInTerminal path={repoPath} />
-          <button
-            type="button"
-            aria-label="Fetch"
-            onClick={() =>
-              toast.info({
-                title: 'Coming soon',
-                description: 'Fetch is not implemented yet'
-              })
-            }
-            className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors"
-          >
-            <RefreshCw aria-hidden="true" className="size-4" />
-          </button>
+          <FetchButton
+            repoPath={repoPath}
+            iconOnly
+            className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground size-8 p-0"
+          />
           <PullButton
             repoPath={repoPath}
             branchName={branchQuery.data?.name ?? undefined}

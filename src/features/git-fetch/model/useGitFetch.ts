@@ -10,7 +10,12 @@ export type GitFetchInput = {
 
 export type GitFetchResult = void;
 
-const FETCH_QUERY_KEYS = ['branches', 'commits'] as const;
+const FETCH_QUERY_KEYS = [
+  'current-branch',
+  'branch-list',
+  'git-log',
+  'branch-mainlines'
+] as const;
 
 const invokeFetch = async (input: GitFetchInput): Promise<GitFetchResult> => {
   if (typeof window === 'undefined' || !('api' in window)) {
