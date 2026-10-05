@@ -9,6 +9,7 @@ export type WorkspaceHeroProps = {
 };
 
 export type WorkspaceToolbarProps = {
+  path: string;
   query: string;
   onQueryChange: (q: string) => void;
   grouped: boolean;

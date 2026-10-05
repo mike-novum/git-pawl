@@ -163,6 +163,7 @@ export const WorkspacePage: FC = () => {
         <WorkspaceHero workspace={workspace} iconPath={iconPath} />
 
         <WorkspaceToolbar
+          path={workspace.path}
           query={query}
           onQueryChange={setQuery}
           grouped={grouped}

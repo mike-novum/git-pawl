@@ -18,7 +18,7 @@ export const EmptyWorkspace: FC<EmptyWorkspaceProps> = ({ onAddRepo, onClone }) 
     </div>
     <div className="flex gap-2">
       <Button type="button" variant="secondary" onClick={onAddRepo}>
-        Add repo
+        Add local repo
       </Button>
       <Button type="button" onClick={onClone}>
         Clone

@@ -1,11 +1,15 @@
 import { GitBranch, Plus, Search } from 'lucide-react';
 import type { FC } from 'react';
 
+import { OpenInAgent } from '@/features/open-in-agent';
+import { OpenInFinder } from '@/features/open-in-finder';
+import { OpenInTerminal } from '@/features/open-in-terminal';
 import { Input } from '@/shared/ui/input';
 
 import type { WorkspaceToolbarProps } from '../types';
 
 export const WorkspaceToolbar: FC<WorkspaceToolbarProps> = ({
+  path,
   query,
   onQueryChange,
   grouped,
@@ -37,13 +41,18 @@ export const WorkspaceToolbar: FC<WorkspaceToolbarProps> = ({
       {grouped ? 'Group by folder' : 'Flat list'}
     </button>
     <div className="flex-1" />
+    <div className="flex items-center gap-1">
+      <OpenInAgent path={path} />
+      <OpenInFinder path={path} />
+      <OpenInTerminal path={path} />
+    </div>
     <button
       type="button"
       onClick={onAddRepo}
       className="text-foreground hover:bg-surface-elevated flex h-8 items-center gap-1.5 rounded-md px-3 text-xs transition-colors"
     >
       <Plus aria-hidden="true" className="size-3.5" />
-      Add repo
+      Add local repo
     </button>
     <button
       type="button"
