@@ -91,7 +91,7 @@ export const openAgent = async ({
   }
 
   const script = `tell application "Terminal"
-  do script "cd " & quoted form of "${repoPath}" & " && ${agent.command}"
+  do script "cd " & quoted form of "${repoPath}" & " && ${agent.command} " & quoted form of "${repoPath}"
   activate
 end tell`;
 
