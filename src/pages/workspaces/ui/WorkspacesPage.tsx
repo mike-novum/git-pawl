@@ -12,6 +12,7 @@ import {
 } from '@/entities/workspace';
 import { useRepositoryList } from '@/entities/repository';
 import { Button, Spinner } from '@/shared/ui';
+import { AgentCounter } from '@/widgets/agent-counter';
 
 import { EmptyWorkspaces } from './EmptyWorkspaces';
 import { NewWorkspaceTile } from './NewWorkspaceTile';
@@ -49,6 +50,7 @@ export const WorkspacesPage: FC = () => {
       <>
         <EmptyWorkspaces onCreate={handleCreate} />
         <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
+        <AgentCounter />
       </>
     );
   }
@@ -91,6 +93,7 @@ export const WorkspacesPage: FC = () => {
         <RecentActivity items={activityItems} />
       </div>
       <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <AgentCounter />
     </>
   );
 };
