@@ -1,32 +1,33 @@
 import { Bot, Star } from 'lucide-react';
-import type { FC } from 'react';
+import type { FC, ReactElement } from 'react';
 
 import {
+  ContextMenuRoot,
+  ContextMenuTrigger,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
-  DropdownMenuPositioner,
-  DropdownMenuRoot
+  DropdownMenuPositioner
 } from '@/shared/ui/dropdown-menu';
 
 import type { AgentMenuProps } from './types';
 
 export const AgentMenu: FC<AgentMenuProps> = ({
-  agents,
+  agents: agentDescriptors,
   defaultAgentId,
-  open,
-  onOpenChange,
-  onSelect
+  onSelect,
+  trigger
 }) => (
-  <DropdownMenuRoot open={open} onOpenChange={onOpenChange}>
+  <ContextMenuRoot>
+    <ContextMenuTrigger render={trigger as ReactElement<{ onContextMenu?: unknown }>} />
     <DropdownMenuPortal>
       <DropdownMenuPositioner sideOffset={6} align="end">
         <DropdownMenuContent className="min-w-48">
           <DropdownMenuGroup>
             <DropdownMenuLabel>Open with</DropdownMenuLabel>
-            {agents.map((agent) => {
+            {agentDescriptors.map((agent) => {
               const isDefault = agent.id === defaultAgentId;
               return (
                 <DropdownMenuItem
@@ -52,7 +53,7 @@ export const AgentMenu: FC<AgentMenuProps> = ({
         </DropdownMenuContent>
       </DropdownMenuPositioner>
     </DropdownMenuPortal>
-  </DropdownMenuRoot>
+  </ContextMenuRoot>
 );
 
 AgentMenu.displayName = 'AgentMenu';

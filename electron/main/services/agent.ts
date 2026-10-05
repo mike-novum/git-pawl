@@ -1,4 +1,3 @@
-import { spawn } from 'node:child_process';
 import { execFile } from 'node:child_process';
 import { stat } from 'node:fs/promises';
 import { promisify } from 'node:util';
@@ -63,6 +62,10 @@ export const openAgent = async ({
   path: repoPath,
   agentId
 }: ShellOpenAgentArgs): Promise<void> => {
+  if (process.platform !== 'darwin') {
+    throw new Error('openAgent is only supported on macOS');
+  }
+
   try {
     const info = await stat(repoPath);
     if (!info.isDirectory()) {
@@ -87,17 +90,15 @@ export const openAgent = async ({
     );
   }
 
-  const child = spawn(agent.command, [repoPath], {
-    cwd: repoPath,
-    detached: true,
-    stdio: 'ignore',
-    shell: false
-  });
+  const script = `tell application "Terminal"
+  do script "cd " & quoted form of "${repoPath}" & " && ${agent.command}"
+  activate
+end tell`;
 
-  child.on('error', (error) => {
+  try {
+    await execFileAsync('osascript', ['-e', script]);
+  } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    throw new Error(`Failed to launch ${agent.name}: ${message}`);
-  });
-
-  child.unref();
+    throw new Error(`Failed to open agent in Terminal: ${message}`);
+  }
 };

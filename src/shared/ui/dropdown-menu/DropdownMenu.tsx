@@ -1,3 +1,4 @@
+import { ContextMenu as BaseContextMenu } from '@base-ui/react/context-menu';
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { Separator as BaseSeparator } from '@base-ui/react/separator';
 import type { FC } from 'react';
@@ -5,6 +6,8 @@ import type { FC } from 'react';
 import { cn, Z_POPUP } from '@/shared/lib/theme';
 
 import type {
+  ContextMenuRootProps,
+  ContextMenuTriggerProps,
   DropdownMenuCheckboxItemIndicatorProps,
   DropdownMenuCheckboxItemProps,
   DropdownMenuContentProps,
@@ -150,6 +153,14 @@ const DropdownMenuCheckboxItemIndicator: FC<DropdownMenuCheckboxItemIndicatorPro
   />
 );
 
+const ContextMenuRoot: FC<ContextMenuRootProps> = (props) => (
+  <BaseContextMenu.Root {...props} />
+);
+
+const ContextMenuTrigger: FC<ContextMenuTriggerProps> = (props) => (
+  <BaseContextMenu.Trigger {...props} />
+);
+
 export {
   DropdownMenuRoot,
   DropdownMenuTrigger,
@@ -164,5 +175,7 @@ export {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuCheckboxItem,
-  DropdownMenuCheckboxItemIndicator
+  DropdownMenuCheckboxItemIndicator,
+  ContextMenuRoot,
+  ContextMenuTrigger
 };

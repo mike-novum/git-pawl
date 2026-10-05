@@ -1,3 +1,5 @@
+import type { ReactElement } from 'react';
+
 import type { AgentDescriptor } from '@electron/preload';
 
 export type AvailableAgent = AgentDescriptor;
@@ -10,7 +12,6 @@ export type OpenInAgentProps = {
 export type AgentMenuProps = {
   agents: AvailableAgent[];
   defaultAgentId: string | null;
-  open: boolean;
-  onOpenChange: (next: boolean) => void;
   onSelect: (agentId: string) => void;
+  trigger: ReactElement<Record<string, unknown>>;
 };

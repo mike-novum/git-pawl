@@ -1,14 +1,14 @@
 import { Bot } from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
-import type { FC, MouseEvent } from 'react';
+import { useCallback, useMemo } from 'react';
+import type { FC } from 'react';
 
 import { useGlobalSettings } from '@/features/global-settings';
 import { useToast } from '@/shared/ui';
 
 import { openInAgent, useAvailableAgents } from '../model';
 
-import type { OpenInAgentProps } from './types';
 import { AgentMenu } from './AgentMenu';
+import type { OpenInAgentProps } from './types';
 
 const TRIGGER_CLASS =
   'text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors duration-(--duration-fast) disabled:opacity-50';
@@ -32,7 +32,6 @@ export const OpenInAgent: FC<OpenInAgentProps> = ({ path, className }) => {
   const toast = useToast();
   const agentsQuery = useAvailableAgents();
   const { values: settings } = useGlobalSettings();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const agents = useMemo(() => agentsQuery.data ?? [], [agentsQuery.data]);
   const availableAgents = useMemo(
@@ -55,7 +54,7 @@ export const OpenInAgent: FC<OpenInAgentProps> = ({ path, className }) => {
         .then(() => {
           const agent = agents.find((item) => item.id === agentId);
           toast.success({
-            title: `${agent?.name ?? 'Agent'} launched`
+            title: `${agent?.name ?? 'Agent'} opened in Terminal`
           });
         })
         .catch((err: unknown) => {
@@ -80,54 +79,43 @@ export const OpenInAgent: FC<OpenInAgentProps> = ({ path, className }) => {
     launch(defaultAgentId);
   };
 
-  const handleContextMenu = (event: MouseEvent<HTMLButtonElement>): void => {
-    if (availableAgents.length === 0) return;
-    event.preventDefault();
-    setMenuOpen(true);
-  };
-
   const isLoading = agentsQuery.isLoading && agents.length === 0;
   const isButtonDisabled = !path || isLoading;
   const defaultAgentName =
     agents.find((agent) => agent.id === defaultAgentId)?.name ?? 'agent';
 
   const triggerClass = className ?? TRIGGER_CLASS;
+  const triggerAriaLabel = defaultAgentId
+    ? `Open in ${defaultAgentName}`
+    : 'Open in agent';
+  const triggerTitle = defaultAgentId
+    ? `Open in ${defaultAgentName} (right-click for more)`
+    : 'No CLI agents detected';
+
+  const button = (
+    <button
+      type="button"
+      aria-label={triggerAriaLabel}
+      title={triggerTitle}
+      onClick={handleClick}
+      disabled={isButtonDisabled}
+      className={triggerClass}
+    >
+      <Bot aria-hidden="true" className="size-4" />
+    </button>
+  );
 
   if (availableAgents.length === 0 && !isLoading) {
-    return (
-      <button
-        type="button"
-        aria-label="Open in agent"
-        title="No CLI agents detected"
-        onClick={handleClick}
-        className={triggerClass}
-      >
-        <Bot aria-hidden="true" className="size-4" />
-      </button>
-    );
+    return button;
   }
 
   return (
-    <>
-      <button
-        type="button"
-        aria-label={`Open in ${defaultAgentName}`}
-        title={`Open in ${defaultAgentName} (right-click for more)`}
-        onClick={handleClick}
-        onContextMenu={handleContextMenu}
-        disabled={isButtonDisabled}
-        className={triggerClass}
-      >
-        <Bot aria-hidden="true" className="size-4" />
-      </button>
-      <AgentMenu
-        agents={agents}
-        defaultAgentId={defaultAgentId}
-        open={menuOpen}
-        onOpenChange={setMenuOpen}
-        onSelect={launch}
-      />
-    </>
+    <AgentMenu
+      agents={agents}
+      defaultAgentId={defaultAgentId}
+      onSelect={launch}
+      trigger={button}
+    />
   );
 };
 

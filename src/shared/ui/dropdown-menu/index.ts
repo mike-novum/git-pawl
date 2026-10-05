@@ -12,7 +12,9 @@ export {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuCheckboxItem,
-  DropdownMenuCheckboxItemIndicator
+  DropdownMenuCheckboxItemIndicator,
+  ContextMenuRoot,
+  ContextMenuTrigger
 } from './DropdownMenu';
 export type {
   DropdownMenuRootProps,
@@ -27,5 +29,7 @@ export type {
   DropdownMenuRadioGroupProps,
   DropdownMenuRadioItemProps,
   DropdownMenuCheckboxItemProps,
-  DropdownMenuCheckboxItemIndicatorProps
+  DropdownMenuCheckboxItemIndicatorProps,
+  ContextMenuRootProps,
+  ContextMenuTriggerProps
 } from './types';

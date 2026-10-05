@@ -1,3 +1,4 @@
+import type { ContextMenu as ContextMenuPrimitive } from '@base-ui/react/context-menu';
 import type { Menu as MenuPrimitive } from '@base-ui/react/menu';
 import type { ComponentPropsWithoutRef } from 'react';
 
@@ -67,6 +68,27 @@ export type DropdownMenuCheckboxItemProps = Omit<CheckboxItemProps, 'className'>
 
 export type DropdownMenuCheckboxItemIndicatorProps = Omit<
   CheckboxItemIndicatorProps,
+  'className'
+> & {
+  className?: string;
+};
+
+type ContextMenuRootPrimitive = ComponentPropsWithoutRef<
+  typeof ContextMenuPrimitive.Root
+>;
+type ContextMenuTriggerPrimitive = ComponentPropsWithoutRef<
+  typeof ContextMenuPrimitive.Trigger
+>;
+
+export type ContextMenuRootProps = Omit<
+  ContextMenuRootPrimitive,
+  'className'
+> & {
+  className?: string;
+};
+
+export type ContextMenuTriggerProps = Omit<
+  ContextMenuTriggerPrimitive,
   'className'
 > & {
   className?: string;
