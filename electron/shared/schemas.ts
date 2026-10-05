@@ -198,6 +198,10 @@ export const fsIconSchema = z.discriminatedUnion('action', [
   })
 ]);
 
+export const fsRepoIconPathSchema = z.object({
+  repoPath: z.string().min(1)
+});
+
 export const fsWorkspaceListSchema = z.undefined();
 
 export const fsWorkspaceCreateSchema = z.object({
@@ -296,6 +300,7 @@ export type FsIconArgs = z.infer<typeof fsIconSchema>;
 export type FsIconSetArgs = Extract<FsIconArgs, { action: 'set' }>;
 export type FsIconSetWorkspaceArgs = Extract<FsIconArgs, { action: 'set-workspace' }>;
 export type FsIconRemoveArgs = Extract<FsIconArgs, { action: 'remove' }>;
+export type FsRepoIconPathArgs = z.infer<typeof fsRepoIconPathSchema>;
 export type FsSelectDirectoryArgs = z.infer<typeof fsSelectDirectorySchema>;
 export type FsSelectFileArgs = z.infer<typeof fsSelectFileSchema>;
 export type FsWorkspaceListArgs = z.infer<typeof fsWorkspaceListSchema>;

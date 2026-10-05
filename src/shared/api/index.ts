@@ -37,6 +37,7 @@ export {
   fsBuildRepoId,
   fsScanRepos,
   fsReadImageDataUrl,
+  fsRepoIconPath,
   shellOpenTerminal,
   shellOpenFinder,
   shellDetectAgents,

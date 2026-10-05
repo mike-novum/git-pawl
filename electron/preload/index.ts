@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import type { Commit as GitCommit, DiffHunk, FileStatus, GitStatus } from '../shared/types/git';
-import type { FsSelectFileResult } from '../shared/types/fs';
+import type { FsSelectFileResult, RepoIconPathResult } from '../shared/types/fs';
 
 export type AppInfo = {
   name: string;
@@ -52,6 +52,7 @@ export type FsDetectReposArgs = { path: string; maxDepth?: number };
 export type FsBuildRepoIdArgs = { path: string };
 export type FsScanReposArgs = { path: string; maxDepth?: number };
 export type FsReadImageDataUrlArgs = { path: string };
+export type FsRepoIconPathArgs = { repoPath: string };
 
 export type ShellOpenTerminalArgs = { path: string };
 export type ShellOpenFinderArgs = { path: string };
@@ -109,6 +110,7 @@ export type ApiSchema = {
   fsBuildRepoId: (args: FsBuildRepoIdArgs) => Promise<string>;
   fsScanRepos: (args: FsScanReposArgs) => Promise<string[]>;
   fsReadImageDataUrl: (args: FsReadImageDataUrlArgs) => Promise<string>;
+  fsRepoIconPath: (args: FsRepoIconPathArgs) => Promise<RepoIconPathResult>;
 
   authGithubStart: () => Promise<unknown>;
   authGithubComplete: (args: { code: string }) => Promise<unknown>;
@@ -173,6 +175,8 @@ const api: ApiSchema = {
   fsScanRepos: (args) => invoke('fs:scan-repos', args) as Promise<string[]>,
   fsReadImageDataUrl: (args) =>
     invoke('fs:read-image-data-url', args) as Promise<string>,
+  fsRepoIconPath: (args) =>
+    invoke('fs:repo-icon-path', args) as Promise<RepoIconPathResult>,
 
   authGithubStart: () => invoke('auth:github-start'),
   authGithubComplete: (args) => invoke('auth:github-complete', args),

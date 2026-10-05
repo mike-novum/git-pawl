@@ -7,10 +7,10 @@ export {
 export type { RepositoryQueryResult } from './model';
 export type { Repository, RepositoryStatus } from './model';
 
-export { getStatus, getSize, getBranch } from './api';
+export { getStatus, getSize, getBranch, getRepoIconPath } from './api';
 export type { GitStatus, RepoSize } from './api';
 
-export { detectRepos, buildRepository, defaultIconPath } from './lib';
+export { detectRepos, buildRepository } from './lib';
 export type { DetectReposOptions } from './lib';
 
 export {

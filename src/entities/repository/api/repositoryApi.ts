@@ -1,7 +1,7 @@
 import type { GitStatus } from '@electron/shared/types/git';
 import type { RepoSize } from '@electron/shared/types/fs';
 
-import { gitStatus, fsSize, gitRevParse } from '@/shared/api';
+import { gitStatus, fsSize, gitRevParse, fsRepoIconPath } from '@/shared/api';
 
 export type { GitStatus, RepoSize };
 
@@ -15,3 +15,10 @@ export const getBranch = (repoPath: string): Promise<string | null> =>
   gitRevParse({ repoPath })
     .then((r) => (r ? String(r) : null))
     .catch(() => null);
+
+export const getRepoIconPath = async (
+  repoPath: string
+): Promise<string | null> => {
+  const result = await fsRepoIconPath({ repoPath });
+  return result.iconPath;
+};

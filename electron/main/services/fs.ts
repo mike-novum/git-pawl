@@ -9,12 +9,18 @@ import type {
   FsIconSetArgs,
   FsIconSetWorkspaceArgs,
   FsReadImageDataUrlArgs,
+  FsRepoIconPathArgs,
   FsSizeArgs,
   FsWorkspaceCreateArgs,
   FsWorkspaceRemoveArgs,
   FsWorkspaceSizeArgs
 } from '../../shared/schemas';
-import type { RepoSize, FsSelectFileResult, Workspace } from '../../shared/types/fs';
+import type {
+  RepoIconPathResult,
+  RepoSize,
+  FsSelectFileResult,
+  Workspace
+} from '../../shared/types/fs';
 
 import { storeGet, storeSet } from './store';
 
@@ -244,6 +250,32 @@ export const removeRepoIcon = async (args: FsIconRemoveArgs): Promise<void> => {
       }
     }
   }
+};
+
+const REPO_ICON_FILENAMES = ['icon.png', 'icon.jpg', 'icon.jpeg'] as const;
+
+export const getRepoIconPath = async (
+  args: FsRepoIconPathArgs
+): Promise<RepoIconPathResult> => {
+  let repoPath: string;
+  try {
+    repoPath = await ensureDirectoryExists(args.repoPath);
+  } catch {
+    return { iconPath: null };
+  }
+
+  for (const filename of REPO_ICON_FILENAMES) {
+    const candidate = path.join(repoPath, filename);
+    try {
+      const stat = await fs.stat(candidate);
+      if (stat.isFile()) {
+        return { iconPath: candidate };
+      }
+    } catch {
+      continue;
+    }
+  }
+  return { iconPath: null };
 };
 
 export const setWorkspaceIcon = async (

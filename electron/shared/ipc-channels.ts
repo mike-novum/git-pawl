@@ -35,6 +35,7 @@ export const IPC_CHANNELS = {
   FS_SIZE: 'fs:size',
   FS_WORKSPACE_SIZE: 'fs:workspace-size',
   FS_ICON: 'fs:icon',
+  FS_REPO_ICON_PATH: 'fs:repo-icon-path',
   FS_WORKSPACE_LIST: 'fs:workspace-list',
   FS_WORKSPACE_CREATE: 'fs:workspace-create',
   FS_WORKSPACE_REMOVE: 'fs:workspace-remove',

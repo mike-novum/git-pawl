@@ -33,6 +33,7 @@ import type {
   FsBuildRepoIdArgs,
   FsScanReposArgs,
   FsReadImageDataUrlArgs,
+  FsRepoIconPathArgs,
   ShellOpenTerminalArgs,
   ShellOpenFinderArgs,
   ShellOpenAgentArgs,
@@ -217,6 +218,14 @@ export const fsReadImageDataUrl = async (
 ): Promise<string | null> =>
   safeInvoke<string | null>((bridge) => bridge.fsReadImageDataUrl(args), null);
 
+export const fsRepoIconPath = async (
+  args: FsRepoIconPathArgs
+): Promise<{ iconPath: string | null }> =>
+  safeInvoke<{ iconPath: string | null }>(
+    (bridge) => bridge.fsRepoIconPath(args),
+    { iconPath: null }
+  );
+
 export const shellOpenTerminal = async (args: ShellOpenTerminalArgs): Promise<void> =>
   safeInvoke<void>((bridge) => bridge.shellOpenTerminal(args), undefined);
 
@@ -272,6 +281,7 @@ export const api = {
   fsBuildRepoId,
   fsScanRepos,
   fsReadImageDataUrl,
+  fsRepoIconPath,
   shellOpenTerminal,
   shellOpenFinder,
   shellDetectAgents,

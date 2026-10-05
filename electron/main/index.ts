@@ -16,6 +16,7 @@ import {
   fsDetectReposSchema,
   fsIconSchema,
   fsReadImageDataUrlSchema,
+  fsRepoIconPathSchema,
   fsScanReposSchema,
   fsSizeSchema,
   fsWorkspaceCreateSchema,
@@ -54,6 +55,7 @@ import { safeHandle, safeHandleNoArgs } from '../shared/handler';
 
 import {
   getRepoSize,
+  getRepoIconPath,
   getWorkspaceSize,
   readImageAsDataUrl,
   removeRepoIcon,
@@ -231,6 +233,11 @@ const registerIpcHandlers = (): void => {
     }
     await removeRepoIcon(args);
   });
+  safeHandle(
+    IPC_CHANNELS.FS_REPO_ICON_PATH,
+    fsRepoIconPathSchema,
+    getRepoIconPath
+  );
   safeHandleNoArgs(IPC_CHANNELS.FS_WORKSPACE_LIST, workspaceList);
   safeHandle(IPC_CHANNELS.FS_WORKSPACE_CREATE, fsWorkspaceCreateSchema, workspaceCreate);
   safeHandle(IPC_CHANNELS.FS_WORKSPACE_REMOVE, fsWorkspaceRemoveSchema, workspaceRemove);

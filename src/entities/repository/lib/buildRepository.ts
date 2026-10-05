@@ -5,8 +5,6 @@ import { fsBuildRepoId } from '@/shared/api';
 
 import type { Repository, RepositoryStatus } from '../model/types';
 
-const ICON_FILE = 'icon.png';
-
 const ID_HASH_PREFIX_LENGTH = 16;
 
 const deriveStatus = (status: GitStatus | null): RepositoryStatus => {
@@ -35,11 +33,6 @@ const fallbackId = (repoPath: string): string => {
   return (hex + hex + hex + hex).slice(0, ID_HASH_PREFIX_LENGTH);
 };
 
-export const defaultIconPath = (repoPath: string): string => {
-  const trimmed = repoPath.replace(/[/\\]+$/, '');
-  return `${trimmed}/${ICON_FILE}`;
-};
-
 export const buildRepository = async (
   repoPath: string,
   status: GitStatus | null,
@@ -48,7 +41,6 @@ export const buildRepository = async (
 ): Promise<Repository> => {
   const absolutePath = repoPath;
   const name = lastSegment(absolutePath);
-  const resolvedIconPath = iconPath ?? defaultIconPath(absolutePath);
 
   let id: string;
   try {
@@ -67,6 +59,6 @@ export const buildRepository = async (
     remoteUrl: null,
     sizeBytes: size ? size.totalBytes : null,
     gitBytes: size ? size.gitBytes : null,
-    iconPath: resolvedIconPath
+    iconPath
   };
 };

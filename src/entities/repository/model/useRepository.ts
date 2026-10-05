@@ -4,7 +4,8 @@ import { useQuery, type UseQueryResult } from '@tanstack/react-query';
 import type { GitStatus } from '@electron/shared/types/git';
 import type { RepoSize } from '@electron/shared/types/fs';
 
-import { buildRepository, defaultIconPath, detectRepos } from '../lib';
+import { buildRepository, detectRepos } from '../lib';
+import { getRepoIconPath } from '../api';
 
 import type { Repository } from './types';
 
@@ -77,16 +78,12 @@ export const useRepository = (repoPath: string | null): RepositoryQueryResult =>
         : DISABLED_REPOSITORY_KEY,
       queryFn: async ({ signal }: { signal?: AbortSignal }): Promise<Repository | null> => {
         if (!repoPath) return null;
-        const [status, size] = await Promise.all([
+        const [status, size, iconPath] = await Promise.all([
           fetchGitStatus(repoPath, signal).catch(() => null),
-          fetchRepoSize(repoPath, signal).catch(() => null)
+          fetchRepoSize(repoPath, signal).catch(() => null),
+          getRepoIconPath(repoPath).catch(() => null)
         ]);
-        return buildRepository(
-          repoPath,
-          status,
-          size,
-          defaultIconPath(repoPath)
-        );
+        return buildRepository(repoPath, status, size, iconPath);
       },
       enabled: Boolean(repoPath)
     }),
@@ -135,16 +132,12 @@ export const useRepositoryList = (
       }
       const repos = await Promise.all(
         paths.map(async (repoPath) => {
-          const [status, size] = await Promise.all([
+          const [status, size, iconPath] = await Promise.all([
             fetchGitStatus(repoPath, signal).catch(() => null),
-            fetchRepoSize(repoPath, signal).catch(() => null)
+            fetchRepoSize(repoPath, signal).catch(() => null),
+            getRepoIconPath(repoPath).catch(() => null)
           ]);
-          return buildRepository(
-            repoPath,
-            status,
-            size,
-            defaultIconPath(repoPath)
-          );
+          return buildRepository(repoPath, status, size, iconPath);
         })
       );
       return repos;

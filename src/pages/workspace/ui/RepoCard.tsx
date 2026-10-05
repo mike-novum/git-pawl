@@ -2,6 +2,7 @@ import { GitBranch } from 'lucide-react';
 import type { FC } from 'react';
 
 import { formatBytes } from '@/entities/workspace';
+import { RepositoryIcon } from '@/entities/repository';
 import type { Repository } from '@/entities/repository';
 import { StatusDot } from '@/shared/ui';
 import { cn } from '@/shared/lib/theme';
@@ -23,8 +24,11 @@ export const RepoCard: FC<RepoCardProps> = ({ repo, sizeBytes, onClick }) => (
       'duration-(--duration-base) ease-(--ease-fast)'
     )}
   >
-    <div className="flex items-start justify-between gap-2">
-      <span className="text-foreground truncate text-sm font-medium">{repo.name}</span>
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex min-w-0 items-center gap-2">
+        <RepositoryIcon iconPath={repo.iconPath} name={repo.name} size="sm" />
+        <span className="text-foreground truncate text-sm font-medium">{repo.name}</span>
+      </div>
       {repo.status !== 'unknown' ? (
         <StatusDot
           variant={statusToVariant(repo.status)}

@@ -25,7 +25,7 @@ vi.mock('./store', () => ({
   storeSet: vi.fn()
 }));
 
-import { getRepoSize, getWorkspaceSize, workspaceCreate, workspaceList } from './fs';
+import { getRepoSize, getWorkspaceSize, workspaceCreate, workspaceList, getRepoIconPath } from './fs';
 
 const WORKSPACE_KEY = 'workspaces';
 
@@ -209,5 +209,74 @@ describe('workspaces', () => {
 
     const created = await workspaceCreate({ path: target });
     expect(created.name).toBe('my-project');
+  });
+});
+
+describe('getRepoIconPath', () => {
+  it('returns null when no icon file is present', async () => {
+    const repoPath = path.join(tmpRoot, 'no-icon-repo');
+    await mkdir(repoPath, { recursive: true });
+
+    const result = await getRepoIconPath({ repoPath });
+
+    expect(result).toEqual({ iconPath: null });
+  });
+
+  it('returns icon.png path when icon.png is present', async () => {
+    const repoPath = path.join(tmpRoot, 'png-repo');
+    await mkdir(repoPath, { recursive: true });
+    await writeFile(path.join(repoPath, 'icon.png'), 'png-content');
+
+    const result = await getRepoIconPath({ repoPath });
+
+    expect(result.iconPath).toBe(path.join(repoPath, 'icon.png'));
+  });
+
+  it('returns icon.jpg path when icon.jpg is present', async () => {
+    const repoPath = path.join(tmpRoot, 'jpg-repo');
+    await mkdir(repoPath, { recursive: true });
+    await writeFile(path.join(repoPath, 'icon.jpg'), 'jpg-content');
+
+    const result = await getRepoIconPath({ repoPath });
+
+    expect(result.iconPath).toBe(path.join(repoPath, 'icon.jpg'));
+  });
+
+  it('returns icon.jpeg path when icon.jpeg is present', async () => {
+    const repoPath = path.join(tmpRoot, 'jpeg-repo');
+    await mkdir(repoPath, { recursive: true });
+    await writeFile(path.join(repoPath, 'icon.jpeg'), 'jpeg-content');
+
+    const result = await getRepoIconPath({ repoPath });
+
+    expect(result.iconPath).toBe(path.join(repoPath, 'icon.jpeg'));
+  });
+
+  it('prefers icon.png over icon.jpg when both exist', async () => {
+    const repoPath = path.join(tmpRoot, 'both-repo');
+    await mkdir(repoPath, { recursive: true });
+    await writeFile(path.join(repoPath, 'icon.png'), 'png');
+    await writeFile(path.join(repoPath, 'icon.jpg'), 'jpg');
+
+    const result = await getRepoIconPath({ repoPath });
+
+    expect(result.iconPath).toBe(path.join(repoPath, 'icon.png'));
+  });
+
+  it('returns null when the repository directory does not exist', async () => {
+    const result = await getRepoIconPath({
+      repoPath: path.join(tmpRoot, 'missing')
+    });
+
+    expect(result).toEqual({ iconPath: null });
+  });
+
+  it('returns null when icon entry is a directory not a file', async () => {
+    const repoPath = path.join(tmpRoot, 'dir-icon-repo');
+    await mkdir(path.join(repoPath, 'icon.png'), { recursive: true });
+
+    const result = await getRepoIconPath({ repoPath });
+
+    expect(result).toEqual({ iconPath: null });
   });
 });
