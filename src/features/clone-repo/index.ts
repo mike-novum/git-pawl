@@ -1,8 +1,9 @@
-export { CloneByUrlForm } from './ui';
+export { CloneByUrlForm, CloneDialog } from './ui';
 export type {
   ActiveWorkspace,
   CloneByUrlFormProps,
-  CloneByUrlFormValues
+  CloneByUrlFormValues,
+  CloneDialogProps
 } from './ui';
 
 export { useCloneRepo } from './model';

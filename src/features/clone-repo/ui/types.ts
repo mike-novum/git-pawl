@@ -13,3 +13,9 @@ export type CloneByUrlFormValues = {
   url: string;
   destPath: string;
 };
+
+export type CloneDialogProps = {
+  open: boolean;
+  onOpenChange: (next: boolean) => void;
+  activeWorkspace: ActiveWorkspace;
+};

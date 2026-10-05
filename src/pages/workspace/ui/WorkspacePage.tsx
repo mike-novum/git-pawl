@@ -3,6 +3,7 @@ import { Settings } from 'lucide-react';
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom';
 
 import { CreateWorkspaceDialog } from '@/features/workspace-create';
+import { CloneDialog } from '@/features/clone-repo';
 import { useAddExistingRepo } from '@/features/add-existing-repo';
 import { useRepoSearch } from '@/features/search-repos';
 import {
@@ -41,6 +42,7 @@ export const WorkspacePage: FC = () => {
   const { query, setQuery, results: visibleRepos } = useRepoSearch(repos);
 
   const [createOpen, setCreateOpen] = useState(false);
+  const [cloneOpen, setCloneOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [grouped, setGrouped] = useLocalStorageBool('workspace-view-mode', true);
   const { mutate: addExistingRepo } = useAddExistingRepo();
@@ -75,8 +77,8 @@ export const WorkspacePage: FC = () => {
   }, [addExistingRepo, workspaceId]);
 
   const handleClone = useCallback((): void => {
-    navigate('/clone');
-  }, [navigate]);
+    setCloneOpen(true);
+  }, []);
 
   const handleRepoClick = useCallback(
     (repo: Repository): void => {
@@ -146,6 +148,11 @@ export const WorkspacePage: FC = () => {
       <>
         <div className="p-8 text-sm text-muted-foreground">Workspace not found.</div>
         <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
+        <CloneDialog
+          open={cloneOpen}
+          onOpenChange={setCloneOpen}
+          activeWorkspace={null}
+        />
       </>
     );
   }
@@ -186,6 +193,15 @@ export const WorkspacePage: FC = () => {
       </div>
 
       <CreateWorkspaceDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <CloneDialog
+        open={cloneOpen}
+        onOpenChange={setCloneOpen}
+        activeWorkspace={
+          workspace
+            ? { id: workspace.id, name: workspace.name, path: workspace.path }
+            : null
+        }
+      />
       <WorkspaceSettingsDrawer
         workspace={workspace}
         open={settingsOpen}
