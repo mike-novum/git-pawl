@@ -1,5 +1,6 @@
 import type { FC } from 'react';
 
+import { OpenInAgent } from '@/features/open-in-agent';
 import { OpenInFinder } from '@/features/open-in-finder';
 import { OpenInTerminal } from '@/features/open-in-terminal';
 import { WorkspaceIcon } from '@/entities/workspace';
@@ -15,6 +16,7 @@ export const WorkspaceHero: FC<WorkspaceHeroProps> = ({ workspace, iconPath }) =
       </h1>
     </div>
     <div className="flex items-center gap-1">
+      <OpenInAgent path={workspace.path} />
       <OpenInFinder path={workspace.path} />
       <OpenInTerminal path={workspace.path} />
     </div>

@@ -4,7 +4,8 @@ export type {
   SettingsFormProps,
   GlobalSettingsValues,
   ThemePreference,
-  DiffViewMode
+  DiffViewMode,
+  AgentId
 } from './ui';
 
 export { useGlobalSettings, DEFAULT_SETTINGS } from './model';

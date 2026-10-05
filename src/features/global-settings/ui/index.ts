@@ -5,5 +5,6 @@ export type {
   SettingsFormProps,
   GlobalSettingsValues,
   ThemePreference,
-  DiffViewMode
+  DiffViewMode,
+  AgentId
 } from './types';

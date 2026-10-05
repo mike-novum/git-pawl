@@ -259,6 +259,13 @@ export const shellOpenFinderSchema = z.object({
   path: z.string().min(1)
 });
 
+export const shellDetectAgentsSchema = z.undefined();
+
+export const shellOpenAgentSchema = z.object({
+  path: z.string().min(1),
+  agentId: z.string().min(1)
+});
+
 export type NoArgs = z.infer<typeof noArgsSchema>;
 export type StoreGetArgs = z.infer<typeof storeGetSchema>;
 export type StoreSetArgs = z.infer<typeof storeSetSchema>;
@@ -310,3 +317,17 @@ export type GithubListReposArgs = z.infer<typeof githubListReposSchema>;
 export type GitlabListReposArgs = z.infer<typeof gitlabListReposSchema>;
 export type ShellOpenTerminalArgs = z.infer<typeof shellOpenTerminalSchema>;
 export type ShellOpenFinderArgs = z.infer<typeof shellOpenFinderSchema>;
+export type ShellOpenAgentArgs = z.infer<typeof shellOpenAgentSchema>;
+
+export const agentDescriptorSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  command: z.string(),
+  available: z.boolean(),
+  version: z.string().optional()
+});
+
+export const shellDetectAgentsResultSchema = z.array(agentDescriptorSchema);
+
+export type AgentDescriptor = z.infer<typeof agentDescriptorSchema>;
+export type ShellDetectAgentsResult = z.infer<typeof shellDetectAgentsResultSchema>;

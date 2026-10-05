@@ -56,6 +56,16 @@ export type FsReadImageDataUrlArgs = { path: string };
 export type ShellOpenTerminalArgs = { path: string };
 export type ShellOpenFinderArgs = { path: string };
 
+export type AgentDescriptor = {
+  id: string;
+  name: string;
+  command: string;
+  available: boolean;
+  version?: string;
+};
+
+export type ShellOpenAgentArgs = { path: string; agentId: string };
+
 export type ApiSchema = {
   getAppInfo: () => Promise<AppInfo>;
 
@@ -113,6 +123,8 @@ export type ApiSchema = {
 
   shellOpenTerminal: (args: ShellOpenTerminalArgs) => Promise<void>;
   shellOpenFinder: (args: ShellOpenFinderArgs) => Promise<void>;
+  shellDetectAgents: () => Promise<AgentDescriptor[]>;
+  shellOpenAgent: (args: ShellOpenAgentArgs) => Promise<void>;
 };
 const invoke = (channel: string, args?: unknown): Promise<unknown> =>
   ipcRenderer.invoke(channel, args);
@@ -176,7 +188,11 @@ const api: ApiSchema = {
   shellOpenTerminal: (args) =>
     invoke('shell:open-terminal', args) as Promise<void>,
   shellOpenFinder: (args) =>
-    invoke('shell:open-finder', args) as Promise<void>
+    invoke('shell:open-finder', args) as Promise<void>,
+  shellDetectAgents: () =>
+    invoke('shell:detect-agents') as Promise<AgentDescriptor[]>,
+  shellOpenAgent: (args) =>
+    invoke('shell:open-agent', args) as Promise<void>
 };
 
 contextBridge.exposeInMainWorld('api', api);

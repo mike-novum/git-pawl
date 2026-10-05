@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type {
+  AgentId,
   DiffViewMode,
   GlobalSettingsValues,
   ThemePreference
@@ -11,7 +12,8 @@ export const DEFAULT_SETTINGS: GlobalSettingsValues = {
   editor: '',
   autoFetchInterval: 5,
   diffViewMode: 'unified',
-  confirmDestructiveOps: true
+  confirmDestructiveOps: true,
+  defaultAgent: 'claude'
 };
 
 const STORAGE_KEY = 'git-pawl.global-settings';
@@ -22,6 +24,14 @@ const isThemePreference = (value: unknown): value is ThemePreference =>
 
 const isDiffViewMode = (value: unknown): value is DiffViewMode =>
   value === 'unified' || value === 'split';
+
+const isAgentId = (value: unknown): value is AgentId =>
+  value === 'claude' ||
+  value === 'cursor' ||
+  value === 'opencode' ||
+  value === 'kilo' ||
+  value === 'kimi' ||
+  value === 'qwen';
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -51,7 +61,10 @@ const sanitizeSettings = (
     confirmDestructiveOps:
       typeof raw.confirmDestructiveOps === 'boolean'
         ? raw.confirmDestructiveOps
-        : fallback.confirmDestructiveOps
+        : fallback.confirmDestructiveOps,
+    defaultAgent: isAgentId(raw.defaultAgent)
+      ? raw.defaultAgent
+      : fallback.defaultAgent
   };
 };
 

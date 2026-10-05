@@ -46,6 +46,7 @@ import {
   gitTagSchema,
   githubListReposSchema,
   gitlabListReposSchema,
+  shellOpenAgentSchema,
   shellOpenFinderSchema,
   shellOpenTerminalSchema
 } from '../shared/schemas';
@@ -100,6 +101,7 @@ import {
   listGitLabAccounts,
   listGitLabRepos
 } from './services/git-host/gitlab';
+import { detectAgents, openAgent } from './services/agent';
 import { openInFinder, openTerminal } from './services/shell';
 
 const isDev = !app.isPackaged;
@@ -274,6 +276,8 @@ const registerIpcHandlers = (): void => {
 
   safeHandle(IPC_CHANNELS.SHELL_OPEN_TERMINAL, shellOpenTerminalSchema, openTerminal);
   safeHandle(IPC_CHANNELS.SHELL_OPEN_FINDER, shellOpenFinderSchema, openInFinder);
+  safeHandleNoArgs(IPC_CHANNELS.SHELL_DETECT_AGENTS, detectAgents);
+  safeHandle(IPC_CHANNELS.SHELL_OPEN_AGENT, shellOpenAgentSchema, openAgent);
 };
 
 app.whenReady().then(async () => {

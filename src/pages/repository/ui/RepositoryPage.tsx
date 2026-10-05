@@ -10,6 +10,7 @@ import { useRepository } from '@/entities/repository';
 import { useStashList } from '@/entities/stash';
 import { useTags } from '@/entities/tag';
 import { useCommit } from '@/features/commit-changes';
+import { OpenInAgent } from '@/features/open-in-agent';
 import { OpenInFinder } from '@/features/open-in-finder';
 import { OpenInTerminal } from '@/features/open-in-terminal';
 import { FetchButton } from '@/features/git-fetch';
@@ -141,6 +142,7 @@ export const RepositoryPage: FC = () => {
           </div>
         </div>
         <div className="flex items-center gap-1">
+          <OpenInAgent path={repoPath} />
           <OpenInFinder path={repoPath} />
           <OpenInTerminal path={repoPath} />
           <FetchButton

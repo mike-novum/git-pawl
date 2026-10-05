@@ -38,7 +38,9 @@ export {
   fsScanRepos,
   fsReadImageDataUrl,
   shellOpenTerminal,
-  shellOpenFinder
+  shellOpenFinder,
+  shellDetectAgents,
+  shellOpenAgent
 } from './ipc';
 
 export type { ApiSchema, AppInfo, IpcApi } from './ipc';

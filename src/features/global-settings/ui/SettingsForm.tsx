@@ -28,7 +28,15 @@ const formSchema = z.object({
     .min(AUTO_FETCH_MIN, `Minimum ${AUTO_FETCH_MIN} minute`)
     .max(AUTO_FETCH_MAX, `Maximum ${AUTO_FETCH_MAX} minutes`),
   diffViewMode: z.union([z.literal('unified'), z.literal('split')]),
-  confirmDestructiveOps: z.boolean()
+  confirmDestructiveOps: z.boolean(),
+  defaultAgent: z.union([
+    z.literal('claude'),
+    z.literal('cursor'),
+    z.literal('opencode'),
+    z.literal('kilo'),
+    z.literal('kimi'),
+    z.literal('qwen')
+  ])
 });
 
 const zodResolver =
@@ -61,6 +69,18 @@ const DIFF_OPTIONS = [
   { value: 'split', label: 'Side by side' }
 ] as const;
 
+const AGENT_OPTIONS = [
+  { value: 'claude', label: 'Claude' },
+  { value: 'cursor', label: 'Cursor' },
+  { value: 'opencode', label: 'OpenCode' },
+  { value: 'kilo', label: 'Kilo' },
+  { value: 'kimi', label: 'Kimi' },
+  { value: 'qwen', label: 'Qwen' }
+] as const;
+
+const isAgentOptionValue = (value: string): value is (typeof AGENT_OPTIONS)[number]['value'] =>
+  AGENT_OPTIONS.some((option) => option.value === value);
+
 export const SettingsForm: FC<SettingsFormProps> = ({ onSuccess }) => {
   const toast = useToast();
   const { values, setValues } = useGlobalSettings();
@@ -80,6 +100,7 @@ export const SettingsForm: FC<SettingsFormProps> = ({ onSuccess }) => {
   const watchedTheme = watch('theme');
   const watchedDiff = watch('diffViewMode');
   const watchedConfirm = watch('confirmDestructiveOps');
+  const watchedAgent = watch('defaultAgent');
 
   useEffect(() => {
     reset(values);
@@ -95,7 +116,8 @@ export const SettingsForm: FC<SettingsFormProps> = ({ onSuccess }) => {
       editor: next.editor.trim(),
       autoFetchInterval: next.autoFetchInterval,
       diffViewMode: next.diffViewMode,
-      confirmDestructiveOps: next.confirmDestructiveOps
+      confirmDestructiveOps: next.confirmDestructiveOps,
+      defaultAgent: next.defaultAgent
     });
     toast.success({ title: 'Settings saved' });
     onSuccess?.();
@@ -219,6 +241,32 @@ export const SettingsForm: FC<SettingsFormProps> = ({ onSuccess }) => {
           <Switch.Thumb />
         </Switch.Root>
       </label>
+
+      <div className="flex flex-col gap-1.5">
+        <label
+          htmlFor="settings-default-agent"
+          className="text-foreground text-xs font-medium"
+        >
+          Default agent
+        </label>
+        <Select
+          options={AGENT_OPTIONS.map((option) => ({
+            value: option.value,
+            label: option.label
+          }))}
+          value={watchedAgent}
+          onValueChange={(next) => {
+            if (typeof next === 'string' && isAgentOptionValue(next)) {
+              setValue('defaultAgent', next, { shouldDirty: true });
+            }
+          }}
+          placeholder="Pick agent"
+          className="w-full"
+        />
+        <span className="text-muted-foreground text-[11px]">
+          Launched when you click the agent button. Right-click to pick another.
+        </span>
+      </div>
 
       <div className="flex justify-end gap-2 pt-1">
         <Button
