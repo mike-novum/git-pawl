@@ -3,6 +3,7 @@ import type { FC } from 'react';
 
 import {
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
@@ -23,29 +24,31 @@ export const AgentMenu: FC<AgentMenuProps> = ({
     <DropdownMenuPortal>
       <DropdownMenuPositioner sideOffset={6} align="end">
         <DropdownMenuContent className="min-w-48">
-          <DropdownMenuLabel>Open with</DropdownMenuLabel>
-          {agents.map((agent) => {
-            const isDefault = agent.id === defaultAgentId;
-            return (
-              <DropdownMenuItem
-                key={agent.id}
-                disabled={!agent.available}
-                onClick={() => onSelect(agent.id)}
-              >
-                <Bot
-                  aria-hidden="true"
-                  className="text-muted-foreground size-4"
-                />
-                <span className="flex-1">Open in {agent.name}</span>
-                {isDefault ? (
-                  <Star
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Open with</DropdownMenuLabel>
+            {agents.map((agent) => {
+              const isDefault = agent.id === defaultAgentId;
+              return (
+                <DropdownMenuItem
+                  key={agent.id}
+                  disabled={!agent.available}
+                  onClick={() => onSelect(agent.id)}
+                >
+                  <Bot
                     aria-hidden="true"
-                    className="text-primary size-3.5"
+                    className="text-muted-foreground size-4"
                   />
-                ) : null}
-              </DropdownMenuItem>
-            );
-          })}
+                  <span className="flex-1">Open in {agent.name}</span>
+                  {isDefault ? (
+                    <Star
+                      aria-hidden="true"
+                      className="text-primary size-3.5"
+                    />
+                  ) : null}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenuPositioner>
     </DropdownMenuPortal>
