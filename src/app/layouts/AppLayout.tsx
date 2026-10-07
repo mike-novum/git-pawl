@@ -14,6 +14,7 @@ import type { AppLayoutProps } from './types';
 
 const HOMEPAGE_PATH = '/workspaces';
 const REPOSITORY_PATH_PREFIX = '/repos/';
+const SETTINGS_PATH = '/settings';
 
 const WORKSPACE_ID_PATTERN = /^\/workspaces\/([^/]+)/;
 
@@ -47,8 +48,15 @@ export const AppLayout: FC<AppLayoutProps> = ({ children }) => {
   const [headerAction, setHeaderAction] = useState<ReactNode>(null);
 
   const isHome = location.pathname === HOMEPAGE_PATH;
+  const isSettings = location.pathname.startsWith(SETTINGS_PATH);
   const isRepository = location.pathname.startsWith(REPOSITORY_PATH_PREFIX);
-  const variant = isHome ? 'home' : isRepository ? 'repository' : 'workspace';
+  const variant = isHome
+    ? 'home'
+    : isSettings
+      ? 'settings'
+      : isRepository
+        ? 'repository'
+        : 'workspace';
   const repoPath = isRepository ? decodeRepoId(params.id) : null;
   const repoName = lastPathSegment(repoPath);
   const selectorWorkspaceId =

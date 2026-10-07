@@ -1,36 +1,37 @@
-import type { FC } from 'react';
+import { useState, type FC } from 'react';
 
-import { SettingsForm } from '@/features/global-settings';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui';
+import {
+  SettingsAgentsTab,
+  SettingsGeneralTab,
+  SettingsGitTab
+} from '@/features/global-settings/ui';
 
-import type { SettingsPageProps } from '../types';
+import { SettingsSideNav } from './SettingsSideNav';
+import type { SettingsPageProps, SettingsTab } from '../types';
 
 export const SettingsPage: FC<SettingsPageProps> = () => {
+  const [activeTab, setActiveTab] = useState<SettingsTab>('general');
+
   return (
-    <div className="flex h-full w-full flex-col gap-4 overflow-y-auto p-6">
-      <header className="flex items-center justify-between">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-foreground text-2xl font-semibold tracking-tight">
-            Settings
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Global preferences for git-pawl. Saved locally and applied to all
-            repositories.
-          </p>
-        </div>
+    <div className="flex h-full w-full flex-col gap-4 overflow-hidden p-6">
+      <header className="flex flex-col gap-1">
+        <h1 className="text-foreground text-2xl font-semibold tracking-tight">
+          Settings
+        </h1>
+        <p className="text-muted-foreground text-sm">
+          Global preferences for git-pawl. Saved locally and applied to all
+          repositories.
+        </p>
       </header>
 
-      <Card className="max-w-2xl">
-        <CardHeader>
-          <CardTitle>Application</CardTitle>
-          <CardDescription>
-            Theme, editor, fetch cadence and diff preferences.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <SettingsForm />
-        </CardContent>
-      </Card>
+      <div className="flex min-h-0 flex-1 gap-6">
+        <SettingsSideNav activeTab={activeTab} onTabChange={setActiveTab} />
+        <div className="flex-1 overflow-y-auto">
+          {activeTab === 'general' ? <SettingsGeneralTab /> : null}
+          {activeTab === 'git' ? <SettingsGitTab /> : null}
+          {activeTab === 'agents' ? <SettingsAgentsTab /> : null}
+        </div>
+      </div>
     </div>
   );
 };

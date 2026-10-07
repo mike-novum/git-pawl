@@ -21,3 +21,15 @@ export type SettingsDialogProps = {
 export type SettingsFormProps = {
   onSuccess?: () => void;
 };
+
+export type SettingsGeneralValues = Pick<
+  GlobalSettingsValues,
+  'theme' | 'diffViewMode' | 'confirmDestructiveOps'
+>;
+
+export type SettingsGitValues = Pick<
+  GlobalSettingsValues,
+  'editor' | 'autoFetchInterval'
+>;
+
+export type SettingsAgentsValues = Pick<GlobalSettingsValues, 'defaultAgent'>;

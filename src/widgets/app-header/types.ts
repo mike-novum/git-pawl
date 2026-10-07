@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-export type AppHeaderVariant = 'home' | 'workspace' | 'repository';
+export type AppHeaderVariant = 'home' | 'workspace' | 'repository' | 'settings';
 
 export type AppHeaderProps = {
   variant: AppHeaderVariant;
