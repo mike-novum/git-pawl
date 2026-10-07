@@ -3,11 +3,6 @@ import type { Workspace } from '@/entities/workspace';
 
 export type WorkspacePageProps = Record<string, never>;
 
-export type WorkspaceHeroProps = {
-  workspace: Workspace;
-  iconPath: string | null;
-};
-
 export type WorkspaceToolbarProps = {
   path: string;
   query: string;

@@ -11,8 +11,7 @@ import {
   useRemoveWorkspace,
   useSetWorkspaceIcon,
   useWorkspaceById,
-  useWorkspaceExtraRepoPaths,
-  useWorkspaceIcon
+  useWorkspaceExtraRepoPaths
 } from '@/entities/workspace';
 import type { Repository } from '@/entities/repository';
 import { useRepositoryList } from '@/entities/repository';
@@ -22,7 +21,6 @@ import { useLocalStorageBool } from '@/shared/lib/framework';
 
 import { EmptyWorkspace } from './EmptyWorkspace';
 import { RepoGroup } from './RepoGroup';
-import { WorkspaceHero } from './WorkspaceHero';
 import { WorkspaceSettingsDrawer } from './WorkspaceSettingsDrawer';
 import { WorkspaceToolbar } from './WorkspaceToolbar';
 
@@ -48,7 +46,6 @@ export const WorkspacePage: FC = () => {
   const { mutate: addExistingRepo } = useAddExistingRepo();
   const { mutate: removeWorkspace } = useRemoveWorkspace();
   const { mutate: setWorkspaceIcon } = useSetWorkspaceIcon();
-  const { data: iconPath = null } = useWorkspaceIcon(workspaceId);
 
   useEffect(() => {
     const handleClick = (): void => {
@@ -160,8 +157,6 @@ export const WorkspacePage: FC = () => {
   return (
     <>
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 p-8">
-        <WorkspaceHero workspace={workspace} iconPath={iconPath} />
-
         <WorkspaceToolbar
           path={workspace.path}
           query={query}
