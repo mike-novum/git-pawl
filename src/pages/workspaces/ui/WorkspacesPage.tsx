@@ -72,7 +72,7 @@ export const WorkspacesPage: FC = () => {
           </div>
           <Button type="button" onClick={handleCreate}>
             <Plus aria-hidden="true" className="size-4" />
-            New
+            Add workspace
           </Button>
         </header>
 
