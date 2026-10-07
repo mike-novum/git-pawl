@@ -5,7 +5,7 @@ import { BICUBIC, createICNS } from 'png2icons';
 
 const root = process.cwd();
 
-const sourceSvgPath = join(root, 'assets', 'icon.svg');
+const sourcePngPath = join(root, 'icons', 'git-pawl-icon.png');
 const buildDir = join(root, 'build');
 const masterPngPath = join(buildDir, 'icon-master.png');
 const standardPngPath = join(buildDir, 'icon.png');
@@ -19,10 +19,10 @@ const ensureDir = (path: string): void => {
 };
 
 const sourceNewerThanOutputs = (): boolean => {
-  if (!existsSync(sourceSvgPath)) {
-    throw new Error(`Source SVG not found: ${sourceSvgPath}`);
+  if (!existsSync(sourcePngPath)) {
+    throw new Error(`Source PNG not found: ${sourcePngPath}`);
   }
-  const sourceMtime = statSync(sourceSvgPath).mtimeMs;
+  const sourceMtime = statSync(sourcePngPath).mtimeMs;
   const targets = [masterPngPath, standardPngPath, icnsPath];
   return targets.some((target) => !existsSync(target) || statSync(target).mtimeMs < sourceMtime);
 };
@@ -30,15 +30,15 @@ const sourceNewerThanOutputs = (): boolean => {
 const buildAll = async (): Promise<void> => {
   ensureDir(dirname(masterPngPath));
 
-  const svgBuffer = readFileSync(sourceSvgPath);
+  const pngBuffer = readFileSync(sourcePngPath);
 
-  await sharp(svgBuffer)
-    .resize(masterSize, masterSize, { fit: 'contain', background: { r: 255, g: 251, b: 245, alpha: 1 } })
+  await sharp(pngBuffer)
+    .resize(masterSize, masterSize, { fit: 'cover' })
     .png()
     .toFile(masterPngPath);
 
-  await sharp(svgBuffer)
-    .resize(standardSize, standardSize, { fit: 'contain', background: { r: 255, g: 251, b: 245, alpha: 1 } })
+  await sharp(pngBuffer)
+    .resize(standardSize, standardSize, { fit: 'cover' })
     .png()
     .toFile(standardPngPath);
 
