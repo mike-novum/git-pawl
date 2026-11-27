@@ -1,8 +1,9 @@
 import type { FC, ReactElement, ReactNode } from 'react';
-import { Cat } from 'lucide-react';
+import { Cat, PanelLeftClose, PanelLeftOpen, Search } from 'lucide-react';
 import { useLocation } from 'react-router-dom';
 
 import { cn } from '@/shared/lib/theme';
+import { Kbd } from '@/shared/ui';
 import { ThemeToggle } from '@/shared/ui/theme-toggle';
 
 import type { AppHeaderProps } from '../types';
@@ -26,15 +27,17 @@ const SettingsIcon = (): ReactElement => (
   </svg>
 );
 
-const IconButton: FC<{ onClick: () => void; label: string; children: ReactNode }> = ({
-  onClick,
-  label,
-  children
-}) => (
+const IconButton: FC<{
+  onClick: () => void;
+  label: string;
+  title?: string;
+  children: ReactNode;
+}> = ({ onClick, label, title, children }) => (
   <button
     type="button"
     onClick={onClick}
     aria-label={label}
+    title={title}
     className="text-muted-foreground hover:bg-surface-elevated hover:text-foreground flex size-8 items-center justify-center rounded-md transition-colors duration-(--duration-fast)"
   >
     {children}
@@ -46,7 +49,10 @@ export const AppHeader: FC<AppHeaderProps> = ({
   leftSlot,
   metaSlot,
   rightSlot,
-  hideSettings = false
+  hideSettings = false,
+  sidebarOpen = false,
+  onToggleSidebar,
+  onOpenCommandPalette
 }) => {
   const location = useLocation();
   const isHome = HOMEPAGE_PATHS.has(location.pathname) || variant === 'home';
@@ -64,6 +70,19 @@ export const AppHeader: FC<AppHeaderProps> = ({
       )}
     >
       <div className="flex min-w-0 items-center gap-2">
+        {onToggleSidebar ? (
+          <IconButton
+            onClick={onToggleSidebar}
+            label={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
+            title="Toggle sidebar (⌘B)"
+          >
+            {sidebarOpen ? (
+              <PanelLeftClose aria-hidden="true" className="size-4" />
+            ) : (
+              <PanelLeftOpen aria-hidden="true" className="size-4" />
+            )}
+          </IconButton>
+        ) : null}
         {isHome ? (
           <div className="flex items-center gap-2">
             <Cat aria-hidden="true" className="text-primary size-5" />
@@ -75,6 +94,19 @@ export const AppHeader: FC<AppHeaderProps> = ({
         {metaSlot}
       </div>
       <div className="flex items-center gap-1">
+        {onOpenCommandPalette ? (
+          <button
+            type="button"
+            onClick={onOpenCommandPalette}
+            aria-label="Open command palette"
+            title="Command palette (⌘K)"
+            className="border-border bg-surface-elevated/60 text-muted-foreground hover:bg-surface-elevated hover:text-foreground mr-1 flex h-8 items-center gap-2 rounded-md border px-2.5 text-xs transition-colors duration-(--duration-fast)"
+          >
+            <Search aria-hidden="true" className="size-3.5 shrink-0" />
+            <span>Search</span>
+            <Kbd>⌘K</Kbd>
+          </button>
+        ) : null}
         {rightSlot}
         {showGlobalSettings ? (
           <IconButton onClick={handleSettings} label="Settings">

@@ -18,7 +18,7 @@ import { PullButton } from '@/features/git-pull';
 import { PushButton } from '@/features/git-push';
 import { toCommitNodes } from '@/pages/repository';
 import { gitLog } from '@/shared/api';
-import { Empty, Spinner, useToast } from '@/shared/ui';
+import { Empty, ResizablePanel, Spinner, useToast } from '@/shared/ui';
 import { RepoDetailPanel } from '@/widgets/repo-detail-panel';
 import { computeLayout, RepoGraph } from '@/widgets/repo-graph-vertical';
 import { RepoTree } from '@/widgets/repo-tree';
@@ -153,57 +153,85 @@ export const RepositoryPage: FC = () => {
           <PullButton
             repoPath={repoPath}
             branchName={branchQuery.data?.name ?? undefined}
-            variant="primary"
+            variant={behind > 0 && ahead === 0 ? 'primary' : 'secondary'}
+            count={behind}
           />
           <PushButton
             repoPath={repoPath}
             branchName={branchQuery.data?.name ?? undefined}
-            variant="primary"
+            variant={ahead > 0 ? 'primary' : 'secondary'}
+            count={ahead}
           />
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <RepoTree
-          repoPath={repoPath}
-          selectedCommit={selectedHash}
-          onSelectCommit={setSelectedHash}
-          onSwitchBranch={handleSwitchBranch}
-        />
-        <RepoGraph
-          commits={commits}
-          layout={commitLayout}
-          selectedHash={selectedHash}
-          onSelect={setSelectedHash}
-          isLoading={logQuery.isLoading}
-          isError={logQuery.isError}
-          className="flex-1"
-        />
-        <RepoDetailPanel
-          commit={selectedCommit}
-          repoPath={repoPath}
-          onCopyHash={handleCopyHash}
-          onCreatePatch={() =>
-            toast.info({ title: 'Coming soon', description: 'Patch is not implemented yet' })
-          }
-          onRevert={() =>
-            toast.info({ title: 'Coming soon', description: 'Revert is not implemented yet' })
-          }
-          onCherryPick={() =>
-            toast.info({
-              title: 'Coming soon',
-              description: 'Cherry-pick is not implemented yet'
-            })
-          }
-          onResetToHere={() =>
-            toast.info({
-              title: 'Coming soon',
-              description: 'Reset to here is not implemented yet'
-            })
-          }
-          onCommit={handleCommit}
-        />
-      </div>
+      <ResizablePanel.PanelGroup
+        id="repository-page-panels"
+        orientation="horizontal"
+        className="min-h-0 flex-1"
+      >
+        <ResizablePanel.Panel
+          id="repo-tree-panel"
+          defaultSize="20%"
+          minSize="14%"
+          maxSize="35%"
+        >
+          <RepoTree
+            repoPath={repoPath}
+            selectedCommit={selectedHash}
+            onSelectCommit={setSelectedHash}
+            onSwitchBranch={handleSwitchBranch}
+          />
+        </ResizablePanel.Panel>
+        <ResizablePanel.PanelResizeHandle aria-label="Resize repository tree" />
+        <ResizablePanel.Panel
+          id="repo-graph-panel"
+          defaultSize="45%"
+          minSize="25%"
+        >
+          <RepoGraph
+            commits={commits}
+            layout={commitLayout}
+            selectedHash={selectedHash}
+            onSelect={setSelectedHash}
+            isLoading={logQuery.isLoading}
+            isError={logQuery.isError}
+            className="flex-1"
+          />
+        </ResizablePanel.Panel>
+        <ResizablePanel.PanelResizeHandle aria-label="Resize commit details" />
+        <ResizablePanel.Panel
+          id="repo-detail-panel"
+          defaultSize="35%"
+          minSize="22%"
+          maxSize="55%"
+        >
+          <RepoDetailPanel
+            commit={selectedCommit}
+            repoPath={repoPath}
+            onCopyHash={handleCopyHash}
+            onCreatePatch={() =>
+              toast.info({ title: 'Coming soon', description: 'Patch is not implemented yet' })
+            }
+            onRevert={() =>
+              toast.info({ title: 'Coming soon', description: 'Revert is not implemented yet' })
+            }
+            onCherryPick={() =>
+              toast.info({
+                title: 'Coming soon',
+                description: 'Cherry-pick is not implemented yet'
+              })
+            }
+            onResetToHere={() =>
+              toast.info({
+                title: 'Coming soon',
+                description: 'Reset to here is not implemented yet'
+              })
+            }
+            onCommit={handleCommit}
+          />
+        </ResizablePanel.Panel>
+      </ResizablePanel.PanelGroup>
     </div>
   );
 };

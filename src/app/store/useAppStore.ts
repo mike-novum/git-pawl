@@ -28,5 +28,13 @@ export const useAppStore = createPersistedStore<AppState>('app', (set) => ({
     set((state) => ({
       workspaceCounters: { ...state.workspaceCounters, [id]: counters }
     }));
+  },
+
+  sidebarOpen: true,
+  setSidebarOpen: (open) => {
+    set({ sidebarOpen: open });
+  },
+  toggleSidebar: () => {
+    set((state) => ({ sidebarOpen: !state.sidebarOpen }));
   }
 }));

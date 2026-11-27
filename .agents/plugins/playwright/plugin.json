@@ -1,0 +1,5 @@
+{
+  "name": "playwright",
+  "description": "Browser automation and end-to-end testing MCP plugin (Playwright & Chrome DevTools)",
+  "author": "Microsoft / Google DevTools"
+}

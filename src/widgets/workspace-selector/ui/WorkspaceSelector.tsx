@@ -35,7 +35,7 @@ export const WorkspaceSelector: FC<WorkspaceSelectorProps> = ({
   const [createOpen, setCreateOpen] = useState(false);
 
   const currentWorkspace =
-    active ?? workspaces.find((w) => w.id === workspaceId) ?? null;
+    workspaces.find((w) => w.id === workspaceId) ?? active ?? null;
 
   const handleSwitch = (id: string, name: string): void => {
     if (id === workspaceId) return;

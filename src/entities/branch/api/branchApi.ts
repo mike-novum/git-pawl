@@ -71,7 +71,8 @@ export const listBranches = (repoPath: string): Promise<BranchListData> =>
 export const buildBranches = (
   rawBranches: BranchListData | null | undefined,
   currentBranchName: string | null,
-  detached: boolean
+  detached: boolean,
+  currentUpstream?: BranchUpstream
 ): Branch[] => {
   if (!Array.isArray(rawBranches) || rawBranches.length === 0) return [];
 
@@ -82,12 +83,17 @@ export const buildBranches = (
       typeof rawBranch === 'string' ? [] : rawBranch.commits ?? [];
     const parsed = splitMarker(name);
     const isCurrent = !detached && parsed.name === currentBranchName;
+    const upstream =
+      parsed.upstream ??
+      ((parsed.current || isCurrent) && currentUpstream
+        ? currentUpstream
+        : undefined);
     return {
       name: parsed.name,
       target,
       current: parsed.current || isCurrent,
       commits,
-      upstream: parsed.upstream
+      upstream
     } satisfies Branch;
   });
 
@@ -97,7 +103,7 @@ export const buildBranches = (
       target: '',
       current: true,
       commits: [],
-      upstream: undefined
+      upstream: currentUpstream
     });
   }
 
@@ -112,7 +118,7 @@ export const fetchBranches = async (
   const [namesResult, statusResult] = await Promise.allSettled([
     listBranches(repoPath),
     gitStatus({ repoPath }) as Promise<{
-      branch: { current?: string; detached: boolean };
+      branch: { current?: string; detached: boolean; upstream?: BranchUpstream };
     }>
   ]);
 
@@ -123,7 +129,7 @@ export const fetchBranches = async (
     statusResult.status === 'fulfilled' ? statusResult.value : null;
 
   const current = status ? deriveCurrent(status) : { name: null, detached: false };
-  return buildBranches(names, current.name, current.detached);
+  return buildBranches(names, current.name, current.detached, status?.branch?.upstream);
 };
 
 export const fetchCurrentBranch = async (

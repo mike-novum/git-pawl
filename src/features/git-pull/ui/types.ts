@@ -1,4 +1,4 @@
-export type PullButtonVariant = 'primary' | 'secondary';
+export type PullButtonVariant = 'primary' | 'secondary' | 'outline';
 
 export type PullButtonProps = {
   repoPath: string;
@@ -6,4 +6,5 @@ export type PullButtonProps = {
   variant?: PullButtonVariant;
   disabled?: boolean;
   className?: string;
+  count?: number;
 };

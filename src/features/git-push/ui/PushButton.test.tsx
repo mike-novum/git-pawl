@@ -110,6 +110,30 @@ describe('PushButton', () => {
     expect(button.getAttribute('data-variant')).toBe('primary');
   });
 
+  it('maps outline variant to secondary on the underlying Button', () => {
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <PushButton repoPath="/tmp/repo" variant="outline" />
+      </Wrapper>
+    );
+
+    const button = screen.getByRole('button', { name: /push/i });
+    expect(button.getAttribute('data-variant')).toBe('secondary');
+  });
+
+  it('renders ahead count badge with contrast styling on primary variant', () => {
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <PushButton repoPath="/tmp/repo" variant="primary" count={3} />
+      </Wrapper>
+    );
+
+    const badge = screen.getByText('↑3');
+    expect(badge).toHaveClass('bg-primary-foreground/20', 'text-primary-foreground');
+  });
+
   it('calls mutate on click with the repoPath', async () => {
     const Wrapper = createWrapper();
     render(

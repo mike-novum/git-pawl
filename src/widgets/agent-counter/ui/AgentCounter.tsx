@@ -32,7 +32,7 @@ export const AgentCounter: FC<AgentCounterProps> = ({ className }) => {
           : 'No CLI agents detected — open settings'
       }
       className={cn(
-        'fixed bottom-4 left-4 z-40 transition-opacity',
+        'fixed bottom-4 right-4 z-40 transition-opacity',
         'duration-(--duration-fast)',
         className
       )}

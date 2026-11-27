@@ -1,4 +1,4 @@
-export type PushButtonVariant = 'primary' | 'secondary';
+export type PushButtonVariant = 'primary' | 'secondary' | 'outline';
 
 export type PushButtonProps = {
   repoPath: string;
@@ -6,4 +6,5 @@ export type PushButtonProps = {
   variant?: PushButtonVariant;
   disabled?: boolean;
   className?: string;
+  count?: number;
 };

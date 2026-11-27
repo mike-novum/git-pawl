@@ -7,6 +7,7 @@ import { CloneDialog } from '@/features/clone-repo';
 import { useAddExistingRepo } from '@/features/add-existing-repo';
 import { useRepoSearch } from '@/features/search-repos';
 import {
+  formatBytes,
   useActiveWorkspace,
   useRemoveWorkspace,
   useSetWorkspaceIcon,
@@ -19,6 +20,7 @@ import type { AppLayoutOutletContext } from '@/shared/lib';
 import { useToast } from '@/shared/ui';
 import { useLocalStorageBool } from '@/shared/lib/framework';
 
+import type { WorkspaceViewMode } from '../types';
 import { EmptyWorkspace } from './EmptyWorkspace';
 import { RepoGroup } from './RepoGroup';
 import { WorkspaceSettingsDrawer } from './WorkspaceSettingsDrawer';
@@ -43,6 +45,12 @@ export const WorkspacePage: FC = () => {
   const [cloneOpen, setCloneOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [grouped, setGrouped] = useLocalStorageBool('workspace-view-mode', true);
+  const [viewMode, setViewMode] = useState<WorkspaceViewMode>(() => {
+    if (typeof window === 'undefined') return 'grid';
+    const saved = window.localStorage.getItem('workspace-layout-view');
+    return saved === 'list' ? 'list' : 'grid';
+  });
+
   const { mutate: addExistingRepo } = useAddExistingRepo();
   const { mutate: removeWorkspace } = useRemoveWorkspace();
   const { mutate: setWorkspaceIcon } = useSetWorkspaceIcon();
@@ -67,6 +75,13 @@ export const WorkspacePage: FC = () => {
       setHeaderAction(null);
     };
   }, [setHeaderAction]);
+
+  const handleViewModeChange = useCallback((mode: WorkspaceViewMode): void => {
+    setViewMode(mode);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('workspace-layout-view', mode);
+    }
+  }, []);
 
   const handleAddRepo = useCallback((): void => {
     if (!workspaceId) return;
@@ -125,13 +140,29 @@ export const WorkspacePage: FC = () => {
     [setWorkspaceIcon, toast, workspaceId]
   );
 
+  const handleClearSearch = useCallback((): void => {
+    setQuery('');
+  }, [setQuery]);
+
+  const dirtyReposCount = useMemo(
+    () => repos.filter((r) => r.status === 'dirty').length,
+    [repos]
+  );
+
+  const totalSizeBytes = useMemo(
+    () => repos.reduce((acc, r) => acc + (r.sizeBytes ?? 0), 0),
+    [repos]
+  );
+
   const groups = useMemo(() => {
     if (!grouped) {
       return [{ name: 'All', repos: visibleRepos }];
     }
     const byGroup = new Map<string, Repository[]>();
     for (const repo of visibleRepos) {
-      const rel = workspacePath ? repo.path.replace(workspacePath, '').replace(/^[\\/]/, '') : repo.name;
+      const rel = workspacePath
+        ? repo.path.replace(workspacePath, '').replace(/^[\\/]/, '')
+        : repo.name;
       const group = rel.includes('/') ? rel.split('/')[0] ?? 'Root' : 'Root';
       const arr = byGroup.get(group) ?? [];
       arr.push(repo);
@@ -163,16 +194,60 @@ export const WorkspacePage: FC = () => {
           onQueryChange={setQuery}
           grouped={grouped}
           onGroupedChange={setGrouped}
+          viewMode={viewMode}
+          onViewModeChange={handleViewModeChange}
           onAddRepo={handleAddRepo}
           onClone={handleClone}
+          totalReposCount={repos.length}
+          filteredReposCount={visibleRepos.length}
         />
 
+        {repos.length > 0 ? (
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/40 pb-3 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <span>
+                <strong className="text-foreground font-semibold">{repos.length}</strong>{' '}
+                {repos.length === 1 ? 'repository' : 'repositories'}
+              </span>
+              <span aria-hidden="true">·</span>
+              {dirtyReposCount > 0 ? (
+                <span className="text-amber-500 font-medium inline-flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-amber-500 animate-pulse" />
+                  {dirtyReposCount} with changes
+                </span>
+              ) : (
+                <span className="text-emerald-500 font-medium inline-flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-emerald-500" />
+                  All clean
+                </span>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 font-mono">
+              <span>{formatBytes(totalSizeBytes)} total</span>
+            </div>
+          </div>
+        ) : null}
+
         {isLoading ? (
-          <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">
+          <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground py-16">
             Loading...
           </div>
         ) : repos.length === 0 ? (
           <EmptyWorkspace onAddRepo={handleAddRepo} onClone={handleClone} />
+        ) : visibleRepos.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-16 text-center">
+            <p className="text-muted-foreground text-sm">
+              No repositories match &ldquo;{query}&rdquo;
+            </p>
+            <button
+              type="button"
+              onClick={handleClearSearch}
+              className="text-primary hover:underline text-xs font-medium"
+            >
+              Clear search
+            </button>
+          </div>
         ) : (
           <div className="flex flex-col gap-6">
             {groups.map((g) => (
@@ -180,6 +255,7 @@ export const WorkspacePage: FC = () => {
                 key={g.name}
                 name={g.name}
                 repos={g.repos}
+                viewMode={viewMode}
                 onRepoClick={handleRepoClick}
                 onAddRepo={handleAddRepo}
               />

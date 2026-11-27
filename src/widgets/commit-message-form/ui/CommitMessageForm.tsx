@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { FC, FormEvent } from 'react';
+import type { FC, FormEvent, KeyboardEvent } from 'react';
 
 import { cn } from '@/shared/lib/theme/cn';
 import { Button, Checkbox, Input } from '@/shared/ui';
@@ -63,6 +63,15 @@ export const CommitMessageForm: FC<CommitMessageFormProps> = ({
     onCommit(buildMessage(header, body, footer));
   };
 
+  const handleKeyDown = (event: KeyboardEvent<HTMLFormElement>): void => {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+      if (canSubmit) {
+        event.preventDefault();
+        onCommit(buildMessage(header, body, footer));
+      }
+    }
+  };
+
   const handleBypassChange = (checked: boolean): void => {
     onBypassChange?.(checked);
   };
@@ -70,6 +79,7 @@ export const CommitMessageForm: FC<CommitMessageFormProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
+      onKeyDown={handleKeyDown}
       aria-label="Commit message"
       className={cn('flex flex-col gap-4', className)}
     >
