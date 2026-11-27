@@ -60,4 +60,33 @@ describe('buildBranches', () => {
       }
     ]);
   });
+
+  it('attaches currentUpstream from gitStatus to the current branch', () => {
+    expect(
+      buildBranches(
+        [
+          { name: 'main', target: 'aaa', commits: ['aaa'] },
+          { name: 'feat/ux', target: 'bbb', commits: ['bbb'] }
+        ],
+        'feat/ux',
+        false,
+        { ref: 'origin/feat/ux', ahead: 2, behind: 1 }
+      )
+    ).toEqual([
+      {
+        name: 'main',
+        target: 'aaa',
+        current: false,
+        commits: ['aaa'],
+        upstream: undefined
+      },
+      {
+        name: 'feat/ux',
+        target: 'bbb',
+        current: true,
+        commits: ['bbb'],
+        upstream: { ref: 'origin/feat/ux', ahead: 2, behind: 1 }
+      }
+    ]);
+  });
 });

@@ -8,4 +8,7 @@ export type AppHeaderProps = {
   metaSlot?: ReactNode;
   rightSlot?: ReactNode;
   hideSettings?: boolean;
+  sidebarOpen?: boolean;
+  onToggleSidebar?: () => void;
+  onOpenCommandPalette?: () => void;
 };

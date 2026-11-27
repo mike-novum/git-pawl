@@ -107,7 +107,7 @@ const WorkspaceTileWrapper: FC<{
   const { status, isLoading: isStatusLoading } = useWorkspaceStatus(workspace.path);
   const { data: iconPath = null } = useWorkspaceIcon(workspace.id);
 
-  const lastActivity: number | null = null;
+  const lastActivity: number | null = workspace.createdAt ?? null;
   const isLoading = isReposPending || isSizeLoading || isStatusLoading;
 
   return (

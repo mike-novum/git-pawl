@@ -48,6 +48,9 @@ export const buildRepository = async (
   } catch {
     id = fallbackId(absolutePath);
   }
+  if (!id) {
+    id = fallbackId(absolutePath);
+  }
 
   return {
     id,

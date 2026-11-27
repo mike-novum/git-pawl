@@ -22,4 +22,8 @@ export type AppState = {
 
   workspaceCounters: Record<string, WorkspaceCounters>;
   setWorkspaceCounters: (id: string, counters: WorkspaceCounters) => void;
+
+  sidebarOpen: boolean;
+  setSidebarOpen: (open: boolean) => void;
+  toggleSidebar: () => void;
 };

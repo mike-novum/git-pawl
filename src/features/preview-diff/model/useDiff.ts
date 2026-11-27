@@ -43,7 +43,16 @@ const fetchDiff = async (
     ...(input.range ? { range: input.range } : {})
   };
 
-  const result = await gitDiff(args);
+  let result: unknown;
+  try {
+    result = await gitDiff(args);
+  } catch (error) {
+    if (input.range === 'HEAD') {
+      result = await gitDiff({ repoPath: input.repoPath });
+    } else {
+      throw error;
+    }
+  }
 
   if (signal?.aborted) {
     return [];

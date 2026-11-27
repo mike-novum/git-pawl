@@ -42,10 +42,12 @@ const PanelResizeHandle: FC<PanelHandleProps> = ({
 }) => (
   <Separator
     className={cn(
-      'group/handle bg-border relative flex items-center justify-center transition-colors',
-      'data-[separator=vertical]:w-px data-[separator=vertical]:cursor-col-resize',
-      'data-[separator=horizontal]:h-px data-[separator=horizontal]:cursor-row-resize',
-      'hover:bg-primary focus-visible:bg-ring focus-visible:outline-none',
+      'group/handle relative flex items-center justify-center bg-border transition-colors',
+      'w-1.5 cursor-col-resize hover:bg-primary/80 active:bg-primary focus-visible:bg-ring focus-visible:outline-none',
+      'aria-[orientation=vertical]:w-1.5 aria-[orientation=vertical]:cursor-col-resize',
+      'aria-[orientation=horizontal]:h-1.5 aria-[orientation=horizontal]:cursor-row-resize',
+      'data-[separator=vertical]:w-1.5 data-[separator=vertical]:cursor-col-resize',
+      'data-[separator=horizontal]:h-1.5 data-[separator=horizontal]:cursor-row-resize',
       className
     )}
     {...rest}
@@ -54,9 +56,8 @@ const PanelResizeHandle: FC<PanelHandleProps> = ({
       <span
         aria-hidden
         className={cn(
-          'bg-muted-foreground/50 group-hover/handle:bg-primary-foreground/80 rounded-sm',
-          'group-data-[separator=vertical]/handle:h-6 group-data-[separator=vertical]/handle:w-0.5',
-          'group-data-[separator=horizontal]/handle:h-0.5 group-data-[separator=horizontal]/handle:w-6'
+          'rounded-sm bg-muted-foreground/40 transition-colors group-hover/handle:bg-primary-foreground',
+          'h-6 w-0.5'
         )}
       />
     )}

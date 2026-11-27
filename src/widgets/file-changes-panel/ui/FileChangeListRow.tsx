@@ -1,9 +1,18 @@
-import { Eye, FilePlus2, FileMinus2, FileEdit, FileQuestion, FileSymlink, EyeOff } from 'lucide-react';
-import type { FC, KeyboardEvent, ReactNode } from 'react';
+import {
+  Eye,
+  FilePlus2,
+  FileMinus2,
+  FileEdit,
+  FileQuestion,
+  FileSymlink,
+  EyeOff
+} from 'lucide-react';
+import type { FC, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 import { FILE_CHANGE_STATUS_LABELS } from '@/entities/file-change';
 import type { FileChange } from '@/entities/file-change';
 import { cn } from '@/shared/lib/theme';
+import { Checkbox } from '@/shared/ui';
 
 import type { FileChangeListRowProps } from './types';
 
@@ -38,7 +47,10 @@ const dirnameFor = (path: string): string => {
 
 export const FileChangeListRow: FC<FileChangeListRowProps> = ({
   change,
-  onSelect
+  isSelectedForDiff,
+  isStagedForCommit,
+  onSelect,
+  onToggleStage
 }) => {
   const label = FILE_CHANGE_STATUS_LABELS[change.status];
   const baseName = basenameFor(change.path);
@@ -57,6 +69,14 @@ export const FileChangeListRow: FC<FileChangeListRowProps> = ({
     }
   };
 
+  const handleCheckboxContainerClick = (event: MouseEvent<HTMLDivElement>): void => {
+    event.stopPropagation();
+  };
+
+  const handleCheckboxChange = (): void => {
+    onToggleStage?.(change.path);
+  };
+
   return (
     <div
       role="button"
@@ -65,10 +85,25 @@ export const FileChangeListRow: FC<FileChangeListRowProps> = ({
       onClick={interactive ? handleClick : undefined}
       onKeyDown={interactive ? handleKeyDown : undefined}
       className={cn(
-        'flex items-center gap-3 rounded-md border border-border/60 bg-card px-3 py-2 text-sm',
-        interactive && 'hover:border-primary/60 hover:bg-accent/40 cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus:outline-none'
+        'flex items-center gap-2.5 rounded-md border border-border/60 bg-card px-3 py-2 text-sm transition-colors',
+        interactive &&
+          'hover:border-primary/60 hover:bg-accent/40 cursor-pointer focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus:outline-none',
+        isSelectedForDiff && 'border-primary/80 bg-primary/10 ring-1 ring-primary/40'
       )}
     >
+      {onToggleStage ? (
+        <div
+          className="flex shrink-0 items-center"
+          onClick={handleCheckboxContainerClick}
+        >
+          <Checkbox
+            aria-label={`Stage ${change.path}`}
+            checked={isStagedForCommit}
+            onCheckedChange={handleCheckboxChange}
+          />
+        </div>
+      ) : null}
+
       <span
         className={cn(
           'inline-flex shrink-0 items-center justify-center rounded border px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide',
@@ -104,9 +139,14 @@ export const FileChangeListRow: FC<FileChangeListRowProps> = ({
       {interactive ? (
         <Eye
           aria-hidden="true"
-          className="text-muted-foreground size-4 shrink-0"
+          className={cn(
+            'size-4 shrink-0',
+            isSelectedForDiff ? 'text-primary' : 'text-muted-foreground'
+          )}
         />
       ) : null}
     </div>
   );
 };
+
+FileChangeListRow.displayName = 'FileChangeListRow';

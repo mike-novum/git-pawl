@@ -110,6 +110,43 @@ describe('PullButton', () => {
     expect(button.getAttribute('data-variant')).toBe('primary');
   });
 
+  it('maps outline variant to secondary on the underlying Button', () => {
+    const Wrapper = createWrapper();
+    render(
+      <Wrapper>
+        <PullButton repoPath="/tmp/repo" variant="outline" />
+      </Wrapper>
+    );
+
+    const button = screen.getByRole('button', { name: /pull/i });
+    expect(button.getAttribute('data-variant')).toBe('secondary');
+  });
+
+  it('renders behind count badge with contrast styling on primary and neutral styling on secondary', () => {
+    const Wrapper = createWrapper();
+    const { rerender } = render(
+      <Wrapper>
+        <PullButton repoPath="/tmp/repo" variant="primary" count={4} />
+      </Wrapper>
+    );
+
+    expect(screen.getByText('↓4')).toHaveClass(
+      'bg-primary-foreground/20',
+      'text-primary-foreground'
+    );
+
+    rerender(
+      <Wrapper>
+        <PullButton repoPath="/tmp/repo" variant="secondary" count={2} />
+      </Wrapper>
+    );
+
+    expect(screen.getByText('↓2')).toHaveClass(
+      'bg-surface-elevated',
+      'text-foreground'
+    );
+  });
+
   it('calls mutate on click with the repoPath', async () => {
     const Wrapper = createWrapper();
     render(

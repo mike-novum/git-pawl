@@ -1,8 +1,11 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { ThemeProvider } from '@/shared/lib/theme';
+
+import type { AppHeaderProps } from '../types';
 
 import { AppHeader } from './AppHeader';
 
@@ -23,6 +26,18 @@ const renderHeaderOnRoute = (path: string): ReturnType<typeof render> =>
     <ThemeProvider>
       <MemoryRouter initialEntries={[path]}>
         <AppHeader variant="workspace" />
+      </MemoryRouter>
+    </ThemeProvider>
+  );
+
+const renderHeaderWithProps = (
+  props: AppHeaderProps,
+  initialPath = '/workspaces'
+): ReturnType<typeof render> =>
+  render(
+    <ThemeProvider>
+      <MemoryRouter initialEntries={[initialPath]}>
+        <AppHeader {...props} />
       </MemoryRouter>
     </ThemeProvider>
   );
@@ -56,5 +71,58 @@ describe('AppHeader', () => {
     renderHeaderOnRoute('/settings');
 
     expect(screen.queryByRole('button', { name: 'Settings' })).not.toBeInTheDocument();
+  });
+
+  it('renders sidebar toggle button when onToggleSidebar is provided and reflects sidebarOpen state', async () => {
+    const user = userEvent.setup();
+    const onToggleSidebar = vi.fn();
+
+    const { rerender } = renderHeaderWithProps({
+      variant: 'home',
+      sidebarOpen: true,
+      onToggleSidebar
+    });
+
+    const hideButton = screen.getByRole('button', { name: 'Hide sidebar' });
+    expect(hideButton).toHaveAttribute('title', 'Toggle sidebar (⌘B)');
+
+    await user.click(hideButton);
+    expect(onToggleSidebar).toHaveBeenCalledTimes(1);
+
+    rerender(
+      <ThemeProvider>
+        <MemoryRouter initialEntries={['/workspaces']}>
+          <AppHeader
+            variant="home"
+            sidebarOpen={false}
+            onToggleSidebar={onToggleSidebar}
+          />
+        </MemoryRouter>
+      </ThemeProvider>
+    );
+
+    const showButton = screen.getByRole('button', { name: 'Show sidebar' });
+    expect(showButton).toBeInTheDocument();
+
+    await user.click(showButton);
+    expect(onToggleSidebar).toHaveBeenCalledTimes(2);
+  });
+
+  it('renders command palette trigger button when onOpenCommandPalette is provided', async () => {
+    const user = userEvent.setup();
+    const onOpenCommandPalette = vi.fn();
+
+    renderHeaderWithProps({
+      variant: 'workspace',
+      onOpenCommandPalette
+    }, '/workspaces/ws-1');
+
+    const trigger = screen.getByRole('button', { name: 'Open command palette' });
+    expect(trigger).toHaveAttribute('title', 'Command palette (⌘K)');
+    expect(trigger).toHaveTextContent('Search');
+    expect(trigger).toHaveTextContent('⌘K');
+
+    await user.click(trigger);
+    expect(onOpenCommandPalette).toHaveBeenCalledTimes(1);
   });
 });
